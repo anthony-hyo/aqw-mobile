@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<application xmlns="http://ns.adobe.com/air/application/51.0">
+  <id>com.aqw.pocket</id>
+  <versionNumber>1.0.0</versionNumber>
+  <versionLabel>1.0.0</versionLabel>
+  <filename>AQW Pocket</filename>
+  <description>Play AdventureQuest Worlds on your mobile device.</description>
+  <name>AQW Pocket</name>
+  <copyright>Community Mod</copyright>
+  <initialWindow>
+    <content>Loader.swf</content>
+    <systemChrome>standard</systemChrome>
+    <transparent>false</transparent>
+    <visible>true</visible>
+    <fullScreen>true</fullScreen>
+    <aspectRatio>landscape</aspectRatio>
+    <renderMode>auto</renderMode>
+    <autoOrients>false</autoOrients>
+    <width>960</width>
+    <height>550</height>
+    <maximizable>true</maximizable>
+    <minimizable>true</minimizable>
+    <resizable>true</resizable>
+  </initialWindow>
+  <icon>
+    <image36x36>icons/android-icon-36x36.png</image36x36>
+    <image48x48>icons/android-icon-48x48.png</image48x48>
+    <image72x72>icons/android-icon-72x72.png</image72x72>
+    <image96x96>icons/android-icon-96x96.png</image96x96>
+    <image144x144>icons/android-icon-144x144.png</image144x144>
+    <image192x192>icons/android-icon-192x192.png</image192x192>
+    <image512x512>icons/android-icon-512x512.png</image512x512>
+  </icon>
+  <customUpdateUI>false</customUpdateUI>
+  <allowBrowserInvocation>false</allowBrowserInvocation>
+  <android>
+    <manifestAdditions><![CDATA[<manifest>
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+</manifest>]]></manifestAdditions>
+  </android>
+  <supportedLanguages>en</supportedLanguages>
+</application>

@@ -2,7 +2,7 @@
 name: Patch Broken (Game Update)
 about: A game update broke the client
 title: ''
-labels: ''
+labels: patch
 assignees: ''
 
 ---

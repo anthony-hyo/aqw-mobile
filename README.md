@@ -64,7 +64,7 @@ adt -package -target apk-captive-runtime -arch armv8 \
   -C loader Loader.swf gamefiles/Game.swf
 ```
 
-Or push to `master` and let the **GitHub Actions** workflow handle it — the APK will be available as a build artifact.
+Or trigger it manually from the [Actions](../../actions) tab, the APK will be published to the [Releases](../../releases/latest) page automatically.
 
 ---
 

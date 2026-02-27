@@ -19,6 +19,70 @@ async fn main() {
     let patches: HashMap<String, String> = load_patch();
 
     apply_patch(&patches, Path::new("assets/Game-0")).expect("Error while applying the patch");
+
+    build();
+}
+
+fn build() {
+    let output: ExitStatus = Command::new("rabcasm")
+        .arg("assets/Game-0/Game-0.main.asasm")
+        .status()
+        .expect("failed to build rabcasm");
+
+    println!("status: {}", output);
+
+    let output: ExitStatus = Command::new("abcreplace")
+        .arg("assets/Game.swf")
+        .arg("0")
+        .arg("assets/Game-0/Game-0.main.abc")
+        .status()
+        .expect("failed to execute abcreplace");
+
+    println!("status: {}", output);
+}
+
+fn find_all_original_blocks(content: &str, find_normalized: &str) -> Vec<String> {
+    let find_lines: Vec<&str> = find_normalized.lines().collect();
+    let content_lines: Vec<&str> = content.lines().collect();
+    let mut results = Vec::new();
+
+    let mut ci = 0;
+
+    'outer: while ci < content_lines.len() {
+        let mut fi = 0;
+        let mut start = None;
+        let mut tmp_ci = ci;
+
+        while tmp_ci < content_lines.len() {
+            let cl = content_lines[tmp_ci].trim();
+
+            if cl.is_empty() {
+                tmp_ci += 1;
+                continue;
+            }
+
+            if cl == find_lines[fi] {
+                if fi == 0 {
+                    start = Some(tmp_ci);
+                }
+                fi += 1;
+                tmp_ci += 1;
+
+                if fi == find_lines.len() {
+                    let block = content_lines[start.unwrap()..tmp_ci].join("\n");
+                    results.push(block);
+                    ci = start.unwrap() + 1;
+                    continue 'outer;
+                }
+            } else {
+                break;
+            }
+        }
+
+        ci += 1;
+    }
+
+    results
 }
 
 fn apply_patch(patches: &HashMap<String, String>, path: &Path) -> Result<(), Box<dyn Error>> {
@@ -28,23 +92,36 @@ fn apply_patch(patches: &HashMap<String, String>, path: &Path) -> Result<(), Box
                 let _ = apply_patch(&patches, &file.path());
             } else {
                 if file.path().extension().map_or(false, |ext| ext == "asasm") {
-                    let content = fs::read_to_string(&file.path())?;
+                    let mut content = fs::read_to_string(&file.path())?;
 
                     for (find, replace) in patches {
-                        let find_normalized = find.lines().map(|l| l.trim()).collect::<Vec<_>>().join("\n");
-                        let content_normalized = content.lines().map(|l| l.trim()).collect::<Vec<_>>().join("\n");
+                        let find_normalized = find
+                            .lines()
+                            .map(|l| l.trim())
+                            .filter(|l| !l.is_empty())
+                            .collect::<Vec<_>>()
+                            .join("\n");
+
+                        let content_normalized = content
+                            .lines()
+                            .map(|l| l.trim())
+                            .filter(|l| !l.is_empty())
+                            .collect::<Vec<_>>()
+                            .join("\n");
+
 
                         if content_normalized.contains(&find_normalized) {
-                            println!("Applying patch to {:?}", file.path());
-                            println!("Find: {}", find);
-                            println!("Replace: {}", replace);
+                            let blocks = find_all_original_blocks(&content, &find_normalized);
 
-                            let result = content_normalized.replace(&find_normalized, replace);
+                            //println!("Applying patch to {:?}", file.path());
+                            //println!("Find: {}", find);
+                            //println!("Replace: {}", replace);
 
-                            fs::write(file.path(), &result)?;
-                        } else {
-                            println!("No patch found for {:?}", file.path());
-                            println!("Looking for: {}", find);
+                            for original in blocks {
+                                content = content.replacen(&original, replace, 1);
+                            }
+
+                            fs::write(file.path(), &content)?;
                         }
                     }
                 }

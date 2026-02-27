@@ -8,7 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +34,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget unzip git curl liblzma-dev default-jdk
-          
+
           git clone --depth 1 https://github.com/CyberShadow/RABCDAsm.git
           cd RABCDAsm
           dmd -run build_rabcdasm.d
@@ -45,7 +47,6 @@ jobs:
         run: |
           mkdir -p loader/gamefiles
           cp assets/Game.swf loader/gamefiles/Game.swf
-          ls -la loader/gamefiles/  # confirma que copiou
 
       - name: Setup AIR SDK
         uses: joshtynjala/setup-adobe-air-action@v2
@@ -66,19 +67,18 @@ jobs:
             -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=US"
 
       - name: Compile Loader.swf
-        run: |
-          amxmlc -output loader/Loader.swf loader/src/Main.as
+        run: amxmlc -output loader/Loader.swf loader/src/Main.as
 
-      - name: Build APK
+      - name: Build APK (armv7)
         run: |
           adt -package \
             -target apk-captive-runtime \
-            -arch armv8 \
+            -arch armv7 \
             -storetype JKS \
             -keystore temp_keystore.jks \
             -storepass temppass \
             -keypass temppass \
-            AQWPocket.apk \
+            AQWPocket-armv7.apk \
             loader/app.xml \
             -C loader \
               Loader.swf \
@@ -91,8 +91,34 @@ jobs:
               icons/android-icon-512x512.png \
               gamefiles/Game.swf
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Build APK (armv8)
+        run: |
+          adt -package \
+            -target apk-captive-runtime \
+            -arch armv8 \
+            -storetype JKS \
+            -keystore temp_keystore.jks \
+            -storepass temppass \
+            -keypass temppass \
+            AQWPocket-armv8.apk \
+            loader/app.xml \
+            -C loader \
+              Loader.swf \
+              icons/android-icon-36x36.png \
+              icons/android-icon-48x48.png \
+              icons/android-icon-72x72.png \
+              icons/android-icon-96x96.png \
+              icons/android-icon-144x144.png \
+              icons/android-icon-192x192.png \
+              icons/android-icon-512x512.png \
+              gamefiles/Game.swf
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: AQWPocket
-          path: AQWPocket.apk
+          tag_name: latest
+          name: Latest Build
+          prerelease: true
+          files: |
+            AQWPocket-armv7.apk
+            AQWPocket-armv8.apk

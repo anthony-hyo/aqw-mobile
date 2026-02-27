@@ -34,7 +34,8 @@ package {
 		private static const STATE_READY:int = 2;
 
 		private var loading:TextField;
-		
+		private var logField:TextField;
+
 		private var backgroundDomain:ApplicationDomain = new ApplicationDomain();
 		private var backgroundContext:LoaderContext;
 
@@ -65,7 +66,42 @@ package {
 			loading.text = "Loading...";
 			addChild(loading);
 
+			const logFmt:TextFormat = new TextFormat();
+			logFmt.font = "_typewriter";
+			logFmt.size = 11;
+			logFmt.color = 0xCCCCCC;
+
+			logField = new TextField();
+			logField.defaultTextFormat = logFmt;
+			logField.width = 920;
+			logField.height = 200;
+			logField.x = 20;
+			logField.y = 330;
+			logField.multiline = true;
+			logField.wordWrap = true;
+			logField.selectable = true; 
+			logField.background = true;
+			logField.backgroundColor = 0x111111;
+			logField.border = true;
+			logField.borderColor = 0x444444;
+			logField.visible = false;
+			addChild(logField);
+
+			log("Init");
+
 			fetchJSON(API_VERSION_URL, onVersionComplete);
+		}
+
+		private function log(msg:String):void {
+			var timestamp:String = new Date().toTimeString().substr(0, 8);
+			logField.appendText("[" + timestamp + "] " + msg + "\n");
+			logField.scrollV = logField.maxScrollV;
+		}
+
+		private function showError(msg:String):void {
+			loading.text = "Error — see log below";
+			logField.visible = true;
+			log("ERROR: " + msg);
 		}
 
 		public function loadMapViaBytes(url:String, context:LoaderContext, onComplete:Function, onProgress:Function = null, onError:Function = null):void {
@@ -117,6 +153,8 @@ package {
 		}
 
 		private function loadBackground():void {
+			log("Loading background: " + TITLE_BASE_URL + backgroundFile);
+
 			loading.text = "Loading Background...";
 
 			loadSwf(
@@ -125,6 +163,7 @@ package {
 				onBackgroundComplete,
 				onBackgroundProgress,
 				function (e:IOErrorEvent):void {
+					log("Background load failed, skipping: " + e.text);
 					loading.text = "Loading Game...";
 					loadState = STATE_GAME;
 					advance();
@@ -133,17 +172,24 @@ package {
 		}
 
 		private function loadGame():void {
+			log("Loading game client: " + GAME_SWF_PATH);
+
 			loading.text = "Loading Game...";
 
 			loadSwf(
 				GAME_SWF_PATH,
 				clientContext,
 				onGameComplete,
-				onGameProgress
+				onGameProgress,
+				function (e:IOErrorEvent):void {
+					showError("Failed to load game client: " + e.text);
+				}
 			);
 		}
 
 		private function attachGame():void {
+			log("Attaching game...");
+
 			gameMovieClip = MovieClip(stage.addChild(gameMovieClip));
 
 			const params:Object = gameMovieClip.params;
@@ -170,13 +216,20 @@ package {
 		}
 
 		private function onVersionComplete(e:Event):void {
-			const data:Object = JSON.parse(URLLoader(e.target).data);
-			titleFile = data.sTitle;
-			backgroundFile = data.sBG;
-			advance();
+			try {
+				const data:Object = JSON.parse(URLLoader(e.target).data);
+				titleFile = data.sTitle;
+				backgroundFile = data.sBG;
+				log("Version fetched — title: " + titleFile + ", bg: " + backgroundFile);
+				advance();
+			} catch (err:Error) {
+				showError("Failed to parse version response: " + err.message);
+			}
 		}
 
 		private function onBackgroundComplete(e:Event):void {
+			log("Background loaded");
+
 			try {
 				const TitleScreenClass:Class = backgroundDomain.getDefinition("TitleScreen") as Class;
 				const titleScreen:DisplayObject = new TitleScreenClass();
@@ -186,7 +239,7 @@ package {
 
 				addChildAt(titleScreen, 1);
 			} catch (err:Error) {
-				trace(e)
+				log("TitleScreen class not found, skipping: " + err.message);
 			}
 
 			loadState = STATE_GAME;
@@ -198,6 +251,8 @@ package {
 		}
 
 		private function onGameComplete(e:Event):void {
+			log("Game client loaded");
+
 			gameMovieClip = MovieClip(Loader(e.target.loader).content);
 			loadState = STATE_READY;
 			advance();
@@ -251,6 +306,11 @@ package {
 				function (bytes:ByteArray):void {
 					const ldr:Loader = new Loader();
 					ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
+
+					if (onError != null) {
+						ldr.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onError);
+					}
+
 					ldr.loadBytes(bytes, context);
 				},
 				onProgress,

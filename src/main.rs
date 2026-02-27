@@ -1,26 +1,95 @@
 use reqwest::{Client, Response};
 use serde::Deserialize;
-use std::fs;
-use std::process::{Command, ExitStatus};
+use std::collections::HashMap;
+use std::error::Error;
 use std::fs::File;
+use std::fs::{self, DirBuilder, FileType, ReadDir};
 use std::io::Write;
+use std::path::Path;
+use std::process::{Command, ExitStatus};
 
 #[tokio::main]
 async fn main() {
-    match fs::remove_dir_all("assets") {
-        Ok(()) => println!("File successfully deleted."),
-        Err(error) => eprintln!("Error deleting file: {}", error),
+    clear_asset_dir();
+
+    download_asset().await.expect("Could not load Game.swf");
+
+    export_bytecode();
+
+    let patches: HashMap<String, String> = load_patch();
+
+    let _ = apply_patch(&patches, Path::new("assets/Game-0"));
+}
+
+fn apply_patch(patches: &HashMap<String, String>, path: &Path) -> Result<(), Box<dyn Error>>{
+    for files in fs::read_dir(path)? {
+        if let Ok(file) = files {
+            if file.file_type()?.is_dir() {
+                let _ = apply_patch(&patches, &file.path());
+            } else {
+                if file.path().extension().map_or(false, |ext| ext == "asasm") {
+                    let mut content = fs::read_to_string(&path)?;
+
+                    for (find, replace) in patches {
+                        if content.contains(find) {
+                            content = content.replace(find, replace);
+
+                            println!("Applied patch to {:?}", file.path())
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    match fs::create_dir("assets") {
-        Ok(()) => println!("File successfully deleted."),
-        Err(error) => eprintln!("Error deleting file: {}", error),
+    Ok(())
+}
+
+fn load_patch() -> HashMap<String, String> {
+    let mut patches_files: HashMap<String, String> = HashMap::new();
+
+    let patches: ReadDir = fs::read_dir("patches").expect("Failed to load patches directory.");
+
+    for patch_dir in patches {
+        if let Ok(p) = patch_dir {
+            let file_type: FileType = p.file_type().expect("Error reading file type.");
+
+            if file_type.is_dir() {
+                let patch: ReadDir =
+                    fs::read_dir(p.path()).expect("Failed to load patch directory.");
+
+                let mut find_content: String = String::new();
+                let mut replace_content: String = String::new();
+
+                for patch_files in patch {
+                    if let Ok(file) = patch_files {
+                        match &*file.file_name().to_string_lossy() {
+                            "find.txt" => {
+                                find_content = fs::read_to_string(file.path())
+                                    .expect("Error reading find.txt");
+                            }
+                            "replace.txt" => {
+                                replace_content = fs::read_to_string(file.path())
+                                    .expect("Error reading replace.txt");
+                            }
+                            _ => {
+                                // Default
+                            }
+                        }
+                    }
+                }
+
+                if !find_content.is_empty() && !replace_content.is_empty() {
+                    patches_files.insert(find_content, replace_content);
+                }
+            }
+        }
     }
 
-    linear_download()
-        .await
-        .expect("Could not load Game.swf");
+    patches_files
+}
 
+fn export_bytecode() {
     let output: ExitStatus = Command::new("abcexport")
         .arg("assets/Game.swf")
         .status()
@@ -36,7 +105,19 @@ async fn main() {
     println!("status: {}", output);
 }
 
-async fn linear_download() -> Result<(), Box<dyn std::error::Error>> {
+fn clear_asset_dir() {
+    match fs::remove_dir_all("assets") {
+        Ok(()) => println!("File successfully deleted."),
+        Err(error) => eprintln!("Error deleting file: {}", error),
+    }
+
+    match fs::create_dir("assets") {
+        Ok(()) => println!("File successfully deleted."),
+        Err(error) => eprintln!("Error deleting file: {}", error),
+    }
+}
+
+async fn download_asset() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = Client::new();
 
     let response: Response = client
@@ -73,7 +154,6 @@ async fn linear_download() -> Result<(), Box<dyn std::error::Error>> {
 struct GameVersion {
     #[serde(rename = "sFile")]
     file: String,
-
     //#[serde(rename = "sTitle")]
     //title: String,
 

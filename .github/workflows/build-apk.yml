@@ -1,0 +1,98 @@
+name: Build APK
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
+      - name: Setup Dlang
+        uses: dlang-community/setup-dlang@v1
+
+      - name: Install Dependencies and Build RABCDAsm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip git curl liblzma-dev default-jdk
+          
+          git clone --depth 1 https://github.com/CyberShadow/RABCDAsm.git
+          cd RABCDAsm
+          dmd -run build_rabcdasm.d
+          sudo cp abcexport rabcdasm rabcasm abcreplace /usr/local/bin/
+
+      - name: Patch Game.swf
+        run: cargo run --release
+
+      - name: Prepare gamefiles
+        run: |
+          mkdir -p loader/gamefiles
+          cp assets/Game.swf loader/gamefiles/Game.swf
+          ls -la loader/gamefiles/  # confirma que copiou
+
+      - name: Setup AIR SDK
+        uses: joshtynjala/setup-adobe-air-action@v2
+        with:
+          air-version: "51.1"
+          accept-license: yes
+
+      - name: Generate temporary keystore
+        run: |
+          keytool -genkeypair \
+            -alias tempalias \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -keystore temp_keystore.jks \
+            -storepass temppass \
+            -keypass temppass \
+            -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=US"
+
+      - name: Compile Loader.swf
+        run: |
+          amxmlc -output loader/Loader.swf loader/src/Main.as
+
+      - name: Build APK
+        run: |
+          adt -package \
+            -target apk-captive-runtime \
+            -arch armv8 \
+            -storetype JKS \
+            -keystore temp_keystore.jks \
+            -storepass temppass \
+            -keypass temppass \
+            AQWPocket.apk \
+            loader/app.xml \
+            -C loader \
+              Loader.swf \
+              icons/android-icon-36x36.png \
+              icons/android-icon-48x48.png \
+              icons/android-icon-72x72.png \
+              icons/android-icon-96x96.png \
+              icons/android-icon-144x144.png \
+              icons/android-icon-192x192.png \
+              icons/android-icon-512x512.png \
+              gamefiles/Game.swf
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AQWPocket
+          path: AQWPocket.apk

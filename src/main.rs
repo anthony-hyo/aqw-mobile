@@ -3,7 +3,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fs::File;
-use std::fs::{self, ReadDir};
+use std::fs::{self};
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, ExitStatus};

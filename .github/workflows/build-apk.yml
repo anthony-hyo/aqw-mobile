@@ -20,7 +20,9 @@ jobs:
 
       - name: Set version
         id: version
-        run: echo "VERSION=v${{ github.event.inputs.version_prefix }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
+        run: |
+              echo "VERSION=v${{ github.event.inputs.version_prefix }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
+              echo "VERSION_NUMBER=${{ github.event.inputs.version_prefix }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -73,9 +75,11 @@ jobs:
             -keypass temppass \
             -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=US"
 
-      - name: Inject version into Config.as
+      - name: Inject version
         run: |
           sed -i "s/APP_VERSION:String = \".*\"/APP_VERSION:String = \"${{ steps.version.outputs.VERSION }}\"/" loader/src/Config.as
+          sed -i "s|<versionNumber>.*</versionNumber>|<versionNumber>${{ steps.version.outputs.VERSION_NUMBER }}</versionNumber>|" loader/app.xml
+          sed -i "s|<versionLabel>.*</versionLabel>|<versionLabel>${{ steps.version.outputs.VERSION_NUMBER }}</versionLabel>|" loader/app.xml
 
       - name: Compile Loader.swf
         run: amxmlc -output loader/Loader.swf loader/src/Main.as

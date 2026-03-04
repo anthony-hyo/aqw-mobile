@@ -89,7 +89,7 @@ jobs:
             -keystore temp_keystore.jks \
             -storepass temppass \
             -keypass temppass \
-            AQWPocket-armv7.apk \
+            AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk \
             loader/app.xml \
             -C loader \
               Loader.swf \
@@ -110,7 +110,7 @@ jobs:
             -keystore temp_keystore.jks \
             -storepass temppass \
             -keypass temppass \
-            AQWPocket-armv8.apk \
+            AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk \
             loader/app.xml \
             -C loader \
               Loader.swf \
@@ -131,7 +131,7 @@ jobs:
             -keystore temp_keystore.jks \
             -storepass temppass \
             -keypass temppass \
-            AQWPocket-x86.apk \
+            AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk \
             loader/app.xml \
             -C loader \
               Loader.swf \
@@ -152,7 +152,7 @@ jobs:
             -keystore temp_keystore.jks \
             -storepass temppass \
             -keypass temppass \
-            AQWPocket-x64.apk \
+            AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk \
             loader/app.xml \
             -C loader \
               Loader.swf \
@@ -176,7 +176,7 @@ jobs:
           name: ${{ steps.version.outputs.VERSION }}
           prerelease: false
           files: |
-            AQWPocket-armv7.apk
-            AQWPocket-armv8.apk
-            AQWPocket-x86.apk
-            AQWPocket-x64.apk
+            AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk
+            AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk
+            AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk
+            AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk

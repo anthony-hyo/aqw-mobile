@@ -37,7 +37,10 @@
     <manifestAdditions><![CDATA[<manifest>
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-<application android:hardwareAccelerated="true" />
+      
+<application
+  android:hardwareAccelerated="true"
+  android:windowSoftInputMode="stateHidden|adjustResize" />
 </manifest>]]></manifestAdditions>
   </android>
   <supportedLanguages>en</supportedLanguages>

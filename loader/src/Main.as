@@ -1,5 +1,8 @@
 package {
 
+	import core.AvatarMC;
+	import core.Game;
+
 	import flash.desktop.NativeApplication;
 	import flash.desktop.SystemIdleMode;
 	import flash.display.DisplayObject;
@@ -54,6 +57,9 @@ package {
 		private var loadState:int = STATE_BACKGROUND;
 
 		private var container: Sprite = new Sprite();
+		
+		public const avatarMCCore: AvatarMC = new AvatarMC(this);
+		public const gameCore: Game = new Game(this);
 
 		public function Main() {
 			NativeApplication.nativeApplication.systemIdleMode = SystemIdleMode.KEEP_AWAKE;

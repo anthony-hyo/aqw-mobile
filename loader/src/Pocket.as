@@ -1,4 +1,4 @@
-package {
+﻿package {
 
 	import core.AvatarMC;
 	import core.Game;
@@ -26,7 +26,7 @@ package {
 	import input.GamePad;
 
 	[SWF(width="960", height="550", frameRate="30", backgroundColor="#000")]
-	public class Pocket extends MovieClip {
+	public dynamic class Pocket extends Sprite {
 
 		MovieClip.prototype.removeAllChildren = function ():void {
 			var i:int = this.numChildren - 1;
@@ -57,6 +57,8 @@ package {
 		private var loadState:int = STATE_BACKGROUND;
 
 		private var container: Sprite = new Sprite();
+
+		public var game:MovieClip;
 		
 		public const avatarMCCore: AvatarMC = new AvatarMC(this);
 		public const gameCore: Game = new Game(this);
@@ -132,8 +134,8 @@ package {
 				function (bytes:ByteArray):void {
 					const ldr:Loader = new Loader();
 
-					if (gameMovieClip != null && gameMovieClip.world != null) {
-						gameMovieClip.world.ldr_map = ldr;
+					if (game != null && game.world != null) {
+						game.world.ldr_map = ldr;
 					}
 
 					ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
@@ -212,11 +214,11 @@ package {
 
 			removeChild(container);
 
-			gameMovieClip = MovieClip(stage.addChild(gameMovieClip));
+			game = MovieClip(stage.addChild(game));
 
-			gameMovieClip.addChild(container);
+			game.addChild(container);
 
-			const params:Object = gameMovieClip.params;
+			const params:Object = game.params;
 
 			params.sTitle = titleFile;
 			params.isWeb = false;
@@ -233,12 +235,12 @@ package {
 				params[key] = rootParams[key];
 			}
 
-			gameMovieClip.failedServers = {mobile: this};
+			game.failedServers = {mobile: this};
 
-			stage.setChildIndex(gameMovieClip, 0);
+			stage.setChildIndex(game, 0);
 			stage.removeChild(DisplayObject(this));
 
-			gameMovieClip.addChild(new GamePad(gameMovieClip));
+			game.addChild(new GamePad(game));
 		}
 
 		private function checkForUpdates():void {
@@ -305,7 +307,7 @@ package {
 		private function onGameComplete(e:Event):void {
 			log("Game client loaded");
 
-			gameMovieClip = MovieClip(Loader(e.target.loader).content);
+			game = MovieClip(Loader(e.target.loader).content);
 			loadState = STATE_READY;
 			advance();
 		}

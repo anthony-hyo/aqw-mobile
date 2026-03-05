@@ -5,18 +5,18 @@ package core {
 
 	public class Game {
 
-		public function Game(game:MovieClip) {
-			this.game = game;
+		public function Game(pocket:Pocket) {
+			this.pocket = pocket;
 		}
 
-		private var game:MovieClip;
+		private var pocket:Pocket;
 
 		public function mcSetColor(mc:MovieClip, strColor:String, strShade:String):void {
 			var avOwner:MovieClip;
 			var location:String;
 
-			if (game.currentLabel == "Select") {
-				game.mcCharSelect.mcSetColor(mc, strColor, strShade);
+			if (pocket.game.currentLabel == "Select") {
+				pocket.game.mcCharSelect.mcSetColor(mc, strColor, strShade);
 				return;
 			}
 
@@ -65,7 +65,7 @@ package core {
 
 			if (location != "none") {
 				if (avOwner.pAV == undefined) {
-					game.world.myAvatar.pMC.setColor(mc, location, strColor, strShade);
+					pocket.game.world.myAvatar.pMC.setColor(mc, location, strColor, strShade);
 				} else {
 					avOwner.pAV.pMC.setColor(mc, location, strColor, strShade);
 				}

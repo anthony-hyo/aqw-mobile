@@ -7,11 +7,11 @@ package core {
 
 		private static const _ct:ColorTransform = new ColorTransform();
 
-		public function AvatarMC(game:MovieClip) {
-			this.game = game;
+		public function AvatarMC(pocket:Pocket) {
+			this.pocket = pocket;
 		}
 
-		private var game:MovieClip;
+		private var pocket:Pocket;
 
 		public function setColor(target: MovieClip, mc:MovieClip, strColor:String, strLocation:String, strShade:String):void {
 			const colorInt:Number = Number(target.pAV.objData[("intColor" + strLocation)]);

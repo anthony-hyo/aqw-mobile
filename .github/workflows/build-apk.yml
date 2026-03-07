@@ -18,6 +18,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout custom
+        uses: actions/checkout@v4
+        with:
+          repository: anthony-hyo/pocket-patches
+          token: ${{ secrets.PATCHES_TOKEN }}
+          path: pocket-patches
+
+      - name: Merge custom
+        run: |
+          if [ -d "pocket-patches/aqw" ] && [ "$(ls -A pocket-patches/aqw)" ]; then
+            cp -r pocket-patches/aqw/. patches/
+          fi
+
       - name: Set version
         id: version
         run: |

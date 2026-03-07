@@ -1,0 +1,9 @@
+{
+  	"config": "airmobile",
+	"compilerOptions": {
+		"source-path": [
+			"/src/"
+		]
+	},
+	"mainClass": "Pocket"
+}

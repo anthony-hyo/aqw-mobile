@@ -49,6 +49,10 @@ async fn main() {
         .expect("Failed to apply patches to target asset.");
 
     #[rustfmt::skip]
+    copy_files(patches_aqw, Path::new("assets/Game-0"))
+        .expect("Failed to copy new files.");
+
+    #[rustfmt::skip]
     build()
         .expect("Build failed.");
 }
@@ -164,6 +168,30 @@ fn apply_patch(patches: &HashMap<String, String>, path: &Path) -> Result<(), Box
                     }
                 }
             }
+        }
+    }
+
+    Ok(())
+}
+
+fn copy_files(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
+    if !source.exists() {
+        return Ok(());
+    }
+
+    for entry in fs::read_dir(source)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        if path.is_dir() {
+            copy_files(&path, target)?;
+        } else if path.extension().map_or(false, |ext| ext == "asasm") {
+            let file_name = path.file_name().unwrap();
+            let dest = target.join(file_name);
+
+            println!("Adding new file: {:?}", dest);
+
+            fs::copy(&path, &dest)?;
         }
     }
 

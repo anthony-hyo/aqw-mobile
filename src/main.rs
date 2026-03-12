@@ -2,16 +2,25 @@ use reqwest::{Client, Response};
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::error::Error;
-use std::fs::File;
-use std::fs::{self};
+use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
 use std::process::{Command, ExitStatus};
 
 #[tokio::main]
 async fn main() {
+    let assets = Path::new("assets");
+
+    let patches = Path::new("patches");
+    let patches_aqw = Path::new("pocket-patches/aqw");
+    let patches_final = Path::new("patches-final");
+
     #[rustfmt::skip]
-    clear_asset_dir()
+    clear_dir(patches_final)
+        .expect("Failed to clear existing directory.");
+
+    #[rustfmt::skip]
+    clear_dir(assets)
         .expect("Failed to clear existing assets directory.");
 
     #[rustfmt::skip]
@@ -24,7 +33,15 @@ async fn main() {
         .expect("Failed to export bytecode from target asset.");
 
     #[rustfmt::skip]
-    let patches: HashMap<String, String> = load_patch(Path::new("patches"))
+    get_patches(patches, patches_final)
+        .expect("Failed to load patch files from target directory.");
+
+    #[rustfmt::skip]
+    get_patches(patches_aqw, patches_final)
+        .expect("Failed to load patch files from target directory.");
+
+    #[rustfmt::skip]
+    let patches: HashMap<String, String> = load_patch(patches_final)
         .expect("Failed to load patch files from target directory.");
 
     #[rustfmt::skip]
@@ -52,7 +69,11 @@ fn build() -> Result<(), Box<dyn Error>> {
         output_abcreplace, output_rabcasm
     );
 
-    fs::create_dir("loader/gamefiles")?;
+    if Path::new("loader/gamefiles/Game.swf").exists() {
+        fs::remove_file("loader/gamefiles/Game.swf")?;
+    }
+
+    fs::create_dir_all("loader/gamefiles")?;
 
     fs::rename("assets/Game.swf", "loader/gamefiles/Game.swf")?;
 
@@ -156,20 +177,23 @@ fn load_patch(path: &Path) -> Result<HashMap<String, String>, Box<dyn Error>> {
         let file = file?;
 
         let sub_path = file.path();
-    
+
         let find_path = sub_path.join("find.txt");
 
         if find_path.exists() {
             let replace_path = sub_path.join("replace.txt");
-            
+
             let find_content: String = fs::read_to_string(&find_path)?;
 
             if !find_content.is_empty() {
-                patches_files.insert(find_content, if replace_path.exists() {
-                    fs::read_to_string(&replace_path)?
-                } else {
-                    String::new()
-                });
+                patches_files.insert(
+                    find_content,
+                    if replace_path.exists() {
+                        fs::read_to_string(&replace_path)?
+                    } else {
+                        String::new()
+                    },
+                );
             }
         }
 
@@ -194,12 +218,38 @@ fn export_bytecode() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn clear_asset_dir() -> Result<(), Box<dyn Error>> {
-    if Path::new("assets").exists() {
-        fs::remove_dir_all("assets")?;
+fn get_patches(path: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
+    if path.exists() {
+        copy_dir(path, target)?;
     }
 
-    fs::create_dir("assets")?;
+    Ok(())
+}
+
+fn clear_dir(path: &Path) -> Result<(), Box<dyn Error>> {
+    if path.exists() {
+        fs::remove_dir_all(path)?;
+    }
+
+    fs::create_dir(path)?;
+
+    Ok(())
+}
+
+fn copy_dir(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
+    fs::create_dir_all(target)?;
+
+    for entry in fs::read_dir(source)? {
+        let entry = entry?;
+        let target_path = target.join(entry.file_name());
+
+        if entry.path().is_dir() {
+            copy_dir(&entry.path(), &target_path)?;
+            continue;
+        }
+
+        fs::copy(entry.path(), target_path)?;
+    }
 
     Ok(())
 }

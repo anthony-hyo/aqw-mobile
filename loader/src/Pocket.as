@@ -24,11 +24,11 @@
 	import ui.UpdateBanner;
 	import input.GamePad;
 
-	[SWF(width="960", height="550", frameRate="30", backgroundColor="#000")]
-	public dynamic class Pocket extends Sprite {
+	public class Pocket extends Sprite {
 
 		MovieClip.prototype.removeAllChildren = function ():void {
 			var i:int = this.numChildren - 1;
+			
 			while (i >= 0) {
 				this.removeChildAt(i);
 				i--;

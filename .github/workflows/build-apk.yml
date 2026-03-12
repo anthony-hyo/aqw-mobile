@@ -65,11 +65,6 @@ jobs:
       - name: Patch Game.swf
         run: cargo run --release
 
-      - name: Prepare gamefiles
-        run: |
-          mkdir -p loader/gamefiles
-          cp assets/Game.swf loader/gamefiles/Game.swf
-
       - name: Setup AIR SDK
         uses: joshtynjala/setup-adobe-air-action@v2
         with:

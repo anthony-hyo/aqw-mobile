@@ -52,6 +52,10 @@ fn build() -> Result<(), Box<dyn Error>> {
         output_abcreplace, output_rabcasm
     );
 
+    fs::create_dir("loader/gamefiles")?;
+
+    fs::rename("assets/Game.swf", "loader/gamefiles/Game.swf")?;
+
     Ok(())
 }
 

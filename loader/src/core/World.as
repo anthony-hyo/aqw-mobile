@@ -28,7 +28,7 @@ package core {
 		private var fpsTS:Number = 0;
 		private var fpsQualityCounter:int = 0;
 		private var fpsArrayQuality:Array = [];
-		
+
 		private var tickSum:Number = 0;
 		private var tickList:Array = [];
 
@@ -81,7 +81,7 @@ package core {
 				if (pocket.game.ui && pocket.game.ui.mcFPS.visible) {
 					pocket.game.ui.mcFPS.txtFPS.text = tickFinal.toPrecision(3);
 				}
-				
+
 				if (++fpsQualityCounter % TICK_MAX == 0 && tickList.length == TICK_MAX && pocket.game.userPreference.data.quality == "AUTO") {
 					fpsArrayQuality.push(tickFinal);
 
@@ -96,11 +96,11 @@ package core {
 						const qualityIndex:int = arrQuality.indexOf(pocket.game.stage.quality);
 
 						if (qualityFinal < 12 && qualityIndex > 0) {
-							pocket.game.stage.quality = arrQuality[(qualityIndex - 1)]
+							pocket.game.stage.quality = arrQuality[(qualityIndex - 1)];
 						}
 
 						if (qualityFinal >= 12 && qualityIndex < 2) {
-							pocket.game.stage.quality = arrQuality[(qualityIndex + 1)]
+							pocket.game.stage.quality = arrQuality[(qualityIndex + 1)];
 						}
 
 						fpsArrayQuality = [];
@@ -120,7 +120,7 @@ package core {
 				displayObject = pocket.game.world.CHARS.getChildAt(i);
 
 				entries.push({
-					dio: displayObject, 
+					dio: displayObject,
 					oy: displayObject.y
 				});
 
@@ -231,19 +231,19 @@ package core {
 
 			if (pocket.game.world.ActionResults.length > 0) {
 				pocket.game.world.showActionImpact(pocket.game.world.ActionResults.shift());
-				
+
 				didDisplay = true;
 			}
 
 			if (pocket.game.world.ActionResultsAura.length > 0) {
 				pocket.game.world.showAuraImpact(pocket.game.world.ActionResultsAura.shift());
-				
+
 				didDisplay = true;
 			}
 
 			if (pocket.game.world.ActionResultsMon.length > 0) {
 				pocket.game.world.showActionImpact(pocket.game.world.ActionResultsMon.shift());
-				
+
 				didDisplay = true;
 			}
 

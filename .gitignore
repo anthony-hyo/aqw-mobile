@@ -4,3 +4,5 @@
 *.fla
 /loader/gamefiles/
 /pocket-patches/
+/patches-final/
+/.idea/

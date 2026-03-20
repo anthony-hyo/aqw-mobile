@@ -68,7 +68,7 @@ jobs:
       - name: Setup AIR SDK
         uses: joshtynjala/setup-adobe-air-action@v2
         with:
-          air-version: "51.2"
+          air-version: "51.3"
           accept-license: yes
 
       - name: Generate temporary keystore

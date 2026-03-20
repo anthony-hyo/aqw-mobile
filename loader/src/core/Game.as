@@ -8,6 +8,13 @@ package core {
 
 		private var pocket:Pocket;
 
+		public function onFrameChange(frame: String) {
+			switch (frame) {
+				case "Game":
+					break;
+			}
+		}
+
 	}
 
 }

@@ -1,5 +1,7 @@
 ﻿package {
 
+	import core.Game;
+	import core.Network;
 	import core.World;
 
 	import data.Release;
@@ -48,12 +50,14 @@
 
 		public var game:MovieClip;
 
-		public var world:World = new World(this);
+		public const gameCore:Game = new Game(this);
+		public const networkCore:Network = new Network(this);
+		public const worldCore:World = new World(this);
 
-		private var backgroundLoad:BackgroundLoad = new BackgroundLoad(this);
-		private var gameLoader:GameLoad = new GameLoad(this);
-		private var updateLoad:UpdateLoad = new UpdateLoad(this);
-		private var versionLoad:VersionLoad = new VersionLoad(this);
+		private const backgroundLoad:BackgroundLoad = new BackgroundLoad(this);
+		private const gameLoader:GameLoad = new GameLoad(this);
+		private const updateLoad:UpdateLoad = new UpdateLoad(this);
+		private const versionLoad:VersionLoad = new VersionLoad(this);
 
 		public var version:Version;
 		public var release:Release;

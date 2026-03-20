@@ -7,15 +7,14 @@
 
 	import flash.desktop.NativeApplication;
 	import flash.desktop.SystemIdleMode;
-	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.HTTPStatusEvent;
-	import flash.events.IOErrorEvent;
-	import flash.system.LoaderContext;
 	import flash.text.TextField;
-	import flash.utils.ByteArray;
+
+	import load.handlers.BackgroundLoad;
+	import load.handlers.GameLoad;
+	import load.handlers.UpdateLoad;
+	import load.handlers.VersionLoad;
 
 	import ui.Overlay;
 
@@ -49,10 +48,40 @@
 
 		public var game:MovieClip;
 
+		public var world:World = new World(this);
+
+		private var backgroundLoad:BackgroundLoad = new BackgroundLoad(this);
+		private var gameLoader:GameLoad = new GameLoad(this);
+		private var updateLoad:UpdateLoad = new UpdateLoad(this);
+		private var versionLoad:VersionLoad = new VersionLoad(this);
+
+		public var version:Version;
+		public var release:Release;
+
+		public const queueLoadViaBytes:Function = HelperLoader.load;
+
 		public function check():void {
+			switch (HelperLoader.COUNT) {
+				case 0:
+					this.versionLoad.start();
+					break;
+				case 1:
+					this.backgroundLoad.start();
+					break;
+				case 2:
+					this.updateLoad.start();
+					break;
+				case 3:
+					this.gameLoader.start();
+					break;
+				case 4:
+					break;
+			}
 		}
 
 		public function advance():void {
+			HelperLoader.COUNT++;
+			check();
 		}
 
 	}

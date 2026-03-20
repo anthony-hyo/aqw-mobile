@@ -1,0 +1,55 @@
+package load.handlers {
+
+	import flash.display.DisplayObject;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
+	import flash.events.ProgressEvent;
+
+	import load.Load;
+
+	import util.HelperLoader;
+
+	public class BackgroundLoad extends Load {
+
+		public function BackgroundLoad(pocket:Pocket) {
+			super(pocket);
+		}
+
+		override public function start():void {
+			this.pocket.overlay.log("Loading background: " + this.pocket.version.sBG);
+
+			this.pocket.loadingTxt.text = "Loading Background...";
+
+			this.url = Config.GAME_BASE_URL + "gamefiles/title/" + this.pocket.version.sBG;
+
+			super.start();
+		}
+
+		override protected function onCompleted(event:Event):void {
+			try {
+				const TitleScreenClass:Class = this.domain.getDefinition("TitleScreen") as Class;
+				const titleScreen:DisplayObject = new TitleScreenClass();
+
+				titleScreen.x = 0;
+				titleScreen.y = 0;
+
+				this.pocket.addChildAt(titleScreen, 1);
+			} catch (e:Error) {
+				trace(e);
+			}
+
+			this.pocket.advance();
+		}
+
+		override protected function onProgress(progressEvent:ProgressEvent):void {
+			this.pocket.loadingTxt.text = "Loading Background " + HelperLoader.progressPercent(progressEvent) + "%";
+		}
+
+		override protected function onError(error:IOErrorEvent):void {
+			this.pocket.overlay.logError("Background load failed: " + error.text);
+
+			this.pocket.advance();
+		}
+
+	}
+}

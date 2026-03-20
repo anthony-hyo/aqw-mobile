@@ -1,7 +1,8 @@
-package input {
-
+package ui.input.controller {
 	import flash.display.*;
 	import flash.geom.*;
+
+	import ui.input.*;
 
 	public class WalkController {
 

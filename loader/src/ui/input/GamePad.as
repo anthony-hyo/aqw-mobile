@@ -1,10 +1,10 @@
-package input {
-
+package ui.input {
 	import flash.display.*;
 	import flash.events.*;
 
 	import ui.Layout;
 	import ui.SkillBar;
+	import ui.input.controller.WalkController;
 
 	public class GamePad extends Sprite {
 

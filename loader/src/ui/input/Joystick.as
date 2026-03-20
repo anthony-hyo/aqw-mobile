@@ -1,4 +1,4 @@
-package input {
+package ui.input {
 
 	import flash.display.Sprite;
 	import flash.geom.Point;

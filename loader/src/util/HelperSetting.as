@@ -6,6 +6,13 @@ package util {
 
 		private static const SAVE_KEY:String = "aqw_pocket_settings";
 		
+		public static const OPTION_SHOW_JOYSTICK:String = "option_show_joystick";
+		public static const OPTION_EDIT_LAYOUT:String = "option_edit_layout";
+		public static const OPTION_RESET_LAYOUT:String = "option_reset_layout";
+		
+		public static const LAYOUT_JOYSTICK:String = "layout_joystick";
+		public static const LAYOUT_SKILL_BAR:String = "layout_skill_bar";
+		
 		private static var _so:SharedObject;
 
 		private static function get so():SharedObject {
@@ -22,6 +29,11 @@ package util {
 
 		public static function _set(key:String, value:Object):void {
 			so.data[key] = value;
+			so.flush();
+		}
+
+		public static function _delete(key:String):void {
+			delete so.data[key];
 			so.flush();
 		}
 

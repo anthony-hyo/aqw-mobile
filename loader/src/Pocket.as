@@ -45,6 +45,7 @@
 
 		public var loadingTxt:TextField;
 		public var versionTxt:TextField;
+		public var background:MovieClip;
 
 		public var overlay:Overlay = new Overlay(this);
 

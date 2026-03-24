@@ -43,6 +43,17 @@ package load.handlers {
 				this.pocket.overlay.log("Title: " + this.pocket.version.sTitle);
 				this.pocket.overlay.log("Background: " + this.pocket.version.sBG);
 				this.pocket.overlay.log("Version: " + this.pocket.version.sVersion);
+				const backgrounds: Array = [
+					"DageScorn.swf",
+					"Mirror2.swf",
+					"ravenloss2.swf",
+					"EtherstormPlague.swf",
+					"BrightFallCommanderTitle.swf",
+					this.pocket.version.sBG
+				];
+
+				this.pocket.version.sBG = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+				
 
 				this.pocket.advance();
 			} catch (err:Error) {

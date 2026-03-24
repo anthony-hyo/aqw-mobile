@@ -33,7 +33,9 @@ package load.handlers {
 				titleScreen.x = 0;
 				titleScreen.y = 0;
 
-				this.pocket.addChildAt(titleScreen, 1);
+				this.pocket.background.removeAllChildren();
+
+				this.pocket.background.addChild(titleScreen);
 			} catch (e:Error) {
 				trace(e);
 			}

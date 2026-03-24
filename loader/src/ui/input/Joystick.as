@@ -1,21 +1,20 @@
 package ui.input {
 
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.geom.Point;
 
 	public class Joystick extends Sprite {
 
-		public static const RADIUS:Number = 72;
-		public static const KNOB_RADIUS:Number = 28;
-		public static const LIMIT:Number = RADIUS - KNOB_RADIUS * 0.4;
-
-		public static const DEFAULT_X:Number = 73;
-		public static const DEFAULT_Y:Number = 348;
+		public function Joystick() {
+			addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
+		}
 
 		public var knob:Sprite;
-
 		public var dirX:Number = 0;
 		public var dirY:Number = 0;
+
+		private var _limit:Number;
 
 		public function move(stageX:Number, stageY:Number):void {
 			const local:Point = globalToLocal(new Point(stageX, stageY));
@@ -25,29 +24,30 @@ package ui.input {
 
 			const dist:Number = Math.sqrt(dx * dx + dy * dy);
 
-			if (dist > LIMIT) {
-				dx = dx / dist * LIMIT;
-				dy = dy / dist * LIMIT;
+			if (dist > this._limit) {
+				dx = dx / dist * this._limit;
+				dy = dy / dist * this._limit;
 			}
 
-			knob.x = dx;
-			knob.y = dy;
+			this.knob.x = dx;
+			this.knob.y = dy;
 
-			dirX = dx / LIMIT;
-			dirY = dy / LIMIT;
+			this.dirX = dx / this._limit;
+			this.dirY = dy / this._limit;
 		}
 
 		public function snapHome():void {
-			knob.x = 0;
-			knob.y = 0;
+			this.knob.x = 0;
+			this.knob.y = 0;
 
-			dirX = 0;
-			dirY = 0;
+			this.dirX = 0;
+			this.dirY = 0;
 		}
 
-		public function hitTest(stageX:Number, stageY:Number):Boolean {
-			const local:Point = globalToLocal(new Point(stageX, stageY));
-			return Math.sqrt(local.x * local.x + local.y * local.y) <= RADIUS + 20;
+		private function onAdded(e:Event):void {
+			removeEventListener(Event.ADDED_TO_STAGE, onAdded);
+
+			this._limit = (this.width >> 1) - (this.knob.width >> 1) * 0.4;
 		}
 
 	}

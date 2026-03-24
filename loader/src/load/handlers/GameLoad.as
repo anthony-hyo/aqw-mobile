@@ -17,7 +17,7 @@ package load.handlers {
 		}
 
 		override public function start():void {
-			this.pocket.overlay.log("Loading game: " + Config.GAME_SWF_PATH);
+			this.pocket.overlay.debug.log("Loading game: " + Config.GAME_SWF_PATH);
 
 			this.pocket.loadingTxt.text = "Loading Game...";
 
@@ -27,7 +27,7 @@ package load.handlers {
 		}
 
 		override protected function onCompleted(event:Event):void {
-			this.pocket.overlay.log("Game client loaded");
+			this.pocket.overlay.debug.log("Game client loaded");
 
 			this.pocket.removeChild(this.pocket.overlay);
 
@@ -58,7 +58,7 @@ package load.handlers {
 		}
 
 		override protected function onError(error:IOErrorEvent):void {
-			this.pocket.overlay.logError("Game load failed: " + error.text);
+			this.pocket.overlay.debug.logError("Game load failed: " + error.text);
 
 			//this.pocket.advance();
 		}

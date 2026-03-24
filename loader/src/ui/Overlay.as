@@ -5,7 +5,6 @@ package ui {
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	import flash.text.TextField;
 
 	import ui.option.Button;
 	import ui.option.Check;
@@ -29,8 +28,6 @@ package ui {
 
 			this.notifications = Sprite(addChild(new Sprite()));
 			this.gameUI = GameUI(addChild(new GameUI(this.pocket)));
-
-			initLog();
 		}
 
 		public var showPanelBtn:SimpleButton;
@@ -40,12 +37,11 @@ package ui {
 		public var contentMask:DisplayObject;
 		public var contentScroll:Scroll;
 
+		public var debug:Debug = new Debug(this.pocket);
 		public var gameUI:GameUI;
-
-		public var notifications:Sprite = new Sprite();
+		public var notifications:Sprite;
 
 		private var pocket:Pocket;
-		private var logField:TextField = new TextField();
 
 		private function initFrame():void {
 			this.showPanelBtn.addEventListener(MouseEvent.CLICK, onShowPanel);
@@ -57,6 +53,21 @@ package ui {
 			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
 
 			const options:Vector.<Option> = new <Option> [
+				new Check(
+					HelperSetting.OPTION_ENABLE_DEBUG,
+					"Show Debug",
+					"Display debug on screen",
+					function (option:Check):void {
+						if (option.state) {
+							addChild(debug);
+							return;
+						}
+
+						if (debug.parent && contains(debug)) {
+							removeChild(debug);
+						}
+					}
+				),
 				new Check(
 					HelperSetting.OPTION_SHOW_JOYSTICK,
 					"Show Joystick",
@@ -108,21 +119,6 @@ package ui {
 			gotoAndStop("Init");
 		}
 
-		public function log(msg:String):void {
-			const timestamp:String = new Date().toTimeString().substr(0, 8);
-
-			trace("[" + timestamp + "] " + msg);
-
-			logField.appendText("[" + timestamp + "] " + msg + "\n");
-			logField.scrollV = logField.maxScrollV;
-		}
-
-		public function logError(msg:String):void {
-			logField.visible = true;
-
-			log("ERROR: " + msg);
-		}
-
 		public function notification(message:String):void {
 			const index:uint = this.notifications.numChildren;
 			const notification:Notification = Notification(this.notifications.addChild(new Notification(message)));
@@ -133,23 +129,6 @@ package ui {
 			}
 
 			notification.y = index * (notification.height + 10);
-		}
-
-		private function initLog():void {
-			logField.width = 920;
-			logField.height = 200;
-			logField.x = 20;
-			logField.y = 330;
-			logField.multiline = true;
-			logField.wordWrap = true;
-			logField.selectable = true;
-			logField.background = true;
-			logField.backgroundColor = 0x111111;
-			logField.border = true;
-			logField.borderColor = 0x444444;
-			logField.visible = false;
-
-			addChild(logField);
 		}
 
 	}

@@ -5,7 +5,8 @@ package util {
 	public class HelperSetting {
 
 		private static const SAVE_KEY:String = "aqw_pocket_settings";
-		
+
+		public static const OPTION_ENABLE_DEBUG:String = "option_show_debug";
 		public static const OPTION_SHOW_JOYSTICK:String = "option_show_joystick";
 		public static const OPTION_EDIT_LAYOUT:String = "option_edit_layout";
 		public static const OPTION_RESET_LAYOUT:String = "option_reset_layout";

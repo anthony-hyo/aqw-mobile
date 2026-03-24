@@ -1,8 +1,9 @@
 package ui {
 
-	import flash.display.*;
-	import flash.events.*;
-	import flash.text.*;
+	import flash.display.SimpleButton;
+	import flash.display.Sprite;
+	import flash.events.MouseEvent;
+	import flash.text.TextField;
 
 	public class Notification extends Sprite {
 

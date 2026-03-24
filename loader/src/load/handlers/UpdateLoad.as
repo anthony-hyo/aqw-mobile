@@ -41,17 +41,19 @@ package load.handlers {
 				const latest:String = this.pocket.release.tag_name;
 				const current:String = Config.APP_VERSION;
 
-				this.pocket.overlay.log("Update check — latest: " + latest + "  current: " + current);
+				this.pocket.overlay.debug.log("Update fetched");
+				this.pocket.overlay.debug.log("Latest: " + latest);
+				this.pocket.overlay.debug.log("Current: " + current);
 
 				if (latest != current) {
 					this.pocket.overlay.notification("Update available <font color='#f0c040'>" + latest + "</font> <a href='" + this.pocket.release.html_url + "'><font color='#6ec6ff'><u>DOWNLOAD</u></font></a>");
 
-					this.pocket.overlay.log("New release available: " + latest + " (" + this.pocket.release.html_url + ")");
+					this.pocket.overlay.debug.log("New release available: " + latest + " (" + this.pocket.release.html_url + ")");
 				} else {
-					this.pocket.overlay.log("App is up to date.");
+					this.pocket.overlay.debug.log("App is up to date.");
 				}
 			} catch (error:Error) {
-				this.pocket.overlay.logError("Failed to parse release response: " + error.message);
+				this.pocket.overlay.debug.logError("Failed to parse release response: " + error.message);
 			}
 
 			this.pocket.advance();
@@ -62,7 +64,7 @@ package load.handlers {
 		}
 
 		override protected function onError(error:IOErrorEvent):void {
-			this.pocket.overlay.logError("Update check failed: " + error.text);
+			this.pocket.overlay.debug.logError("Update check failed: " + error.text);
 
 			this.pocket.advance();
 		}

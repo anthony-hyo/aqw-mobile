@@ -38,7 +38,7 @@
 
 			this.versionTxt.text = "Version " + Config.APP_VERSION;
 
-			overlay.log("Init");
+			this.overlay.debug.log("Init");
 
 			check();
 		}

@@ -16,7 +16,7 @@ package load.handlers {
 		}
 
 		override public function start():void {
-			this.pocket.overlay.log("Loading background: " + this.pocket.version.sBG);
+			this.pocket.overlay.debug.log("Loading background: " + this.pocket.version.sBG);
 
 			this.pocket.loadingTxt.text = "Loading Background...";
 
@@ -48,7 +48,7 @@ package load.handlers {
 		}
 
 		override protected function onError(error:IOErrorEvent):void {
-			this.pocket.overlay.logError("Background load failed: " + error.text);
+			this.pocket.overlay.debug.logError("Background load failed: " + error.text);
 
 			this.pocket.advance();
 		}

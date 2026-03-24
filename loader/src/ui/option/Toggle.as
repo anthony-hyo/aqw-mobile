@@ -6,8 +6,8 @@ package ui.option {
 
 	public class Toggle extends Option {
 
-		public function Toggle(key:String = "", label:String = "", info:String = "", onChange:Function = null) {
-			super(key, label, info, onChange);
+		public function Toggle(key:String = "", label:String = "", info:String = "", onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+			super(key, label, info, onChange, onFrameChange, onOverlayStateChange);
 
 			syncState();
 
@@ -19,11 +19,11 @@ package ui.option {
 		public var buttonRight:SimpleButton;
 
 		private function syncState():void {
-			stateTxt.text = _state ? "ON" : "OFF";
+			stateTxt.text = this.state ? "ON" : "OFF";
 		}
 
 		private function onToggle(e:MouseEvent):void {
-			setState(!_state);
+			setState(!this.state);
 			syncState();
 		}
 

@@ -7,10 +7,14 @@ package ui.option {
 
 	public class Option extends Sprite {
 
-		public function Option(key:String = "", name:String = "", info:String = "", onChange:Function = null) {
-			this._key = key;
-			this._state = HelperSetting.getBool(key);
-			this._onChange = onChange;
+		public function Option(key:String = "", name:String = "", info:String = "", onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+			this.key = key;
+			
+			this.state = this.key != null ? HelperSetting.getBool(key) : false;
+			
+			this.onChange = onChange;
+			this.onFrameChange = onFrameChange;
+			this.onOverlayStateChange = onOverlayStateChange;
 
 			this.nameTxt.text = name;
 			this.infoTxt.text = info;
@@ -18,23 +22,22 @@ package ui.option {
 		
 		public var nameTxt:TextField;
 		public var infoTxt:TextField;
-		
-		protected var _key:String;
-		protected var _onChange:Function;
 
-		protected var _state:Boolean;
-
-		public function get state():Boolean {
-			return _state;
-		}
+		public var key:String;
+		public var state:Boolean;
+		public var onChange:Function;
+		public var onFrameChange:Function;
+		public var onOverlayStateChange:Function;
 
 		protected function setState(value:Boolean):void {
-			_state = value;
+			this.state = value;
 
-			HelperSetting._set(_key, _state);
+			if (this.key != null) {
+				HelperSetting._set(this.key, this.state);
+			}
 
-			if (_onChange != null) {
-				_onChange(this);
+			if (this.onChange != null) {
+				this.onChange(this);
 			}
 		}
 

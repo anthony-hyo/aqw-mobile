@@ -1,4 +1,5 @@
 package core {
+	import ui.option.Option;
 
 	public class Game {
 
@@ -8,14 +9,15 @@ package core {
 
 		private var pocket:Pocket;
 
-		public function onFrameChange(frame: String) {
-			switch (frame) {
-				case "Game":
-					this.pocket.overlay.gameUI.show();
-					break;
-				default:
-					this.pocket.overlay.gameUI.hide();
-					break;
+		public var currentFrame:String = null;
+
+		public function onFrameChange(frame:String):void {
+			this.currentFrame = frame;
+			
+			for each (var option:Option in this.pocket.overlay.options) {
+				if (option.onFrameChange != null) {
+					option.onFrameChange(frame);
+				}
 			}
 		}
 

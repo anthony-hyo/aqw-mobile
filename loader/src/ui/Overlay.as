@@ -5,6 +5,7 @@ package ui {
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.filters.ColorMatrixFilter;
 
 	import ui.option.Button;
 	import ui.option.Check;
@@ -43,18 +44,125 @@ package ui {
 
 		private var pocket:Pocket;
 
+		public var options:Vector.<Option>;
+
+		private static const GRAYSCALE:ColorMatrixFilter = new ColorMatrixFilter([
+			0.3, 0.59, 0.11, 0, 0,
+			0.3, 0.59, 0.11, 0, 0,
+			0.3, 0.59, 0.11, 0, 0,
+			0,   0,    0,    1, 0
+		]);
+
 		private function initFrame():void {
 			this.showPanelBtn.addEventListener(MouseEvent.CLICK, onShowPanel);
 
-			stop();
-		}
-
-		private function panelFrame():void {
-			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
-
-			const options:Vector.<Option> = new <Option> [
+			this.options = new <Option> [
 				new Check(
-					HelperSetting.OPTION_ENABLE_DEBUG,
+					HelperSetting.OPTION_SHOW_JOYSTICK,
+					"Show Joystick",
+					"Display joystick on screen",
+					function (option:Check):void {
+						if (pocket.gameCore.currentFrame != "Game") {
+							//pocket.game.MsgBox.notify("...");
+							return;
+						}
+
+						if (option.state) {
+							gameUI.showJoystick();
+							return;
+						}
+
+						gameUI.hideJoystick();
+					},
+					function (frame:String):void {
+						if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK)) {
+							return;
+						}
+
+						if (frame != "Game") {
+							gameUI.hideJoystick();
+							return;
+						}
+
+						gameUI.showJoystick();
+					}
+				),
+				new Check(
+					HelperSetting.OPTION_SHOW_SKILL_BAR,
+					"Show Skill Bar",
+					"Display skill bar on screen",
+					function (option:Check):void {
+						if (pocket.gameCore.currentFrame != "Game") {
+							//pocket.game.MsgBox.notify("...");
+							return;
+						}
+
+						if (option.state) {
+							gameUI.showSkillBar();
+							return;
+						}
+
+						gameUI.hideSkillBar();
+					},
+					function (frame:String):void {
+						if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_SKILL_BAR)) {
+							return;
+						}
+
+						if (frame != "Game") {
+							gameUI.hideSkillBar();
+							return;
+						}
+
+						gameUI.showSkillBar();
+					}
+				),
+				new Button(
+					null,
+					"Edit Layout",
+					"Drag to reposition UI elements",
+					"Edit",
+					function (option:Button):void {
+						if (pocket.gameCore.currentFrame != "Game") {
+							pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
+							return;
+						}
+
+						setWorldFilters([
+							GRAYSCALE
+						]);
+
+						onHidePanel(null);
+
+						gameUI.showEditLayout();
+					},
+					function (frame:String):void {
+						gameUI.hideEditLayout();
+						
+						setWorldFilters([]);
+					},
+					function (frame:String):void {
+						if (frame !== "Panel") {
+							return;
+						}
+
+						setWorldFilters([]);
+						
+						gameUI.hideEditLayout();
+					}
+				),
+				new Button(
+					null,
+					"Reset Layout",
+					"Restore default positions",
+					"Reset",
+					function (option:Button):void {
+						pocket.game.MsgBox.notify("Layout successfully restored.");
+						gameUI.resetLayout();
+					}
+				),
+				new Check(
+					null,
 					"Show Debug",
 					"Display debug on screen",
 					function (option:Check):void {
@@ -67,39 +175,30 @@ package ui {
 							removeChild(debug);
 						}
 					}
-				),
-				new Check(
-					HelperSetting.OPTION_SHOW_JOYSTICK,
-					"Show Joystick",
-					"Display joystick on screen",
-					function (option:Check):void {
-						gameUI.toggleUI();
-					}
-				),
-				new Check(
-					HelperSetting.OPTION_EDIT_LAYOUT,
-					"Edit Layout",
-					"Drag to reposition UI elements",
-					function (option:Check):void {
-						gameUI.toggleEditLayout();
-					}
-				),
-				new Button(
-					HelperSetting.OPTION_RESET_LAYOUT,
-					"Reset Layout",
-					"Restore default positions",
-					"RESET",
-					function (option:Button):void {
-						gameUI.resetLayout();
-					}
 				)
 			];
+
+			for each (var option:Option in options) {
+				if (option.onOverlayStateChange != null) {
+					option.onOverlayStateChange('Init');
+				}
+			}
+
+			stop();
+		}
+
+		private function panelFrame():void {
+			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
 
 			for each (var option:Option in options) {
 				this.content.addChild(option);
 
 				option.x = 3.75;
 				option.y = (option.height + 2) * (this.content.numChildren - 1);
+				
+				if (option.onOverlayStateChange != null) {
+					option.onOverlayStateChange('Panel');
+				}
 			}
 
 			new HelperScroll(
@@ -129,6 +228,17 @@ package ui {
 			}
 
 			notification.y = index * (notification.height + 10);
+		}
+
+		private function setWorldFilters(filters:Array):void {
+			if (this.pocket.game.ui) {
+				this.pocket.game.ui.filters = filters;
+			}
+
+			if (this.pocket.game.world) {
+				this.pocket.game.world.map.filters = filters;
+				this.pocket.game.world.CHARS.filters = filters;
+			}
 		}
 
 	}

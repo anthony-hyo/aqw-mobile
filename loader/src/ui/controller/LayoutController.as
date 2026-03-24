@@ -1,8 +1,6 @@
 package ui.controller {
 	import data.WidgetEntry;
 
-	import ui.*;
-
 	import flash.display.*;
 	import flash.events.*;
 	import flash.geom.*;
@@ -40,8 +38,8 @@ package ui.controller {
 			}
 		}
 
-		public function toggleEdit():void {
-			_editMode = !_editMode;
+		public function toggleEdit(state:Boolean):void {
+			_editMode = state;
 
 			for each (var e:WidgetEntry in widgets) {
 				if (_editMode) {

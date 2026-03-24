@@ -1,13 +1,11 @@
 package ui {
-	
-	import ui.input.*;
-	
+
 	import flash.display.*;
 	import flash.events.*;
 
-	import ui.input.SkillBar;
 	import ui.controller.LayoutController;
 	import ui.controller.WalkController;
+	import ui.input.*;
 
 	import util.HelperSetting;
 
@@ -15,8 +13,6 @@ package ui {
 
 		public function GameUI(pocket:Pocket) {
 			this.pocket = pocket;
-
-			addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
 		}
 
 		private var pocket:Pocket;
@@ -24,23 +20,70 @@ package ui {
 		private var joystick:Joystick;
 		private var skillBar:SkillBar;
 
-		private var layoutController:LayoutController;
+		private var layoutController:LayoutController = new LayoutController();
 		private var walkController:WalkController;
 
-		public function show():void {
-			this.visible = true;
+		public function showJoystick():void {
+			if (this.joystick && contains(this.joystick)) {
+				return;
+			}
+			
+			this.joystick = Joystick(addChild(new Joystick()));
+
+			this.walkController = new WalkController(this.pocket, this.joystick);
+
+			const joystick_default_x:Number = 73;
+			const joystick_default_y:Number = 348;
+
+			this.joystick.x = joystick_default_x;
+			this.joystick.y = joystick_default_y;
+
+			this.layoutController.register(HelperSetting.LAYOUT_JOYSTICK, this.joystick, joystick_default_x, joystick_default_y);
+			this.layoutController.load();
+
+			this.joystick.addEventListener(MouseEvent.MOUSE_DOWN, onDown, false, 0, true);
 		}
 
-		public function hide():void {
-			this.visible = false;
+		public function hideJoystick():void {
+			if (this.joystick && contains(this.joystick)) {
+				removeChild(this.joystick);
+			}
+
+			this.joystick = null;
 		}
 
-		public function toggleUI():void {
-			this.visible = !this.visible;
+		public function showSkillBar():void {
+			if (this.skillBar && contains(this.skillBar)) {
+				return;	
+			}
+			
+			this.skillBar = SkillBar(addChild(new SkillBar(this.pocket)));
+
+			const skill_bar_default_x:Number = 706;
+			const skill_bar_default_y:Number = 380;
+
+			this.skillBar.x = skill_bar_default_x;
+			this.skillBar.y = skill_bar_default_y;
+
+			this.layoutController.register(HelperSetting.LAYOUT_SKILL_BAR, this.skillBar, skill_bar_default_x, skill_bar_default_y);
+
+			this.layoutController.load();
 		}
 
-		public function toggleEditLayout():void {
-			this.layoutController.toggleEdit();
+		public function hideSkillBar():void {
+			if (this.skillBar && contains(this.skillBar)) {
+				removeChild(this.skillBar);
+			}
+
+			this.skillBar = null;
+		}
+
+		public function showEditLayout():void {
+			this.layoutController.toggleEdit(true);
+		}
+
+		public function hideEditLayout():void {
+			this.layoutController.toggleEdit(false);
 		}
 
 		public function resetLayout():void {
@@ -50,30 +93,6 @@ package ui {
 		private function onAdded(e:Event):void {
 			removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 
-			this.joystick = Joystick(addChild(new Joystick()));
-			this.skillBar = SkillBar(addChild(new SkillBar(this.pocket)));
-
-			this.layoutController = new LayoutController();
-			this.walkController = new WalkController(this.pocket, this.joystick);
-
-			const joystick_default_x:Number = 73;
-			const joystick_default_y:Number = 348;
-
-			this.joystick.x = joystick_default_x;
-			this.joystick.y = joystick_default_y;
-
-			const skill_bar_default_x:Number = 706;
-			const skill_bar_default_y:Number = 380;
-
-			this.skillBar.x = skill_bar_default_x;
-			this.skillBar.y = skill_bar_default_y;
-
-			this.layoutController.register(HelperSetting.LAYOUT_JOYSTICK, this.joystick, joystick_default_x, joystick_default_y);
-			this.layoutController.register(HelperSetting.LAYOUT_SKILL_BAR, this.skillBar, skill_bar_default_x, skill_bar_default_y);
-
-			this.layoutController.load();
-
-			this.joystick.addEventListener(MouseEvent.MOUSE_DOWN, onDown, false, 0, true);
 		}
 
 		private function onDown(e:MouseEvent):void {

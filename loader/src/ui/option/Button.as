@@ -6,8 +6,8 @@ package ui.option {
 
 	public class Button extends Option {
 
-		public function Button(key:String = "", name:String = "", info:String = "", buttonLabel:String = "", onChange:Function = null) {
-			super(key, name, info, onChange);
+		public function Button(key:String = "", name:String = "", info:String = "", buttonLabel:String = "", onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+			super(key, name, info, onChange, onFrameChange, onOverlayStateChange);
 
 			this.buttonTxt.text = buttonLabel;
 			this.buttonTxt.mouseEnabled = false;
@@ -19,8 +19,8 @@ package ui.option {
 		public var buttonTxt:TextField;
 
 		private function onClick(e:MouseEvent):void {
-			if (_onChange != null) {
-				_onChange(this);
+			if (onChange != null) {
+				onChange(this);
 			}
 		}
 

@@ -5,8 +5,8 @@ package ui.option {
 
 	public class Check extends Option {
 
-		public function Check(key:String = "", name:String = "", info:String = "", onChange:Function = null) {
-			super(key, name, info, onChange);
+		public function Check(key:String = "", name:String = "", info:String = "", onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+			super(key, name, info, onChange, onFrameChange, onOverlayStateChange);
 
 			syncState();
 
@@ -18,12 +18,12 @@ package ui.option {
 		public var checkMark:Sprite;
 		public var checkBackground:Sprite;
 
-		private function syncState():void {
-			this.checkMark.visible = this._state;
+		public function syncState():void {
+			this.checkMark.visible = this.state;
 		}
 
 		private function onToggle(e:MouseEvent):void {
-			setState(!this._state);
+			setState(!this.state);
 			syncState();
 		}
 

@@ -9,6 +9,7 @@ package util {
 		public static const OPTION_SHOW_JOYSTICK:String = "option_show_joystick";
 		public static const OPTION_EDIT_LAYOUT:String = "option_edit_layout";
 		public static const OPTION_RESET_LAYOUT:String = "option_reset_layout";
+		public static const OPTION_ENABLE_ROTATION:String = "option_enable_rotation";
 		
 		public static const LAYOUT_JOYSTICK:String = "layout_joystick";
 		public static const LAYOUT_SKILL_BAR:String = "layout_skill_bar";

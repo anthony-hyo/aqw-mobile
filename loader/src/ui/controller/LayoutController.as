@@ -1,21 +1,20 @@
-package ui {
+package ui.controller {
+	import data.WidgetEntry;
+
+	import ui.*;
 
 	import flash.display.*;
 	import flash.events.*;
 	import flash.geom.*;
-	import flash.net.SharedObject;
 
-	public class Layout extends EventDispatcher {
+	import ui.util.Handle;
 
-		private static const SAVE_KEY:String = "aqw_mobile_layout";
-		private static const HANDLE_SIZE:uint = 28;
+	import util.HelperSetting;
 
-		public function Layout() {
-			so = SharedObject.getLocal(SAVE_KEY);
-		}
+	public class LayoutController {
 
-		private var so:SharedObject;
 		private var widgets:Vector.<WidgetEntry> = new Vector.<WidgetEntry>();
+
 		private var dragging:WidgetEntry;
 		private var dragOffX:Number;
 		private var dragOffY:Number;
@@ -31,8 +30,10 @@ package ui {
 		}
 
 		public function load():void {
+			var saved:Object;
+
 			for each (var e:WidgetEntry in widgets) {
-				const saved:Object = so.data[e.id];
+				saved = HelperSetting._get(e.id);
 
 				e.target.x = saved ? saved.x : e.defaultX;
 				e.target.y = saved ? saved.y : e.defaultY;
@@ -49,7 +50,11 @@ package ui {
 				}
 
 				hideHandle(e);
-				saveAll();
+
+				HelperSetting._set(e.id, {
+					x: e.target.x,
+					y: e.target.y
+				});
 			}
 		}
 
@@ -66,10 +71,8 @@ package ui {
 				entry.target.x = entry.defaultX;
 				entry.target.y = entry.defaultY;
 
-				delete so.data[entry.id];
+				HelperSetting._delete(entry.id);
 			}
-
-			so.flush();
 		}
 
 
@@ -78,22 +81,19 @@ package ui {
 				return;
 			}
 
-			const h:Sprite = new Sprite();
+			const handle:Handle = new Handle();
 
-			drawHandle(h.graphics);
+			handle.x = e.target.x;
+			handle.y = e.target.y;
 
-			h.x = e.target.x;
-			h.y = e.target.y;
-			h.buttonMode = true;
-			h.useHandCursor = true;
+			handle.buttonMode = true;
+			handle.useHandCursor = true;
 
-			e.target.parent.addChild(h);
+			e.target.parent.addChild(handle);
 
-			h.addEventListener(MouseEvent.MOUSE_DOWN, onHandleDown);
-			h.addEventListener(MouseEvent.ROLL_OVER, onHandleOver);
-			h.addEventListener(MouseEvent.ROLL_OUT, onHandleOut);
+			handle.addEventListener(MouseEvent.MOUSE_DOWN, onHandleDown, false, 0, true);
 
-			e.handle = h;
+			e.handle = handle;
 		}
 
 		private function hideHandle(e:WidgetEntry):void {
@@ -102,53 +102,12 @@ package ui {
 			}
 
 			e.handle.removeEventListener(MouseEvent.MOUSE_DOWN, onHandleDown);
-			e.handle.removeEventListener(MouseEvent.ROLL_OVER, onHandleOver);
-			e.handle.removeEventListener(MouseEvent.ROLL_OUT, onHandleOut);
 
 			if (e.handle.parent) {
 				e.handle.parent.removeChild(e.handle);
 			}
 
 			e.handle = null;
-		}
-
-		private function drawHandle(g:Graphics, hover:Boolean = false):void {
-			g.clear();
-			g.beginFill(0x000000, hover ? 0.70 : 0.50);
-			g.drawRoundRect(0, 0, HANDLE_SIZE, HANDLE_SIZE, 6);
-			g.endFill();
-			g.lineStyle(1.5, 0xffffff, hover ? 0.80 : 0.50);
-			g.drawRoundRect(0, 0, HANDLE_SIZE, HANDLE_SIZE, 6);
-
-			const cx:Number = HANDLE_SIZE / 2, cy:Number = HANDLE_SIZE / 2, arm:Number = 7;
-
-			g.moveTo(cx, cy - arm);
-			g.lineTo(cx, cy + arm);
-			g.moveTo(cx - arm, cy);
-			g.lineTo(cx + arm, cy);
-			g.moveTo(cx - 3, cy - arm);
-			g.lineTo(cx, cy - arm - 4);
-			g.lineTo(cx + 3, cy - arm);
-			g.moveTo(cx - 3, cy + arm);
-			g.lineTo(cx, cy + arm + 4);
-			g.lineTo(cx + 3, cy + arm);
-			g.moveTo(cx - arm, cy - 3);
-			g.lineTo(cx - arm - 4, cy);
-			g.lineTo(cx - arm, cy + 3);
-			g.moveTo(cx + arm, cy - 3);
-			g.lineTo(cx + arm + 4, cy);
-			g.lineTo(cx + arm, cy + 3);
-		}
-
-		private function saveAll():void {
-			for each (var e:WidgetEntry in widgets) {
-				so.data[e.id] = {
-					x: e.target.x,
-					y: e.target.y
-				};
-			}
-
-			so.flush();
 		}
 
 		private function entryForHandle(h:Sprite):WidgetEntry {
@@ -173,8 +132,8 @@ package ui {
 			dragOffX = h.parent.mouseX - dragging.target.x;
 			dragOffY = h.parent.mouseY - dragging.target.y;
 
-			h.stage.addEventListener(MouseEvent.MOUSE_MOVE, onDragMove);
-			h.stage.addEventListener(MouseEvent.MOUSE_UP, onDragUp);
+			h.stage.addEventListener(MouseEvent.MOUSE_MOVE, onDragMove, false, 0, true);
+			h.stage.addEventListener(MouseEvent.MOUSE_UP, onDragUp, false, 0, true);
 
 			e.stopImmediatePropagation();
 		}
@@ -199,16 +158,8 @@ package ui {
 
 			dragging.handle.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onDragMove);
 			dragging.handle.stage.removeEventListener(MouseEvent.MOUSE_UP, onDragUp);
-			
+
 			dragging = null;
-		}
-
-		private function onHandleOver(e:MouseEvent):void {
-			drawHandle(Sprite(e.currentTarget).graphics, true);
-		}
-
-		private function onHandleOut(e:MouseEvent):void {
-			drawHandle(Sprite(e.currentTarget).graphics, false);
 		}
 
 	}

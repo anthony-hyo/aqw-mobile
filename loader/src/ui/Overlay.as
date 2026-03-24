@@ -7,9 +7,13 @@ package ui {
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 
-	import ui.input.GamePad;
+	import ui.option.Button;
+	import ui.option.Check;
+	import ui.option.Option;
+	import ui.util.Scroll;
 
 	import util.HelperScroll;
+	import util.HelperSetting;
 
 	public class Overlay extends MovieClip {
 
@@ -23,9 +27,8 @@ package ui {
 
 			this.pocket.addChild(this);
 
-			addChild(notifications);
-
-			this.gamePad = GamePad(addChild(new GamePad(this.pocket)));
+			this.notifications = Sprite(addChild(new Sprite()));
+			this.gameUI = GameUI(addChild(new GameUI(this.pocket)));
 
 			initLog();
 		}
@@ -37,7 +40,7 @@ package ui {
 		public var contentMask:DisplayObject;
 		public var contentScroll:Scroll;
 
-		private var gamePad:GamePad;
+		public var gameUI:GameUI;
 
 		public var notifications:Sprite = new Sprite();
 
@@ -53,9 +56,40 @@ package ui {
 		private function panelFrame():void {
 			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
 
-			addOption("show_joystick", "Show Joystick", "Display joystick on screen", onShowJoystick);
-			addOption("edit_layout", "Edit Layout", "Drag to reposition UI elements", onEditLayout);
-			addOption("reset_layout", "Reset Layout", "Restore default positions", onResetLayout);
+			const options:Vector.<Option> = new <Option> [
+				new Check(
+					HelperSetting.OPTION_SHOW_JOYSTICK,
+					"Show Joystick",
+					"Display joystick on screen",
+					function (option:Check):void {
+						gameUI.toggleUI();
+					}
+				),
+				new Check(
+					HelperSetting.OPTION_EDIT_LAYOUT,
+					"Edit Layout",
+					"Drag to reposition UI elements",
+					function (option:Check):void {
+						gameUI.toggleEditLayout();
+					}
+				),
+				new Button(
+					HelperSetting.OPTION_RESET_LAYOUT,
+					"Reset Layout",
+					"Restore default positions",
+					"RESET",
+					function (option:Button):void {
+						gameUI.resetLayout();
+					}
+				)
+			];
+
+			for each (var option:Option in options) {
+				this.content.addChild(option);
+
+				option.x = 3.75;
+				option.y = (option.height + 2) * (this.content.numChildren - 1);
+			}
 
 			new HelperScroll(
 				this.contentScroll,
@@ -99,24 +133,6 @@ package ui {
 			}
 
 			notification.y = index * (notification.height + 10);
-		}
-
-		private function onShowJoystick(state:Boolean):void {
-			gamePad.toggleUI();
-		}
-
-		private function onEditLayout(state:Boolean):void {
-			gamePad.toggleEditLayout();
-		}
-
-		private function onResetLayout(state:Boolean):void {
-			gamePad.resetLayout();
-		}
-
-		private function addOption(key:String, label:String, info:String = "", onChange:Function = null):void {
-			const option:Option = Option(this.content.addChild(new Option(key, label, info, onChange)));
-			option.x = 3.75;
-			option.y = (option.height + 2) * (this.content.numChildren - 1);
 		}
 
 		private function initLog():void {

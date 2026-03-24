@@ -1,4 +1,4 @@
-package ui {
+package ui.util {
 	import flash.display.Sprite;
 
 	public class Scroll extends Sprite {

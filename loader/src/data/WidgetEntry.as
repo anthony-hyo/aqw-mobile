@@ -1,4 +1,4 @@
-package ui {
+package data {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 

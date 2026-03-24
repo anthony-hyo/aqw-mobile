@@ -4,7 +4,7 @@
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
-	import ui.Scroll;
+	import ui.util.Scroll;
 
 	public class HelperScroll {
 

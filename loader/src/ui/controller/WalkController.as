@@ -1,4 +1,4 @@
-package ui.input.controller {
+package ui.controller {
 	import flash.display.*;
 	import flash.geom.*;
 

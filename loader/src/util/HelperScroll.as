@@ -13,7 +13,6 @@
 		private static const MIN_VELOCITY:Number = 0.5;
 
 		public function HelperScroll(scroll:Scroll, list:DisplayObject, mask:DisplayObject, isResize:Boolean = true) {
-			trace(list.y)
 			this.scroll = scroll;
 			this.list = list;
 			this.listMask = mask;

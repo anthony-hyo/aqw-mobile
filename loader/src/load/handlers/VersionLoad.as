@@ -56,8 +56,8 @@ package load.handlers {
 				this.pocket.overlay.debug.log("Version: " + this.pocket.version.sVersion);
 
 				this.pocket.advance();
-			} catch (err:Error) {
-				this.pocket.overlay.debug.logError("Failed to parse version response: " + err.message);
+			} catch (error:Error) {
+				this.pocket.overlay.debug.logError("Failed to parse version response: " + error.message);
 			}
 		}
 

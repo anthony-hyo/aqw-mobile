@@ -36,8 +36,8 @@ package load.handlers {
 				this.pocket.background.removeAllChildren();
 
 				this.pocket.background.addChild(titleScreen);
-			} catch (e:Error) {
-				trace(e);
+			} catch (error:Error) {
+				this.pocket.overlay.debug.logError("Failed to instantiate background: " + error.message);
 			}
 
 			this.pocket.advance();

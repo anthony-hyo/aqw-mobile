@@ -217,6 +217,8 @@ package ui {
 				}
 			}
 
+			this.pocket.overlay.setOverlayButtonTransform();
+
 			stop();
 		}
 
@@ -271,6 +273,29 @@ package ui {
 			if (this.pocket.game.world) {
 				this.pocket.game.world.map.filters = filters;
 				this.pocket.game.world.CHARS.filters = filters;
+			}
+		}
+
+		public function setOverlayButtonTransform():void {
+			if (!this.pocket.game) {
+				return;
+			}
+			
+			switch (this.pocket.game.currentFrameLabel) {
+				case "Game":
+					if (this.pocket.overlay.showPanelBtn) {
+						this.pocket.overlay.showPanelBtn.width = this.pocket.overlay.showPanelBtn.height = 24;
+						this.pocket.overlay.showPanelBtn.x = this.pocket.overlay.showPanelBtn.y = 2;
+					}
+					break;
+				default:
+					if (this.pocket.overlay.showPanelBtn) {
+						this.pocket.overlay.showPanelBtn.width = this.pocket.overlay.showPanelBtn.height = 37.3;
+
+						this.pocket.overlay.showPanelBtn.x = 7.1;
+						this.pocket.overlay.showPanelBtn.y = 264.9;
+					}
+					break;
 			}
 		}
 

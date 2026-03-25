@@ -9,16 +9,14 @@ package core {
 
 		private var pocket:Pocket;
 
-		public var currentFrame:String = null;
-
 		public function onFrameChange(frame:String):void {
-			this.currentFrame = frame;
-			
 			for each (var option:Option in this.pocket.overlay.options) {
 				if (option.onFrameChange != null) {
 					option.onFrameChange(frame);
 				}
 			}
+
+			this.pocket.overlay.setOverlayButtonTransform();
 		}
 
 	}

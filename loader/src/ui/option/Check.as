@@ -7,16 +7,20 @@ package ui.option {
 
 	public class Check extends Option {
 
-		public function Check(key:String = "", name:String = "", info:String = "", onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+		public function Check(key:String, defaultValue:Boolean, name:String, info:String, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
 			super(key, name, info, onChange, onFrameChange, onOverlayStateChange);
+
+			this.state = this.key != null ? HelperSetting.getBool(this.key, defaultValue) : defaultValue;
 
 			syncState();
 
 			this.checkMark.mouseEnabled = false;
-			
+
 			this.checkBackground.addEventListener(MouseEvent.CLICK, onToggle);
 		}
-		
+
+		public var state:Boolean;
+
 		public var checkMark:Sprite;
 		public var checkBackground:Sprite;
 
@@ -34,7 +38,7 @@ package ui.option {
 			if (this.onChange != null) {
 				this.onChange(this);
 			}
-			
+
 			syncState();
 		}
 

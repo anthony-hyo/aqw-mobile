@@ -24,7 +24,13 @@ package util {
 		}
 
 		public static function _get(key:String, defaultValue:Object = null):Object {
-			return so.data.hasOwnProperty(key) ? so.data[key] : defaultValue;
+			if (so.data.hasOwnProperty(key)) {
+				return so.data[key];
+			}
+			
+			_set(key, defaultValue);
+
+			return defaultValue;
 		}
 
 		public static function _set(key:String, value:Object):void {

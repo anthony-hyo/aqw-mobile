@@ -8,16 +8,16 @@ package ui.option {
 
 	public class Toggle extends Option {
 
-		public function Toggle(key:String = "", label:String = "", info:String = "", toggleLabels:Array = null, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+		public function Toggle(key:String, defaultValue:int, label:String, info:String, toggleLabels:Array = null, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
 			super(key, label, info, onChange, onFrameChange, onOverlayStateChange);
 
 			this.toggleLabels = toggleLabels;
-			this.index = HelperSetting.getInt(key);
+			this.index = this.key != null ? HelperSetting.getInt(this.key, defaultValue) : defaultValue;
 
 			syncState();
 
-			buttonLeft.addEventListener(MouseEvent.CLICK, onLeft);
-			buttonRight.addEventListener(MouseEvent.CLICK, onRight);
+			this.buttonLeft.addEventListener(MouseEvent.CLICK, onLeft);
+			this.buttonRight.addEventListener(MouseEvent.CLICK, onRight);
 		}
 
 		public var stateTxt:TextField;
@@ -32,19 +32,19 @@ package ui.option {
 		}
 
 		public function setIndex(i:int):void {
-			index = i % toggleLabels.length;
-			
+			this.index = i % this.toggleLabels.length;
+
 			syncState();
 		}
 
 		private function syncState():void {
-			stateTxt.text = toggleLabels[index];
+			this.stateTxt.text = this.toggleLabels[this.index];
 		}
 
 		private function onLeft(e:MouseEvent):void {
-			index = (index - 1 + toggleLabels.length) % toggleLabels.length;
-			
-			HelperSetting.setInt(key, index);
+			this.index = (this.index - 1 + this.toggleLabels.length) % this.toggleLabels.length;
+
+			HelperSetting.setInt(this.key, this.index);
 
 			syncState();
 
@@ -54,9 +54,9 @@ package ui.option {
 		}
 
 		private function onRight(e:MouseEvent):void {
-			index = (index + 1) % toggleLabels.length;
-			
-			HelperSetting.setInt(key, index);
+			this.index = (this.index + 1) % this.toggleLabels.length;
+
+			HelperSetting.setInt(this.key, this.index);
 
 			syncState();
 

@@ -4,6 +4,7 @@ package ui {
 	import flash.display.MovieClip;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
+	import flash.display.StageAspectRatio;
 	import flash.display.StageOrientation;
 	import flash.events.MouseEvent;
 	import flash.filters.ColorMatrixFilter;
@@ -61,10 +62,11 @@ package ui {
 			this.options = new <Option> [
 				new Check(
 					HelperSetting.OPTION_SHOW_JOYSTICK,
+					true,
 					"Show Joystick",
 					"Display joystick on screen",
 					function (option:Check):void {
-						if (pocket.gameCore.currentFrame != "Game") {
+						if (pocket.game && pocket.game.currentFrameLabel != "Game") {
 							//pocket.game.MsgBox.notify("...");
 							return;
 						}
@@ -91,10 +93,11 @@ package ui {
 				),
 				new Check(
 					HelperSetting.OPTION_SHOW_SKILL_BAR,
+					true,
 					"Show Skill Bar",
 					"Display skill bar on screen",
 					function (option:Check):void {
-						if (pocket.gameCore.currentFrame != "Game") {
+						if (pocket.game && pocket.game.currentFrameLabel != "Game") {
 							//pocket.game.MsgBox.notify("...");
 							return;
 						}
@@ -125,7 +128,7 @@ package ui {
 					"Drag to reposition UI elements",
 					"Edit",
 					function (option:Button):void {
-						if (pocket.gameCore.currentFrame != "Game") {
+						if (pocket.game && pocket.game.currentFrameLabel != "Game") {
 							pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
 							return;
 						}
@@ -165,37 +168,54 @@ package ui {
 				),
 				new Toggle(
 					HelperSetting.OPTION_LOCK_ORIENTATION,
-					"Lock Orientation",
-					"Lock screen to current orientation",
-					["Portrait", "Left", "Right", "Flipped"],
+					0,
+					"Screen Orientation",
+					"Choose how the screen rotates",
+					["Auto", "Portrait", "Left", "Right", "Flipped"],
 					function (option:Toggle):void {
 						const orientations:Array = [
+							StageOrientation.DEFAULT,
 							StageOrientation.DEFAULT,
 							StageOrientation.ROTATED_LEFT,
 							StageOrientation.ROTATED_RIGHT,
 							StageOrientation.UPSIDE_DOWN
 						];
 
-						stage.autoOrients = false;
+						if (option.getIndex() == 0) {
+							stage.autoOrients = true;
+							stage.setAspectRatio(StageAspectRatio.LANDSCAPE); 
+							return;
+						}
 						
+						stage.autoOrients = false;
+						stage.setAspectRatio(StageAspectRatio.ANY);
 						stage.setOrientation(orientations[option.getIndex()]);
 					},
 					null,
 					function (frame:String):void {
 						const orientations:Array = [
 							StageOrientation.DEFAULT,
+							StageOrientation.DEFAULT,
 							StageOrientation.ROTATED_LEFT,
 							StageOrientation.ROTATED_RIGHT,
 							StageOrientation.UPSIDE_DOWN
 						];
 
-						stage.autoOrients = false;
-						
-						stage.setOrientation(orientations[HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION)]);
+						const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION);
+
+						if (savedIndex == 0) {
+							stage.autoOrients = true;
+							stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
+						} else {
+							stage.autoOrients = false;
+							stage.setAspectRatio(StageAspectRatio.ANY);
+							stage.setOrientation(orientations[savedIndex]);
+						}
 					}
 				),
 				new Check(
 					null,
+					false,
 					"Show Debug",
 					"Display debug on screen",
 					function (option:Check):void {
@@ -266,10 +286,6 @@ package ui {
 		}
 
 		private function setWorldFilters(filters:Array):void {
-			if (this.pocket.game.ui) {
-				this.pocket.game.ui.filters = filters;
-			}
-
 			if (this.pocket.game.world) {
 				this.pocket.game.world.map.filters = filters;
 				this.pocket.game.world.CHARS.filters = filters;

@@ -53,7 +53,7 @@ package ui {
 			0.3, 0.59, 0.11, 0, 0,
 			0.3, 0.59, 0.11, 0, 0,
 			0.3, 0.59, 0.11, 0, 0,
-			0,   0,    0,    1, 0
+			0, 0, 0, 1, 0
 		]);
 
 		private function initFrame():void {
@@ -66,8 +66,7 @@ package ui {
 					"Show Joystick",
 					"Display joystick on screen",
 					function (option:Check):void {
-						if (pocket.game && pocket.game.currentFrameLabel != "Game") {
-							//pocket.game.MsgBox.notify("...");
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 							return;
 						}
 
@@ -97,8 +96,7 @@ package ui {
 					"Show Skill Bar",
 					"Display skill bar on screen",
 					function (option:Check):void {
-						if (pocket.game && pocket.game.currentFrameLabel != "Game") {
-							//pocket.game.MsgBox.notify("...");
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 							return;
 						}
 
@@ -128,8 +126,10 @@ package ui {
 					"Drag to reposition UI elements",
 					"Edit",
 					function (option:Button):void {
-						if (pocket.game && pocket.game.currentFrameLabel != "Game") {
-							pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+							if (pocket.game) {
+								pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
+							}
 							return;
 						}
 
@@ -143,7 +143,7 @@ package ui {
 					},
 					function (frame:String):void {
 						gameUI.hideEditLayout();
-						
+
 						setWorldFilters([]);
 					},
 					function (frame:String):void {
@@ -152,7 +152,7 @@ package ui {
 						}
 
 						setWorldFilters([]);
-						
+
 						gameUI.hideEditLayout();
 					}
 				),
@@ -162,7 +162,10 @@ package ui {
 					"Restore default positions",
 					"Reset",
 					function (option:Button):void {
-						pocket.game.MsgBox.notify("Layout successfully restored.");
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Layout successfully restored.");
+						}
+
 						gameUI.resetLayout();
 					}
 				),
@@ -183,10 +186,10 @@ package ui {
 
 						if (option.getIndex() == 0) {
 							stage.autoOrients = true;
-							stage.setAspectRatio(StageAspectRatio.LANDSCAPE); 
+							stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
 							return;
 						}
-						
+
 						stage.autoOrients = false;
 						stage.setAspectRatio(StageAspectRatio.ANY);
 						stage.setOrientation(orientations[option.getIndex()]);
@@ -220,7 +223,9 @@ package ui {
 					"Display debug on screen",
 					function (option:Check):void {
 						if (option.state) {
-							addChild(debug);
+							if (debug.parent == null) {
+								addChild(debug);
+							}
 							return;
 						}
 
@@ -233,7 +238,7 @@ package ui {
 
 			for each (var option:Option in options) {
 				if (option.onOverlayStateChange != null) {
-					option.onOverlayStateChange('Init');
+					option.onOverlayStateChange("Init");
 				}
 			}
 
@@ -250,9 +255,9 @@ package ui {
 
 				option.x = 3.75;
 				option.y = (option.height + 2) * (this.content.numChildren - 1);
-				
+
 				if (option.onOverlayStateChange != null) {
-					option.onOverlayStateChange('Panel');
+					option.onOverlayStateChange("Panel");
 				}
 			}
 
@@ -296,7 +301,7 @@ package ui {
 			if (!this.pocket.game) {
 				return;
 			}
-			
+
 			switch (this.pocket.game.currentFrameLabel) {
 				case "Game":
 					if (this.pocket.overlay.showPanelBtn) {

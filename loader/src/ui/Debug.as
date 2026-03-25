@@ -6,12 +6,12 @@ package ui {
 	import flash.text.TextField;
 
 	public class Debug extends Sprite {
-		
+
 		public var logTxt:TextField;
 
 		public function Debug(pocket:Pocket) {
 			this.pocket = pocket;
-			
+
 			this.x = 30;
 			this.y = 330;
 
@@ -29,19 +29,19 @@ package ui {
 
 		public function log(msg:String):void {
 			const stack:String = new Error().getStackTrace();
-			
+
 			if (stack) {
 				const lines:Array = stack.split("\n");
-				
+
 				if (lines.length > 2) {
 					const match:Array = lines[2].match(/at\s+([\w.:$\/]+)/);
-					
-					var callerName:String  = match ? match[1] : "unknown";
+
+					var callerName:String = match ? match[1] : "unknown";
 
 					if (callerName.indexOf("::") != -1) {
 						callerName = callerName.split("::")[1];
 					}
-					
+
 					if (callerName.indexOf("/") != -1) {
 						callerName = callerName.split("/")[0];
 					}
@@ -58,7 +58,9 @@ package ui {
 		}
 
 		public function logError(msg:String):void {
-			this.logTxt.visible = true;
+			if (parent == null) {
+				this.pocket.overlay.addChild(this);
+			}
 
 			log("ERROR: " + msg);
 		}

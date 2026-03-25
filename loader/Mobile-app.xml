@@ -15,7 +15,6 @@
     <fullScreen>true</fullScreen>
     <aspectRatio>landscape</aspectRatio>
     <renderMode>auto</renderMode>
-    <autoOrients>false</autoOrients>
     <width>960</width>
     <height>550</height>
     <maximizable>true</maximizable>

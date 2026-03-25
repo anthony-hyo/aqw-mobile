@@ -4,12 +4,14 @@ package ui {
 	import flash.display.MovieClip;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
+	import flash.display.StageOrientation;
 	import flash.events.MouseEvent;
 	import flash.filters.ColorMatrixFilter;
 
 	import ui.option.Button;
 	import ui.option.Check;
 	import ui.option.Option;
+	import ui.option.Toggle;
 	import ui.util.Scroll;
 
 	import util.HelperScroll;
@@ -159,6 +161,37 @@ package ui {
 					function (option:Button):void {
 						pocket.game.MsgBox.notify("Layout successfully restored.");
 						gameUI.resetLayout();
+					}
+				),
+				new Toggle(
+					HelperSetting.OPTION_LOCK_ORIENTATION,
+					"Lock Orientation",
+					"Lock screen to current orientation",
+					["Portrait", "Left", "Right", "Flipped"],
+					function (option:Toggle):void {
+						const orientations:Array = [
+							StageOrientation.DEFAULT,
+							StageOrientation.ROTATED_LEFT,
+							StageOrientation.ROTATED_RIGHT,
+							StageOrientation.UPSIDE_DOWN
+						];
+
+						stage.autoOrients = false;
+						
+						stage.setOrientation(orientations[option.getIndex()]);
+					},
+					null,
+					function (frame:String):void {
+						const orientations:Array = [
+							StageOrientation.DEFAULT,
+							StageOrientation.ROTATED_LEFT,
+							StageOrientation.ROTATED_RIGHT,
+							StageOrientation.UPSIDE_DOWN
+						];
+
+						stage.autoOrients = false;
+						
+						stage.setOrientation(orientations[HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION)]);
 					}
 				),
 				new Check(

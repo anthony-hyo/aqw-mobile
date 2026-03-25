@@ -29,17 +29,5 @@ package ui.option {
 		public var onFrameChange:Function;
 		public var onOverlayStateChange:Function;
 
-		protected function setState(value:Boolean):void {
-			this.state = value;
-
-			if (this.key != null) {
-				HelperSetting._set(this.key, this.state);
-			}
-
-			if (this.onChange != null) {
-				this.onChange(this);
-			}
-		}
-
 	}
 }

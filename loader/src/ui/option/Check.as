@@ -3,6 +3,8 @@ package ui.option {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
+	import util.HelperSetting;
+
 	public class Check extends Option {
 
 		public function Check(key:String = "", name:String = "", info:String = "", onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
@@ -23,7 +25,16 @@ package ui.option {
 		}
 
 		private function onToggle(e:MouseEvent):void {
-			setState(!this.state);
+			this.state = !this.state;
+
+			if (this.key != null) {
+				HelperSetting.setBool(this.key, this.state);
+			}
+
+			if (this.onChange != null) {
+				this.onChange(this);
+			}
+			
 			syncState();
 		}
 

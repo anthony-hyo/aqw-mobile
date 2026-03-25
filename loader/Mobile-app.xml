@@ -22,6 +22,7 @@
     <minimizable>true</minimizable>
     <resizable>true</resizable>
     <softKeyboardBehavior>none</softKeyboardBehavior>
+    <autoOrients>true</autoOrients>
   </initialWindow>
   <icon>
     <image36x36>icons/android-icon-36x36.png</image36x36>

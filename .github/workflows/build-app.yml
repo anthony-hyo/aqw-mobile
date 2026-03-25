@@ -1,194 +1,183 @@
 name: Build APK
 
 on:
-  workflow_dispatch:
-    inputs:
-      version_prefix:
-        description: 'Version prefix (e.g. 1.0, 1.1, 2.0)'
-        required: false
-        default: '1.0'
+    workflow_dispatch:
+        inputs:
+            version_prefix:
+                description: 'Version prefix (e.g. 1.0.0, 1.1.0, 2.0.0)'
+                required: true
+                default: '2.0.0'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Checkout custom
-        uses: actions/checkout@v4
-        with:
-          repository: anthony-hyo/pocket-patches
-          token: ${{ secrets.PATCHES_TOKEN }}
-          path: pocket-patches
-
-      - name: Merge custom
-        run: |
-          if [ -d "pocket-patches/aqw" ] && [ "$(ls -A pocket-patches/aqw)" ]; then
-            cp -r pocket-patches/aqw/. patches/
-          fi
-
-      - name: Set version
-        id: version
-        run: |
-              echo "VERSION=v${{ github.event.inputs.version_prefix }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
-              echo "VERSION_NUMBER=${{ github.event.inputs.version_prefix }}.${{ github.run_number }}" >> $GITHUB_OUTPUT
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
-
-      - name: Setup Dlang
-        uses: dlang-community/setup-dlang@v1
-
-      - name: Install Dependencies and Build RABCDAsm
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip git curl liblzma-dev default-jdk
-
-          git clone --depth 1 https://github.com/CyberShadow/RABCDAsm.git
-          cd RABCDAsm
-          dmd -run build_rabcdasm.d
-          sudo cp abcexport rabcdasm rabcasm abcreplace /usr/local/bin/
-
-      - name: Patch Game.swf
-        run: cargo run --release
-
-      - name: Setup AIR SDK
-        uses: joshtynjala/setup-adobe-air-action@v2
-        with:
-          air-version: "51.3"
-          accept-license: yes
-
-      - name: Generate temporary keystore
-        run: |
-          keytool -genkeypair \
-            -alias tempalias \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -keystore temp_keystore.jks \
-            -storepass temppass \
-            -keypass temppass \
-            -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=US"
-
-      - name: Inject version
-        run: |
-          sed -i "s/APP_VERSION:String = \".*\"/APP_VERSION:String = \"${{ steps.version.outputs.VERSION }}\"/" loader/src/Config.as
-          sed -i "s|<versionNumber>.*</versionNumber>|<versionNumber>${{ steps.version.outputs.VERSION_NUMBER }}</versionNumber>|" loader/app.xml
-          sed -i "s|<versionLabel>.*</versionLabel>|<versionLabel>${{ steps.version.outputs.VERSION_NUMBER }}</versionLabel>|" loader/app.xml
-
-      - name: Compile Loader.swf
-        run: amxmlc -output loader/Loader.swf loader/src/Pocket.as
-
-      - name: Build APK (armv7)
-        run: |
-          adt -package \
-            -target apk-captive-runtime \
-            -arch armv7 \
-            -storetype JKS \
-            -keystore temp_keystore.jks \
-            -storepass temppass \
-            -keypass temppass \
-            AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk \
-            loader/app.xml \
-            -C loader \
-              Loader.swf \
-              icons/android-icon-36x36.png \
-              icons/android-icon-48x48.png \
-              icons/android-icon-72x72.png \
-              icons/android-icon-96x96.png \
-              icons/android-icon-144x144.png \
-              icons/android-icon-192x192.png \
-              gamefiles/Game.swf
-
-      - name: Build APK (armv8)
-        run: |
-          adt -package \
-            -target apk-captive-runtime \
-            -arch armv8 \
-            -storetype JKS \
-            -keystore temp_keystore.jks \
-            -storepass temppass \
-            -keypass temppass \
-            AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk \
-            loader/app.xml \
-            -C loader \
-              Loader.swf \
-              icons/android-icon-36x36.png \
-              icons/android-icon-48x48.png \
-              icons/android-icon-72x72.png \
-              icons/android-icon-96x96.png \
-              icons/android-icon-144x144.png \
-              icons/android-icon-192x192.png \
-              gamefiles/Game.swf
-
-      - name: Build APK (x86)
-        run: |
-          adt -package \
-            -target apk-captive-runtime \
-            -arch x86 \
-            -storetype JKS \
-            -keystore temp_keystore.jks \
-            -storepass temppass \
-            -keypass temppass \
-            AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk \
-            loader/app.xml \
-            -C loader \
-              Loader.swf \
-              icons/android-icon-36x36.png \
-              icons/android-icon-48x48.png \
-              icons/android-icon-72x72.png \
-              icons/android-icon-96x96.png \
-              icons/android-icon-144x144.png \
-              icons/android-icon-192x192.png \
-              gamefiles/Game.swf
-
-      - name: Build APK (x64)
-        run: |
-          adt -package \
-            -target apk-captive-runtime \
-            -arch x64 \
-            -storetype JKS \
-            -keystore temp_keystore.jks \
-            -storepass temppass \
-            -keypass temppass \
-            AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk \
-            loader/app.xml \
-            -C loader \
-              Loader.swf \
-              icons/android-icon-36x36.png \
-              icons/android-icon-48x48.png \
-              icons/android-icon-72x72.png \
-              icons/android-icon-96x96.png \
-              icons/android-icon-144x144.png \
-              icons/android-icon-192x192.png \
-              gamefiles/Game.swf
-
-      - name: Tag release
-        run: |
-          git tag -f ${{ steps.version.outputs.VERSION }}
-          git push origin ${{ steps.version.outputs.VERSION }} --force
-
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.VERSION }}
-          name: ${{ steps.version.outputs.VERSION }}
-          prerelease: false
-          files: |
-            AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk
-            AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk
-            AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk
-            AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk
+    build:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+            
+            -   name: Checkout custom
+                uses: actions/checkout@v4
+                with:
+                    repository: anthony-hyo/pocket-patches
+                    token: ${{ secrets.PATCHES_TOKEN }}
+                    path: pocket-patches
+            
+            -   name: Merge custom
+                run: |
+                    if [ -d "pocket-patches/aqw" ] && [ "$(ls -A pocket-patches/aqw)" ]; then
+                      cp -r pocket-patches/aqw/. patches/
+                    fi
+            
+            -   name: Set version
+                id: version
+                run: |
+                    echo "VERSION=v${{ github.event.inputs.version_prefix }}" >> $GITHUB_OUTPUT
+                    echo "VERSION_NUMBER=${{ github.event.inputs.version_prefix }}" >> $GITHUB_OUTPUT
+            
+            -   name: Setup Rust
+                uses: dtolnay/rust-toolchain@stable
+            
+            -   name: Cache Rust dependencies
+                uses: actions/cache@v4
+                with:
+                    path: |
+                        ~/.cargo/registry
+                        ~/.cargo/git
+                        target
+                    key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+            
+            -   name: Setup Dlang
+                uses: dlang-community/setup-dlang@v1
+            
+            -   name: Install Dependencies and Build RABCDAsm
+                run: |
+                    sudo apt-get update
+                    sudo apt-get install -y wget unzip git curl liblzma-dev default-jdk
+                    
+                    git clone --depth 1 https://github.com/CyberShadow/RABCDAsm.git
+                    cd RABCDAsm
+                    dmd -run build_rabcdasm.d
+                    sudo cp abcexport rabcdasm rabcasm abcreplace /usr/local/bin/
+            
+            -   name: Patch Game.swf
+                run: cargo run --release
+            
+            -   name: Setup AIR SDK
+                uses: joshtynjala/setup-adobe-air-action@v2
+                with:
+                    air-version: "51.3"
+                    accept-license: yes
+                    
+            -   name: Keystore
+                run: |
+                    echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > aqwpocket_keystore.jks
+            
+            -   name: Inject version
+                run: |
+                    sed -i "s/APP_VERSION:String = \".*\"/APP_VERSION:String = \"${{ steps.version.outputs.VERSION }}\"/" loader/src/Config.as
+                    sed -i "s|<versionNumber>.*</versionNumber>|<versionNumber>${{ steps.version.outputs.VERSION_NUMBER }}</versionNumber>|" loader/Mobile-app.xml
+                    sed -i "s|<versionLabel>.*</versionLabel>|<versionLabel>${{ steps.version.outputs.VERSION_NUMBER }}</versionLabel>|" loader/Mobile-app.xml
+            
+            -   name: Build APK (armv7)
+                run: |
+                    adt -package \
+                      -target apk-captive-runtime \
+                      -arch armv7 \
+                      -storetype JKS \
+                      -keystore aqwpocket_keystore.jks \
+                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+                      -keypass ${{ secrets.KEY_PASS }} \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk \
+                      loader/Mobile-app.xml \
+                      -C loader \
+                        Mobile.swf \
+                        icons/android-icon-36x36.png \
+                        icons/android-icon-48x48.png \
+                        icons/android-icon-72x72.png \
+                        icons/android-icon-96x96.png \
+                        icons/android-icon-144x144.png \
+                        icons/android-icon-192x192.png \
+                        gamefiles/Game.swf
+            
+            -   name: Build APK (armv8)
+                run: |
+                    adt -package \
+                      -target apk-captive-runtime \
+                      -arch armv8 \
+                      -storetype JKS \
+                      -keystore aqwpocket_keystore.jks \
+                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+                      -keypass ${{ secrets.KEY_PASS }} \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk \
+                      loader/Mobile-app.xml \
+                      -C loader \
+                        Mobile.swf \
+                        icons/android-icon-36x36.png \
+                        icons/android-icon-48x48.png \
+                        icons/android-icon-72x72.png \
+                        icons/android-icon-96x96.png \
+                        icons/android-icon-144x144.png \
+                        icons/android-icon-192x192.png \
+                        gamefiles/Game.swf
+            
+            -   name: Build APK (x86)
+                run: |
+                    adt -package \
+                      -target apk-captive-runtime \
+                      -arch x86 \
+                      -storetype JKS \
+                      -keystore aqwpocket_keystore.jks \
+                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+                      -keypass ${{ secrets.KEY_PASS }} \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk \
+                      loader/Mobile-app.xml \
+                      -C loader \
+                        Mobile.swf \
+                        icons/android-icon-36x36.png \
+                        icons/android-icon-48x48.png \
+                        icons/android-icon-72x72.png \
+                        icons/android-icon-96x96.png \
+                        icons/android-icon-144x144.png \
+                        icons/android-icon-192x192.png \
+                        gamefiles/Game.swf
+            
+            -   name: Build APK (x64)
+                run: |
+                    adt -package \
+                      -target apk-captive-runtime \
+                      -arch x64 \
+                      -storetype JKS \
+                      -keystore aqwpocket_keystore.jks \
+                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+                      -keypass ${{ secrets.KEY_PASS }} \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk \
+                      loader/Mobile-app.xml \
+                      -C loader \
+                        Mobile.swf \
+                        icons/android-icon-36x36.png \
+                        icons/android-icon-48x48.png \
+                        icons/android-icon-72x72.png \
+                        icons/android-icon-96x96.png \
+                        icons/android-icon-144x144.png \
+                        icons/android-icon-192x192.png \
+                        gamefiles/Game.swf
+            
+            -   name: Tag release
+                run: |
+                    git tag -f ${{ steps.version.outputs.VERSION }}
+                    git push origin ${{ steps.version.outputs.VERSION }} --force
+            
+            -   name: Release
+                uses: softprops/action-gh-release@v2
+                with:
+                    tag_name: ${{ steps.version.outputs.VERSION }}
+                    name: ${{ steps.version.outputs.VERSION }}
+                    prerelease: false
+                    files: |
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk

@@ -18,16 +18,15 @@ package ui {
 		private var pocket:Pocket;
 
 		private var joystick:Joystick;
-		private var skillBar:SkillBar;
 
-		private var layoutController:LayoutController = new LayoutController();
+		public var layoutController:LayoutController = new LayoutController();
 		private var walkController:WalkController;
 
 		public function showJoystick():void {
 			if (this.joystick && contains(this.joystick)) {
 				return;
 			}
-			
+
 			this.joystick = Joystick(addChild(new Joystick()));
 
 			this.walkController = new WalkController(this.pocket, this.joystick);
@@ -38,7 +37,7 @@ package ui {
 			this.joystick.x = joystick_default_x;
 			this.joystick.y = joystick_default_y;
 
-			this.layoutController.register(HelperSetting.LAYOUT_JOYSTICK, this.joystick, joystick_default_x, joystick_default_y);
+			this.layoutController.register(HelperSetting.LAYOUT_JOYSTICK, this.joystick, joystick_default_x, joystick_default_y, this.joystick.scaleX, this.joystick.scaleY);
 			this.layoutController.load();
 
 			this.joystick.addEventListener(MouseEvent.MOUSE_DOWN, onDown, false, 0, true);
@@ -53,29 +52,19 @@ package ui {
 		}
 
 		public function showSkillBar():void {
-			if (this.skillBar && contains(this.skillBar)) {
-				return;	
+			if (this.pocket.game && this.pocket.game.currentFrameLabel != "Game") {
+				return;
 			}
-			
-			this.skillBar = SkillBar(addChild(new SkillBar(this.pocket)));
 
-			const skill_bar_default_x:Number = 706;
-			const skill_bar_default_y:Number = 380;
-
-			this.skillBar.x = skill_bar_default_x;
-			this.skillBar.y = skill_bar_default_y;
-
-			this.layoutController.register(HelperSetting.LAYOUT_SKILL_BAR, this.skillBar, skill_bar_default_x, skill_bar_default_y);
-
-			this.layoutController.load();
+			this.pocket.game.ui.mcInterface.actBar.visible = true;
 		}
 
 		public function hideSkillBar():void {
-			if (this.skillBar && contains(this.skillBar)) {
-				removeChild(this.skillBar);
+			if (this.pocket.game && this.pocket.game.currentFrameLabel != "Game") {
+				return;
 			}
 
-			this.skillBar = null;
+			this.pocket.game.ui.mcInterface.actBar.visible = false;
 		}
 
 		public function showEditLayout():void {

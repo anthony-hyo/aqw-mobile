@@ -1,5 +1,7 @@
 package load.handlers {
 
+	import core.Network;
+
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -49,6 +51,7 @@ package load.handlers {
 			this.pocket.stage.removeChild(this.pocket);
 
 			this.pocket.game.pocket = this.pocket;
+			this.pocket.networkCore = new Network(this.pocket);
 
 			this.pocket.advance();
 		}

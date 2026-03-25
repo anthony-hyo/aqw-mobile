@@ -54,7 +54,7 @@
 		public var game:MovieClip;
 
 		public const gameCore:Game = new Game(this);
-		public const networkCore:Network = new Network(this);
+		public var networkCore:Network;
 		public const worldCore:World = new World(this);
 
 		private const backgroundLoad:BackgroundLoad = new BackgroundLoad(this);
@@ -65,7 +65,7 @@
 		public var version:Version;
 		public var release:Release;
 
-		public const queueLoadViaBytes:Function = HelperLoader.load;
+		public const load:Function = HelperLoader.load;
 
 		public function check():void {
 			switch (HelperLoader.COUNT) {

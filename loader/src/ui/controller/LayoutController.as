@@ -3,7 +3,6 @@ package ui.controller {
 
 	import flash.display.*;
 	import flash.events.*;
-	import flash.geom.*;
 
 	import ui.util.Handle;
 
@@ -11,153 +10,188 @@ package ui.controller {
 
 	public class LayoutController {
 
+		private static const SCALE_STEP:Number = 0.15;
+		private static const SCALE_MIN:Number = 0.1;
+		private static const SCALE_MAX:Number = 5.0;
+
 		private var widgets:Vector.<WidgetEntry> = new Vector.<WidgetEntry>();
 
-		private var dragging:WidgetEntry;
-		private var dragOffX:Number;
-		private var dragOffY:Number;
+		private var current:WidgetEntry;
 
-		private var _editMode:Boolean = false;
+		public var editMode:Boolean = false;
 
-		public function get editMode():Boolean {
-			return _editMode;
-		}
-
-		public function register(id:String, target:DisplayObject, defaultX:Number, defaultY:Number):void {
-			widgets.push(new WidgetEntry(id, target, defaultX, defaultY));
+		public function register(id:String, target:Sprite, defaultPositionX:Number, defaultPositionY:Number, defaultScaleX:Number, defaultScaleY:Number):void {
+			this.widgets.push(new WidgetEntry(id, target, defaultPositionX, defaultPositionY, defaultScaleX, defaultScaleY));
 		}
 
 		public function load():void {
 			var saved:Object;
+			var widgetEntry:WidgetEntry;
 
-			for each (var e:WidgetEntry in widgets) {
-				saved = HelperSetting._get(e.id);
+			for each (widgetEntry in this.widgets) {
+				saved = HelperSetting._get(widgetEntry.id);
 
-				e.target.x = saved ? saved.x : e.defaultX;
-				e.target.y = saved ? saved.y : e.defaultY;
+				widgetEntry.target.x = saved ? saved.x : widgetEntry.defaultPositionX;
+				widgetEntry.target.y = saved ? saved.y : widgetEntry.defaultPositionY;
+
+				widgetEntry.target.scaleX = saved ? saved.scaleX : widgetEntry.defaultScaleX;
+				widgetEntry.target.scaleY = saved ? saved.scaleY : widgetEntry.defaultScaleY;
 			}
 		}
 
 		public function toggleEdit(state:Boolean):void {
-			_editMode = state;
+			this.editMode = state;
 
-			for each (var e:WidgetEntry in widgets) {
-				if (_editMode) {
-					showHandle(e);
+			var widgetEntry:WidgetEntry;
+
+			for each (widgetEntry in this.widgets) {
+				if (this.editMode) {
+					showHandles(widgetEntry);
 					continue;
 				}
 
-				hideHandle(e);
+				hideHandles(widgetEntry);
 
-				HelperSetting._set(e.id, {
-					x: e.target.x,
-					y: e.target.y
+				HelperSetting._set(widgetEntry.id, {
+					x: widgetEntry.target.x,
+					y: widgetEntry.target.y,
+
+					scaleX: widgetEntry.target.scaleX,
+					scaleY: widgetEntry.target.scaleY
 				});
 			}
 		}
 
 		public function resetToDefaults():void {
-			if (_editMode) {
-				for each (var e:WidgetEntry in widgets) {
-					hideHandle(e);
+			if (this.editMode) {
+				for each (var e:WidgetEntry in this.widgets) {
+					hideHandles(e);
 				}
 
-				_editMode = false;
+				this.editMode = false;
 			}
 
-			for each (var entry:WidgetEntry in widgets) {
-				entry.target.x = entry.defaultX;
-				entry.target.y = entry.defaultY;
+			var widgetEntry:WidgetEntry;
 
-				HelperSetting._delete(entry.id);
+			for each (widgetEntry in this.widgets) {
+				widgetEntry.target.x = widgetEntry.defaultPositionX;
+				widgetEntry.target.y = widgetEntry.defaultPositionY;
+
+				widgetEntry.target.scaleX = widgetEntry.defaultScaleX;
+				widgetEntry.target.scaleY = widgetEntry.defaultScaleY;
+
+				HelperSetting._delete(widgetEntry.id);
 			}
 		}
 
-
-		private function showHandle(e:WidgetEntry):void {
-			if (e.handle != null) {
+		private function showHandles(widgetEntry:WidgetEntry):void {
+			if (widgetEntry.handle != null) {
 				return;
 			}
+
+			const parent:DisplayObjectContainer = widgetEntry.target.parent;
 
 			const handle:Handle = new Handle();
 
-			handle.x = e.target.x;
-			handle.y = e.target.y;
+			handle.x = widgetEntry.target.x;
+			handle.y = widgetEntry.target.y;
 
-			handle.buttonMode = true;
-			handle.useHandCursor = true;
+			parent.addChild(handle);
 
-			e.target.parent.addChild(handle);
+			handle.drag.addEventListener(MouseEvent.MOUSE_DOWN, onHandleDown, false, 0, true);
+			handle.up.addEventListener(MouseEvent.CLICK, onResizeUp, false, 0, true);
+			handle.down.addEventListener(MouseEvent.CLICK, onResizeDown, false, 0, true);
 
-			handle.addEventListener(MouseEvent.MOUSE_DOWN, onHandleDown, false, 0, true);
-
-			e.handle = handle;
+			widgetEntry.handle = handle;
 		}
 
-		private function hideHandle(e:WidgetEntry):void {
-			if (e.handle == null) {
+		private function repositionHandles(widgetEntry:WidgetEntry):void {
+			if (widgetEntry.handle == null) {
 				return;
 			}
 
-			e.handle.removeEventListener(MouseEvent.MOUSE_DOWN, onHandleDown);
-
-			if (e.handle.parent) {
-				e.handle.parent.removeChild(e.handle);
-			}
-
-			e.handle = null;
+			widgetEntry.handle.x = widgetEntry.target.x;
+			widgetEntry.handle.y = widgetEntry.target.y;
 		}
 
-		private function entryForHandle(h:Sprite):WidgetEntry {
-			for each (var e:WidgetEntry in widgets) {
-				if (e.handle == h) {
-					return e;
+		private function hideHandles(widgetEntry:WidgetEntry):void {
+			if (!widgetEntry.handle) {
+				return;
+			}
+
+			widgetEntry.handle.drag.removeEventListener(MouseEvent.MOUSE_DOWN, onHandleDown);
+			widgetEntry.handle.up.removeEventListener(MouseEvent.CLICK, onResizeUp);
+			widgetEntry.handle.down.removeEventListener(MouseEvent.CLICK, onResizeDown);
+
+			if (widgetEntry.handle.parent) {
+				widgetEntry.handle.parent.removeChild(widgetEntry.handle)
+			}
+			
+			widgetEntry.handle = null;
+		}
+
+		private function entryForHandle(button:SimpleButton):WidgetEntry {
+			var widgetEntry:WidgetEntry;
+
+			for each (widgetEntry in this.widgets) {
+				if (widgetEntry.handle.drag == button || widgetEntry.handle.up == button || widgetEntry.handle.down == button) {
+					return widgetEntry;
 				}
 			}
 
 			return null;
 		}
 
-		private function onHandleDown(e:MouseEvent):void {
-			const h:Sprite = Sprite(e.currentTarget);
+		private function onHandleDown(mouseEvent:MouseEvent):void {
+			this.current = entryForHandle(SimpleButton(mouseEvent.currentTarget));
 
-			dragging = entryForHandle(h);
-
-			if (dragging == null) {
+			if (this.current == null) {
 				return;
 			}
 
-			dragOffX = h.parent.mouseX - dragging.target.x;
-			dragOffY = h.parent.mouseY - dragging.target.y;
+			this.current.handle.visible = false;
 
-			h.stage.addEventListener(MouseEvent.MOUSE_MOVE, onDragMove, false, 0, true);
-			h.stage.addEventListener(MouseEvent.MOUSE_UP, onDragUp, false, 0, true);
-
-			e.stopImmediatePropagation();
+			this.current.target.startDrag(false);
+			this.current.target.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp, false, 0, true);
 		}
 
-		private function onDragMove(e:MouseEvent):void {
-			if (dragging == null) {
-				return;
-			}
+		private function onMouseUp(e:MouseEvent):void {
+			this.current.handle.visible = true;
+			
+			this.current.target.stopDrag();
+			this.current.target.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 
-			const pt:Point = dragging.target.parent.globalToLocal(new Point(e.stageX, e.stageY));
-
-			dragging.target.x = pt.x - dragOffX;
-			dragging.target.y = pt.y - dragOffY;
-			dragging.handle.x = dragging.target.x;
-			dragging.handle.y = dragging.target.y;
+			repositionHandles(this.current);
 		}
 
-		private function onDragUp(e:MouseEvent):void {
-			if (dragging == null) {
+		private function onResizeUp(e:MouseEvent):void {
+			const entry:WidgetEntry = entryForHandle(SimpleButton(e.currentTarget));
+
+			if (entry == null) {
 				return;
 			}
 
-			dragging.handle.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onDragMove);
-			dragging.handle.stage.removeEventListener(MouseEvent.MOUSE_UP, onDragUp);
+			const scale:Number = Math.min(SCALE_MAX, entry.target.scaleX + SCALE_STEP);
 
-			dragging = null;
+			entry.target.scaleX = scale;
+			entry.target.scaleY = scale;
+
+			repositionHandles(entry);
+		}
+
+		private function onResizeDown(e:MouseEvent):void {
+			const entry:WidgetEntry = entryForHandle(SimpleButton(e.currentTarget));
+
+			if (entry == null) {
+				return;
+			}
+
+			const scale:Number = Math.max(SCALE_MIN, entry.target.scaleX - SCALE_STEP);
+
+			entry.target.scaleX = scale;
+			entry.target.scaleY = scale;
+
+			repositionHandles(entry);
 		}
 
 	}

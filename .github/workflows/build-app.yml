@@ -77,7 +77,7 @@ jobs:
             
             -   name: Inject version
                 run: |
-                    sed -i "s/APP_VERSION:String = \".*\"/APP_VERSION:String = \"${{ steps.version.outputs.VERSION }}\"/" loader/src/Config.as
+                    sed -i 's|public static const APP_VERSION:String = ".*";|public static const APP_VERSION:String = "'"${{ steps.version.outputs.VERSION }}"'";|' loader/src/Config.as
                     sed -i "s|<versionNumber>.*</versionNumber>|<versionNumber>${{ steps.version.outputs.VERSION_NUMBER }}</versionNumber>|" loader/Mobile-app.xml
                     sed -i "s|<versionLabel>.*</versionLabel>|<versionLabel>${{ steps.version.outputs.VERSION_NUMBER }}</versionLabel>|" loader/Mobile-app.xml
             

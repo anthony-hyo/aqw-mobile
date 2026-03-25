@@ -91,6 +91,7 @@ jobs:
             
             -   name: Build APK (armv8)
                 run: |
+                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>auto</renderMode>|" loader/Mobile-app.xml
                     adt -package \
                       -target apk-captive-runtime \
                       -arch armv8 \
@@ -109,6 +110,54 @@ jobs:
                         icons/android-icon-144x144.png \
                         icons/android-icon-192x192.png \
                         gamefiles/Game.swf
+            
+            -   name: Build APK (armv8-direct)
+                run: |
+                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>direct</renderMode>|" loader/Mobile-app.xml
+                    adt -package \
+                      -target apk-captive-runtime \
+                      -arch armv8 \
+                      -storetype JKS \
+                      -keystore aqwpocket_keystore.jks \
+                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+                      -keypass ${{ secrets.KEY_PASS }} \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-direct.apk \
+                      loader/Mobile-app.xml \
+                      -C loader \
+                        Mobile.swf \
+                        icons/android-icon-36x36.png \
+                        icons/android-icon-48x48.png \
+                        icons/android-icon-72x72.png \
+                        icons/android-icon-96x96.png \
+                        icons/android-icon-144x144.png \
+                        icons/android-icon-192x192.png \
+                        gamefiles/Game.swf
+            
+            -   name: Build APK (armv8-gpu)
+                run: |
+                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>gpu</renderMode>|" loader/Mobile-app.xml
+                    adt -package \
+                      -target apk-captive-runtime \
+                      -arch armv8 \
+                      -storetype JKS \
+                      -keystore aqwpocket_keystore.jks \
+                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+                      -keypass ${{ secrets.KEY_PASS }} \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-gpu.apk \
+                      loader/Mobile-app.xml \
+                      -C loader \
+                        Mobile.swf \
+                        icons/android-icon-36x36.png \
+                        icons/android-icon-48x48.png \
+                        icons/android-icon-72x72.png \
+                        icons/android-icon-96x96.png \
+                        icons/android-icon-144x144.png \
+                        icons/android-icon-192x192.png \
+                        gamefiles/Game.swf
+            
+            -   name: Restore render mode
+                run: |
+                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>auto</renderMode>|" loader/Mobile-app.xml
             
             -   name: Build APK (armv7)
                 run: |
@@ -186,11 +235,18 @@ jobs:
                     prerelease: ${{ github.event.inputs.prerelease }}
                     body: |
                         ## Which APK should I download?
-                        **Most users (recommended):**
-                        - `AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk`
-                          For **modern** Android phones (64-bit). Works for almost everyone.
                         
-                        **Older devices:**
+                        **Modern Android Devices (64-bit armv8):**
+                        - `AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk`  **(Recommended)**
+                          Standard rendering (Auto mode).
+                        
+                        - **_(Testing)_** `AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-direct.apk`
+                          Uses the CPU for complex vector math, but offloads drawing the final image to the GPU.
+                        
+                        - **_(Testing)_** `AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-gpu.apk` 
+                          Legacy GPU rendering. **Not recommended** for this game due to heavy vector animations, but provided as a fallback.
+                        
+                        **Older devices (32-bit):**
                         - `AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk`
                           For **older** 32-bit Android phones.
                         
@@ -200,6 +256,8 @@ jobs:
                           For Chromebooks or devices using Intel/AMD processors.
                     files: |
                         AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-direct.apk
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-gpu.apk
                         AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk
                         AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk
                         AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk

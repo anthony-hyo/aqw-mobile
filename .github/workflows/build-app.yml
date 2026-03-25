@@ -7,6 +7,14 @@ on:
                 description: 'Version prefix (e.g. 1.0.0, 1.1.0, 2.0.0)'
                 required: true
                 default: '2.0.0'
+            prerelease:
+                description: 'Mark as pre-release'
+                required: true
+                default: 'true'
+                type: choice
+                options:
+                    - 'true'
+                    - 'false'
 
 jobs:
     build:
@@ -36,6 +44,7 @@ jobs:
                 run: |
                     echo "VERSION=v${{ github.event.inputs.version_prefix }}" >> $GITHUB_OUTPUT
                     echo "VERSION_NUMBER=${{ github.event.inputs.version_prefix }}" >> $GITHUB_OUTPUT
+                    echo "IS_PRERELEASE=${{ github.event.inputs.prerelease }}" >> $GITHUB_OUTPUT
             
             -   name: Setup Rust
                 uses: dtolnay/rust-toolchain@stable
@@ -80,27 +89,6 @@ jobs:
                     sed -i "s|<versionNumber>.*</versionNumber>|<versionNumber>${{ steps.version.outputs.VERSION_NUMBER }}</versionNumber>|" loader/Mobile-app.xml
                     sed -i "s|<versionLabel>.*</versionLabel>|<versionLabel>${{ steps.version.outputs.VERSION_NUMBER }}</versionLabel>|" loader/Mobile-app.xml
             
-            -   name: Build APK (armv7)
-                run: |
-                    adt -package \
-                      -target apk-captive-runtime \
-                      -arch armv7 \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk \
-                      loader/Mobile-app.xml \
-                      -C loader \
-                        Mobile.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
-                        gamefiles/Game.swf
-            
             -   name: Build APK (armv8)
                 run: |
                     adt -package \
@@ -122,16 +110,16 @@ jobs:
                         icons/android-icon-192x192.png \
                         gamefiles/Game.swf
             
-            -   name: Build APK (x86)
+            -   name: Build APK (armv7)
                 run: |
                     adt -package \
                       -target apk-captive-runtime \
-                      -arch x86 \
+                      -arch armv7 \
                       -storetype JKS \
                       -keystore aqwpocket_keystore.jks \
                       -storepass ${{ secrets.KEYSTORE_PASS }} \
                       -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk \
                       loader/Mobile-app.xml \
                       -C loader \
                         Mobile.swf \
@@ -164,6 +152,27 @@ jobs:
                         icons/android-icon-192x192.png \
                         gamefiles/Game.swf
             
+            -   name: Build APK (x86)
+                run: |
+                    adt -package \
+                      -target apk-captive-runtime \
+                      -arch x86 \
+                      -storetype JKS \
+                      -keystore aqwpocket_keystore.jks \
+                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+                      -keypass ${{ secrets.KEY_PASS }} \
+                      AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk \
+                      loader/Mobile-app.xml \
+                      -C loader \
+                        Mobile.swf \
+                        icons/android-icon-36x36.png \
+                        icons/android-icon-48x48.png \
+                        icons/android-icon-72x72.png \
+                        icons/android-icon-96x96.png \
+                        icons/android-icon-144x144.png \
+                        icons/android-icon-192x192.png \
+                        gamefiles/Game.swf
+            
             -   name: Tag release
                 run: |
                     git tag -f ${{ steps.version.outputs.VERSION }}
@@ -173,10 +182,24 @@ jobs:
                 uses: softprops/action-gh-release@v2
                 with:
                     tag_name: ${{ steps.version.outputs.VERSION }}
-                    name: ${{ steps.version.outputs.VERSION }}
-                    prerelease: false
+                    name: ${{ steps.version.outputs.VERSION }}${{ github.event.inputs.prerelease == 'true' && ' (test)' || '' }}
+                    prerelease: ${{ github.event.inputs.prerelease }}
+                    body: |
+                        ## Which APK should I download?
+                        **Most users (recommended):**
+                        - `AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk`
+                          For **modern** Android phones (64-bit). Works for almost everyone.
+                        
+                        **Older devices:**
+                        - `AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk`
+                          For **older** 32-bit Android phones.
+                        
+                        **ChromeOS / x86 devices:**
+                        - `AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk`
+                        - `AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk`
+                          For Chromebooks or devices using Intel/AMD processors.
                     files: |
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk
                         AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk
                         AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk
+                        AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk

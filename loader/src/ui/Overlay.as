@@ -174,7 +174,7 @@ package ui {
 					0,
 					"Screen Orientation",
 					"Choose how the screen rotates",
-					["Auto", "Portrait", "Left", "Right", "Flipped"],
+					["Landscape", "Portrait", "L. Left", "L. Right", "P. Flipped"],
 					function (option:Toggle):void {
 						const orientations:Array = [
 							StageOrientation.DEFAULT,

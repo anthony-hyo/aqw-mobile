@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn clear_dir(path: &Path) -> Result<(), Box<dyn Error>> {
     if path.exists() {
@@ -12,9 +12,16 @@ pub fn clear_dir(path: &Path) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn get_patches(path: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
-    if path.exists() {
-        copy_dir(path, target)?;
+pub fn merge_patches(name: &str) -> Result<(), Box<dyn Error>> {
+    let src = PathBuf::from(format!("pocket-patches/aqw/{}", name));
+    let dst = PathBuf::from(format!("patches/{}/bytecodes", name));
+
+    if src.exists() {
+        if dst.exists() {
+            fs::remove_dir_all(&dst).unwrap();
+        }
+
+        copy_dir(&src, &dst)?;
     }
 
     Ok(())

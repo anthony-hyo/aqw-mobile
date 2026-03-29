@@ -33,12 +33,6 @@ jobs:
                     token: ${{ secrets.PATCHES_TOKEN }}
                     path: pocket-patches
             
-            -   name: Merge custom
-                run: |
-                    rm -rf patches/game/bytecodes/ && mkdir patches/game/bytecodes/ && cp -r pocket-patches/aqw/game/. patches/game/bytecodes/
-                    rm -rf patches/world-map/bytecodes/ && mkdir patches/world-map/bytecodes/ && cp -r pocket-patches/aqw/world-map/. patches/world-map/bytecodes/
-                    rm -rf patches/book-of-lore/bytecodes/ && mkdir patches/book-of-lore/bytecodes/ && cp -r pocket-patches/aqw/book-of-lore/. patches/book-of-lore/bytecodes/
-            
             -   name: Set version
                 id: version
                 run: |

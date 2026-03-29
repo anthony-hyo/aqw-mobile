@@ -13,6 +13,15 @@ async fn main() {
 
     tracing_subscriber::fmt().with_max_level(log_level).init();
 
+    util::merge_patches("game")
+        .expect("game merge failed");
+    
+    util::merge_patches("world-map")
+        .expect("world-map merge failed");
+    
+    util::merge_patches("book-of-lore")
+        .expect("book-of-lore merge failed");
+
     Patcher::new("game", DownloadFile::Game).build().await;
 
     Patcher::new(

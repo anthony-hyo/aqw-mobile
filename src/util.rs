@@ -20,7 +20,7 @@ pub fn get_patches(path: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn copy_dir(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
+pub fn copy_dir(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(target)?;
 
     for entry in fs::read_dir(source)? {

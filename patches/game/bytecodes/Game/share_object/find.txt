@@ -1,7 +1,0 @@
-     findproperty        QName(PrivateNamespace(null, "Game#0"), "characters")
-     getlex              QName(PackageNamespace("flash.net"), "SharedObject")
-     pushstring          "AQWChars"
-     pushstring          "/"
-     pushtrue
-     callproperty        QName(PackageNamespace(""), "getLocal"), 3
-     initproperty        QName(PrivateNamespace(null, "Game#0"), "characters")

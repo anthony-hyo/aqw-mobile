@@ -1,8 +1,0 @@
-      callpropvoid        QName(PackageNamespace(""), "addEventListener"), 5
-
-      getlocal1
-      getlocal2
-      getlex              QName(PackageNamespace(""), "assetsContext")
-      callpropvoid        QName(PackageNamespace(""), "load"), 2
-
-      returnvoid

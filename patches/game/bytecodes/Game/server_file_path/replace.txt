@@ -1,3 +1,0 @@
-      findproperty        QName(PackageNamespace(""), "serverFilePath")
-      pushstring          "https://game.aq.com/game/gamefiles/"
-      setproperty         QName(PackageNamespace(""), "serverFilePath")

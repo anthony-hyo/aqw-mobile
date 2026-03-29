@@ -1,6 +1,0 @@
-  trait method QName(PackageNamespace(""), "checkInterfaceQueue")
-   method
-    refid "Game/instance/checkInterfaceQueue"
-    returns QName(PackageNamespace(""), "void")
-    body
-     maxstack 6

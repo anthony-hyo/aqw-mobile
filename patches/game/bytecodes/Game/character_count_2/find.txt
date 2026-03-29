@@ -1,9 +1,0 @@
-      kill                4
-      kill                3
-      getlocal1
-      returnvalue
-     end ; code
-    end ; body
-   end ; method
-  end ; trait
-  trait method QName(PackageNamespace(""), "retroLowercase")

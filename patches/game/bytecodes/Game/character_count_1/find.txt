@@ -1,8 +1,0 @@
-      pushundefined
-      coerce_a
-      setlocal2
-
-      getlex              QName(PrivateNamespace(null, "Game#0"), "characters")
-      getproperty         QName(PackageNamespace(""), "data")
-      getproperty         Multiname("users", [PrivateNamespace(null, "Game#0"), PackageNamespace(""), PrivateNamespace(null, "Game#1"), PackageInternalNs(""), Namespace("http://adobe.com/AS3/2006/builtin"), PackageNamespace("flash.text"), PackageNamespace("flash.external"), PackageNamespace("it.gotoandplay.smartfoxserver"), PackageNamespace("liteAssets.draw"), ProtectedNamespace("Game"), StaticProtectedNs("Game"), StaticProtectedNs("flash.display:MovieClip"), StaticProtectedNs("flash.display:Sprite"), StaticProtectedNs("flash.display:DisplayObjectContainer"), StaticProtectedNs("flash.display:InteractiveObject"), StaticProtectedNs("flash.display:DisplayObject"), StaticProtectedNs("flash.events:EventDispatcher")])
-      iftrue              L24

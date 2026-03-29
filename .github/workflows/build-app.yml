@@ -35,9 +35,9 @@ jobs:
             
             -   name: Merge custom
                 run: |
-                    if [ -d "pocket-patches/aqw" ] && [ "$(ls -A pocket-patches/aqw)" ]; then
-                      cp -r pocket-patches/aqw/. patches/
-                    fi
+                    rm -rf patches/game/bytecodes/ && mkdir patches/game/bytecodes/ && cp -r pocket-patches/aqw/game/. patches/game/bytecodes/
+                    rm -rf patches/world-map/bytecodes/ && mkdir patches/world-map/bytecodes/ && cp -r pocket-patches/aqw/world-map/. patches/world-map/bytecodes/
+                    rm -rf patches/book-of-lore/bytecodes/ && mkdir patches/book-of-lore/bytecodes/ && cp -r pocket-patches/aqw/book-of-lore/. patches/book-of-lore/bytecodes/
             
             -   name: Set version
                 id: version

@@ -1,3 +1,0 @@
-     findproperty        QName(PrivateNamespace(null, "Game#0"), "characters")
-     pushnull
-     initproperty        QName(PrivateNamespace(null, "Game#0"), "characters")

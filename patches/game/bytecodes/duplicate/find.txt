@@ -1,3 +1,0 @@
- #include "itEProto#1.script.asasm"
- #include "itProto#1.script.asasm"
- #include "itCProto#1.script.asasm"

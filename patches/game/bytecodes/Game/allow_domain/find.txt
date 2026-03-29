@@ -1,7 +1,0 @@
-     callpropvoid        QName(PackageNamespace(""), "addFrameScript"), 12
-
-     getlex              QName(PackageNamespace("flash.system"), "Security")
-     pushstring          "*.aq.com"
-     callpropvoid        QName(PackageNamespace(""), "allowDomain"), 1
-
-     getlocal0

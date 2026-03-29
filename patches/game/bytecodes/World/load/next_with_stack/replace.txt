@@ -1,8 +1,0 @@
-  trait method QName(PrivateNamespace(null, "World/instance#0"), "loadNextWith")
-   method
-    refid "World/instance/World/instance/loadNextWith"
-    param QName(PackageNamespace(""), "Object")
-    param QName(PackageNamespace(""), "Object")
-    returns QName(PackageNamespace(""), "void")
-    body
-     maxstack 5

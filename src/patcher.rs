@@ -32,14 +32,6 @@ impl Patcher {
     pub async fn build(&mut self) {
         tracing::info!("[{}] Starting build", self.name);
 
-        match util::clear_dir(&*self.get_bytecode_final_path()) {
-            Ok(()) => tracing::info!("[{}] Cleared final directory", self.name),
-            Err(e) => {
-                tracing::error!("[{}] Failed to clear final directory: {}", self.name, e);
-                return;
-            }
-        }
-
         match util::clear_dir(&*self.get_build_path()) {
             Ok(()) => tracing::info!("[{}] Cleared build directory", self.name),
             Err(e) => {
@@ -64,15 +56,7 @@ impl Patcher {
             }
         }
 
-        match self.get_patches() {
-            Ok(()) => tracing::info!("[{}] Patches initialed", self.name),
-            Err(e) => {
-                tracing::error!("[{}] Failed to init patches: {}", self.name, e);
-                return;
-            }
-        }
-
-        match self.load_patch(&self.get_bytecode_final_path()) {
+        match self.load_patch(&self.get_bytecode_path()) {
             Ok(()) => tracing::info!("[{}] Patches loaded", self.name),
             Err(e) => {
                 tracing::error!("[{}] Failed to load patch: {}", self.name, e);
@@ -119,10 +103,6 @@ impl Patcher {
         format!("patches/{}/bytecodes", self.name)
     }
 
-    fn get_bytecodes_final_path_string(&self) -> String {
-        format!("patches/{}/final", self.name)
-    }
-
     fn get_build_path(&self) -> PathBuf {
         PathBuf::from(self.get_build_path_string())
     }
@@ -141,10 +121,6 @@ impl Patcher {
 
     fn get_bytecode_path(&self) -> PathBuf {
         PathBuf::from(self.get_bytecodes_path_string())
-    }
-
-    fn get_bytecode_final_path(&self) -> PathBuf {
-        PathBuf::from(self.get_bytecodes_final_path_string())
     }
 
     async fn download(&self) -> Result<(), Box<dyn Error>> {
@@ -208,28 +184,6 @@ impl Patcher {
             .status()?;
 
         tracing::info!("[{}] rabcdasm exited with {}", self.name, output);
-
-        Ok(())
-    }
-
-    fn get_patches(&self) -> Result<(), Box<dyn Error>> {
-        let get_bytecode_path = self.get_bytecode_path();
-
-        if get_bytecode_path.exists() {
-            tracing::info!(
-                "[{}] Copying bytecodes {} -> {}",
-                self.name,
-                self.get_bytecodes_path_string(),
-                self.get_bytecodes_final_path_string()
-            );
-
-            util::copy_dir(&*get_bytecode_path, &*self.get_bytecode_final_path())?;
-        } else {
-            tracing::warn!(
-                "[{}] No bytecodes directory found, skipping patch copy",
-                self.name
-            );
-        }
 
         Ok(())
     }

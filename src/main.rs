@@ -26,14 +26,14 @@ async fn main() {
 
     Patcher::new(
         "world-map",
-        DownloadFile::Direct("https://game.aq.com/game/gamefiles/title/Generic2.swf".into()),
+        DownloadFile::Direct("https://game.aq.com/game/gamefiles/news/Map-UI_r38.swf".into()),
     )
     .build()
     .await;
 
     Patcher::new(
         "book-of-lore",
-        DownloadFile::Direct("https://game.aq.com/game/gamefiles/title/Generic2.swf".into()),
+        DownloadFile::Direct("https://game.aq.com/game/gamefiles/news/spiderbook3.swf".into()),
     )
     .build()
     .await;

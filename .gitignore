@@ -1,8 +1,16 @@
+# Build output
 /target
-/assets
-.vscode/settings.json
-*.fla
-/loader/gamefiles/
-/pocket-patches/
-/patches-final/
+
+# IDE
 /.idea/
+/.vscode/settings.json
+
+# Assets
+*.fla
+/patches/*/build/*
+
+# Generated / runtime files
+/loader/gamefiles/
+/patches-final/
+/pocket-patches/
+/patches/*/final/*

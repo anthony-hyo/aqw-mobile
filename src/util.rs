@@ -7,7 +7,7 @@ pub fn clear_dir(path: &Path) -> Result<(), Box<dyn Error>> {
         fs::remove_dir_all(path)?;
     }
 
-    fs::create_dir(path)?;
+    fs::create_dir_all(path)?;
 
     Ok(())
 }
@@ -47,7 +47,7 @@ pub fn copy_dir(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
 
 pub fn copy_files(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
     if !source.exists() {
-        fs::remove_file(source)?;
+        return Ok(());
     }
 
     for entry in fs::read_dir(source)? {

@@ -18,7 +18,7 @@ pub fn merge_patches(name: &str) -> Result<(), Box<dyn Error>> {
 
     if src.exists() {
         if dst.exists() {
-            fs::remove_dir_all(&dst).unwrap();
+            fs::remove_dir_all(&dst)?;
         }
 
         copy_dir(&src, &dst)?;

@@ -78,6 +78,14 @@ impl Patcher {
             }
         }
 
+        match util::copy_files(&self.get_bytecode_path(), &self.get_build_rabcdasm_path()) {
+            Ok(()) => tracing::info!("[{}] Patches copied", self.name),
+            Err(e) => {
+                tracing::error!("[{}] Failed to copy patches: {}", self.name, e);
+                return;
+            }
+        }
+
         self.start().expect("Build failed.");
 
         tracing::info!("[{}] Build complete", self.name);

@@ -47,7 +47,7 @@ pub fn copy_dir(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
 
 pub fn copy_files(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
     if !source.exists() {
-        return Ok(());
+        fs::remove_file(source)?;
     }
 
     for entry in fs::read_dir(source)? {

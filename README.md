@@ -7,77 +7,46 @@
 
 ### Join our Discord [discord.gg/EXS5qM35ff](https://discord.gg/EXS5qM35ff)
 
-AdventureQuest Worlds still runs on Flash. Mobile players have no official option, Puffin works but costs money. AQW Pocket is a free, community-built alternative that runs the game natively on Android.
+AdventureQuest Worlds Mobile, AQW Pocket is a free, community-built alternative that runs the game natively on Android.
 
 > **Disclaimer:** This is an unofficial community project, not affiliated with or endorsed by Artix Entertainment. AdventureQuest Worlds and all related assets are the property of Artix Entertainment. Use at your own risk.
 
 ---
 
-## How It Works
+## Download
 
-1. The build process always uses the latest game client.
-2. A set of patches are applied to the ActionScript bytecode to make the client compatible with mobile/AIR constraints.
-3. A lightweight ActionScript loader wraps the patched game and handles initialization.
-4. Everything is packaged into an Android APK using the Adobe AIR SDK. The entire build process runs openly on GitHub Actions, what you see in the code is exactly what gets built.
+Grab the latest APK from the [Releases](../../releases/latest) tab.
+Pick **armv8** for anything recent (2017+) or **armv7** for older devices.
 
-**The build also pulls from a private patch repository. These are additional compatibility patches kept private to prevent abuse. The core logic remains fully open here.**
+**Only download from this repository. APKs from other sources may be modified.**
 
 ## Features
 
-- Native Android client via Adobe AIR
-- **Joystick** and **combat buttons**, reposition, reset, or hide via the top left menu
+- **Joystick**, **skills bar** and **UI**, reposition, reset, or hide via the top left menu
 - In-game update notifications, checks GitHub for new releases automatically
 
 <img width="500" height="auto" alt="image" src="https://github.com/user-attachments/assets/65fe7ec8-d406-44d7-abc8-018cc6399deb" />
 
-## Download
+## How It Works
 
-Grab the latest APK from the [Releases](../../releases/latest) tab.
-Pick **armv7** for older devices or **armv8** for anything recent (2017+).
+- The build process always uses the latest game client.
+- A set of patches are applied to the ActionScript bytecode to make the client compatible with mobile/AIR constraints.
+- An ActionScript loader wraps the patched game and handles initialization.
+- Everything is packaged into an Android APK using the Adobe AIR SDK. The entire build process runs openly on GitHub Actions, what you see in the code is exactly what gets built.
+- Private patches are included to prevent abuse (e.g., botting) but are fully audited in the compiled SWF.
+- - Users can audit the SWF to:
+- - - Review game logic
+- - - Verify input handling
+- - - Ensure no malicious code is present
 
-**Only download from this repository. APKs from other sources may be modified.**
+**⚠️ While the SWF is readable, we still recommend using a secondary account if you are cautious. Only download APKs from official GitHub releases or build from source.**
 
----
-
-## Building
-
-### Requirements
-
-- [Rust](https://www.rust-lang.org/tools/install)
-- [D compiler (DMD)](https://dlang.org/download.html)
-- [RABCDAsm](https://github.com/CyberShadow/RABCDAsm)
-- [Adobe AIR SDK](https://airsdk.harman.com/) (51.1+)
-- Java (for `keytool` / `adt`)
-
-### Steps
-
-```bash
-# Clone the repo
-git clone https://github.com/anthony-hyo/aqw-mobile.git
-cd aqw-mobile
-
-# Build and patch Game.swf
-cargo run --release
-
-# Copy patched game into loader
-cp assets/Game.swf loader/gamefiles/Game.swf
-
-# Compile the loader
-amxmlc -output loader/Loader.swf loader/src/Main.as
-
-# Generate a keystore (first time only)
-keytool -genkeypair -alias myalias -keyalg RSA -keysize 2048 -validity 10000 \
-  -keystore keystore.jks -storepass yourpass -keypass yourpass \
-  -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=US"
-
-# Package the APK
-adt -package -target apk-captive-runtime -arch armv8 \
-  -storetype JKS -keystore keystore.jks -storepass yourpass -keypass yourpass \
-  AQWPocket.apk loader/app.xml \
-  -C loader Loader.swf gamefiles/Game.swf
-```
-
-Or trigger it manually from the [Actions](../../actions) tab, the APK will be published to the [Releases](../../releases/latest) page automatically.
+## Security & Account Safety
+- Login occurs directly with Artix Entertainment servers, passwords are not stored by the client.
+- The client does not include cheats or automation.
+- Use a secondary account first if you are concerned about safety.
+- Only download APKs from this repository or build from source.
+- Avoid reusing passwords from other accounts.
 
 ---
 

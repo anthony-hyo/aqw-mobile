@@ -103,7 +103,7 @@ jobs:
                         icons/android-icon-96x96.png \
                         icons/android-icon-144x144.png \
                         icons/android-icon-192x192.png \
-                        gamefiles/Game.swf
+                        gamefiles/game.swf
             
             -   name: Build APK (armv8-direct)
                 run: |
@@ -125,7 +125,7 @@ jobs:
                         icons/android-icon-96x96.png \
                         icons/android-icon-144x144.png \
                         icons/android-icon-192x192.png \
-                        gamefiles/Game.swf
+                        gamefiles/game.swf
             
             -   name: Build APK (armv8-gpu)
                 run: |
@@ -147,7 +147,7 @@ jobs:
                         icons/android-icon-96x96.png \
                         icons/android-icon-144x144.png \
                         icons/android-icon-192x192.png \
-                        gamefiles/Game.swf
+                        gamefiles/game.swf
             
             -   name: Restore render mode
                 run: |
@@ -172,7 +172,7 @@ jobs:
                         icons/android-icon-96x96.png \
                         icons/android-icon-144x144.png \
                         icons/android-icon-192x192.png \
-                        gamefiles/Game.swf
+                        gamefiles/game.swf
             
             -   name: Build APK (x64)
                 run: |
@@ -193,7 +193,7 @@ jobs:
                         icons/android-icon-96x96.png \
                         icons/android-icon-144x144.png \
                         icons/android-icon-192x192.png \
-                        gamefiles/Game.swf
+                        gamefiles/game.swf
             
             -   name: Build APK (x86)
                 run: |
@@ -214,7 +214,7 @@ jobs:
                         icons/android-icon-96x96.png \
                         icons/android-icon-144x144.png \
                         icons/android-icon-192x192.png \
-                        gamefiles/Game.swf
+                        gamefiles/game.swf
             
             -   name: Tag release
                 run: |

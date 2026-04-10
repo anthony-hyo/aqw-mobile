@@ -199,6 +199,11 @@ impl Patcher {
     fn load_patch(&mut self, path: &Path) -> Result<(), Box<dyn Error>> {
         tracing::info!("[{}] Loading patches from {:?}", self.name, path);
 
+        if !path.exists() {
+            tracing::warn!("[{}] No bytecodes directory found, skipping patches", self.name);
+            return Ok(());
+        }
+
         for file in fs::read_dir(path)? {
             let file = file?;
 

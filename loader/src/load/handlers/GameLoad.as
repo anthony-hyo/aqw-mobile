@@ -19,11 +19,11 @@ package load.handlers {
 		}
 
 		override public function start():void {
-			this.pocket.overlay.debug.log("Loading game: " + Config.GAME_SWF_PATH);
+			this.pocket.overlay.debug.log("Loading game");
 
 			this.pocket.loadingTxt.text = "Loading Game...";
 
-			this.url = Config.GAME_SWF_PATH;
+			this.url = "app:/gamefiles/game.swf";
 
 			super.start();
 		}

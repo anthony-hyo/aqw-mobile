@@ -11,9 +11,14 @@ package ui.option {
 			this.onChange = onChange;
 			this.onFrameChange = onFrameChange;
 			this.onOverlayStateChange = onOverlayStateChange;
-
-			this.nameTxt.text = name;
-			this.infoTxt.text = info;
+			
+			if (name != null) {
+				this.nameTxt.text = name;
+			}
+			
+			if (info != null) {
+				this.infoTxt.text = info;
+			}
 		}
 
 		public var nameTxt:TextField;

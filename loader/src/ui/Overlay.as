@@ -11,6 +11,7 @@ package ui {
 
 	import ui.option.Button;
 	import ui.option.Check;
+	import ui.option.Divide;
 	import ui.option.Option;
 	import ui.option.Toggle;
 	import ui.util.Scroll;
@@ -120,6 +121,7 @@ package ui {
 						gameUI.showSkillBar();
 					}
 				),
+				new Divide(),
 				new Button(
 					null,
 					"Edit Layout",
@@ -174,7 +176,7 @@ package ui {
 					0,
 					"Screen Orientation",
 					"Choose how the screen rotates",
-					["Landscape", "Portrait", "L. Left", "L. Right", "P. Flipped"],
+					["Landscape", "Portrait", "Landscape Left", "Landscape Right", "Portrait Flipped"],
 					function (option:Toggle):void {
 						const orientations:Array = [
 							StageOrientation.DEFAULT,
@@ -216,6 +218,7 @@ package ui {
 						}
 					}
 				),
+				new Divide(),
 				new Check(
 					null,
 					false,
@@ -248,13 +251,19 @@ package ui {
 		}
 
 		private function panelFrame():void {
+			this.visible = false;
+
 			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
+			
+			var heightTotal: uint = 0;
 
 			for each (var option:Option in options) {
 				this.content.addChild(option);
-
+				
 				option.x = 3.75;
-				option.y = (option.height + 2) * (this.content.numChildren - 1);
+				option.y = heightTotal + 2;
+
+				heightTotal += option.height;
 
 				if (option.onOverlayStateChange != null) {
 					option.onOverlayStateChange("Panel");
@@ -266,6 +275,8 @@ package ui {
 				this.content,
 				this.contentMask
 			);
+
+			this.visible = true;
 
 			stop();
 		}

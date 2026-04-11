@@ -7,13 +7,13 @@ package ui {
 	import flash.display.StageAspectRatio;
 	import flash.display.StageOrientation;
 	import flash.events.MouseEvent;
-	import flash.filters.ColorMatrixFilter;
 
 	import ui.option.Button;
 	import ui.option.Check;
 	import ui.option.Divide;
 	import ui.option.Option;
 	import ui.option.Toggle;
+	import ui.util.Helper;
 	import ui.util.Scroll;
 
 	import util.HelperScroll;
@@ -48,196 +48,209 @@ package ui {
 
 		private var pocket:Pocket;
 
-		public var options:Vector.<Option>;
+		public var options:Vector.<Option> = new <Option> [
+			new Check(
+				HelperSetting.OPTION_SHOW_JOYSTICK,
+				true,
+				"Show Joystick",
+				"Display joystick on screen",
+				function (option:Check):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						return;
+					}
 
-		private static const GRAYSCALE:ColorMatrixFilter = new ColorMatrixFilter([
-			0.3, 0.59, 0.11, 0, 0,
-			0.3, 0.59, 0.11, 0, 0,
-			0.3, 0.59, 0.11, 0, 0,
-			0, 0, 0, 1, 0
-		]);
+					if (option.state) {
+						pocket.overlay.gameUI.showJoystick();
+						return;
+					}
+
+					pocket.overlay.gameUI.hideJoystick();
+				},
+				function (frame:String):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK)) {
+						return;
+					}
+
+					if (frame != "Game") {
+						pocket.overlay.gameUI.hideJoystick();
+						return;
+					}
+
+					pocket.overlay.gameUI.showJoystick();
+				}
+			),
+			new Check(
+				HelperSetting.OPTION_SHOW_SKILL_BAR,
+				true,
+				"Show Skill Bar",
+				"Display skill bar on screen",
+				function (option:Check):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						return;
+					}
+
+					if (option.state) {
+						pocket.overlay.gameUI.showSkillBar();
+						return;
+					}
+
+					pocket.overlay.gameUI.hideSkillBar();
+				},
+				function (frame:String):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_SKILL_BAR)) {
+						return;
+					}
+
+					if (frame != "Game") {
+						pocket.overlay.gameUI.hideSkillBar();
+						return;
+					}
+
+					pocket.overlay.gameUI.showSkillBar();
+				}
+			),
+			new Divide(),
+			new Button(
+				null,
+				"Edit Layout",
+				"Drag to reposition UI elements",
+				"Edit",
+				function (option:Button):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
+						}
+						return;
+					}
+
+					pocket.worldCore.setWorldFilters([
+						Helper.GRAYSCALE
+					]);
+
+					pocket.overlay.onHidePanel(null);
+
+					pocket.overlay.gameUI.showEditLayout();
+				},
+				function (frame:String):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					pocket.overlay.gameUI.hideEditLayout();
+
+					pocket.worldCore.setWorldFilters([]);
+				},
+				function (frame:String):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					if (frame !== "Panel") {
+						return;
+					}
+
+					pocket.worldCore.setWorldFilters([]);
+
+					pocket.overlay.gameUI.hideEditLayout();
+				}
+			),
+			new Button(
+				null,
+				"Reset Layout",
+				"Restore default positions",
+				"Reset",
+				function (option:Button):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (pocket.game) {
+						pocket.game.MsgBox.notify("Layout successfully restored.");
+					}
+
+					pocket.overlay.gameUI.resetLayout();
+				}
+			),
+			new Toggle(
+				HelperSetting.OPTION_LOCK_ORIENTATION,
+				0,
+				"Screen Orientation",
+				"Choose how the screen rotates",
+				["Landscape", "Portrait", "Landscape Left", "Landscape Right", "Portrait Flipped"],
+				function (option:Toggle):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					const orientations:Array = [
+						StageOrientation.DEFAULT,
+						StageOrientation.DEFAULT,
+						StageOrientation.ROTATED_LEFT,
+						StageOrientation.ROTATED_RIGHT,
+						StageOrientation.UPSIDE_DOWN
+					];
+
+					if (option.getIndex() == 0) {
+						stage.autoOrients = true;
+						stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
+						return;
+					}
+
+					stage.autoOrients = false;
+					stage.setAspectRatio(StageAspectRatio.ANY);
+					stage.setOrientation(orientations[option.getIndex()]);
+				},
+				null,
+				function (frame:String):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					const orientations:Array = [
+						StageOrientation.DEFAULT,
+						StageOrientation.DEFAULT,
+						StageOrientation.ROTATED_LEFT,
+						StageOrientation.ROTATED_RIGHT,
+						StageOrientation.UPSIDE_DOWN
+					];
+
+					const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION);
+
+					if (savedIndex == 0) {
+						stage.autoOrients = true;
+						stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
+					} else {
+						stage.autoOrients = false;
+						stage.setAspectRatio(StageAspectRatio.ANY);
+						stage.setOrientation(orientations[savedIndex]);
+					}
+				}
+			),
+			new Divide(),
+			new Check(
+				null,
+				false,
+				"Show Debug",
+				"Display debug on screen",
+				function (option:Check):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (option.state) {
+						if (pocket.overlay.debug.parent == null) {
+							pocket.overlay.addChild(pocket.overlay.debug);
+						}
+						return;
+					}
+
+					if (pocket.overlay.debug.parent && contains(pocket.overlay.debug)) {
+						pocket.overlay.removeChild(pocket.overlay.debug);
+					}
+				}
+			)
+		];
 
 		private function initFrame():void {
 			this.showPanelBtn.addEventListener(MouseEvent.CLICK, onShowPanel);
-
-			this.options = new <Option> [
-				new Check(
-					HelperSetting.OPTION_SHOW_JOYSTICK,
-					true,
-					"Show Joystick",
-					"Display joystick on screen",
-					function (option:Check):void {
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-							return;
-						}
-
-						if (option.state) {
-							gameUI.showJoystick();
-							return;
-						}
-
-						gameUI.hideJoystick();
-					},
-					function (frame:String):void {
-						if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK)) {
-							return;
-						}
-
-						if (frame != "Game") {
-							gameUI.hideJoystick();
-							return;
-						}
-
-						gameUI.showJoystick();
-					}
-				),
-				new Check(
-					HelperSetting.OPTION_SHOW_SKILL_BAR,
-					true,
-					"Show Skill Bar",
-					"Display skill bar on screen",
-					function (option:Check):void {
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-							return;
-						}
-
-						if (option.state) {
-							gameUI.showSkillBar();
-							return;
-						}
-
-						gameUI.hideSkillBar();
-					},
-					function (frame:String):void {
-						if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_SKILL_BAR)) {
-							return;
-						}
-
-						if (frame != "Game") {
-							gameUI.hideSkillBar();
-							return;
-						}
-
-						gameUI.showSkillBar();
-					}
-				),
-				new Divide(),
-				new Button(
-					null,
-					"Edit Layout",
-					"Drag to reposition UI elements",
-					"Edit",
-					function (option:Button):void {
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-							if (pocket.game) {
-								pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
-							}
-							return;
-						}
-
-						setWorldFilters([
-							GRAYSCALE
-						]);
-
-						onHidePanel(null);
-
-						gameUI.showEditLayout();
-					},
-					function (frame:String):void {
-						gameUI.hideEditLayout();
-
-						setWorldFilters([]);
-					},
-					function (frame:String):void {
-						if (frame !== "Panel") {
-							return;
-						}
-
-						setWorldFilters([]);
-
-						gameUI.hideEditLayout();
-					}
-				),
-				new Button(
-					null,
-					"Reset Layout",
-					"Restore default positions",
-					"Reset",
-					function (option:Button):void {
-						if (pocket.game) {
-							pocket.game.MsgBox.notify("Layout successfully restored.");
-						}
-
-						gameUI.resetLayout();
-					}
-				),
-				new Toggle(
-					HelperSetting.OPTION_LOCK_ORIENTATION,
-					0,
-					"Screen Orientation",
-					"Choose how the screen rotates",
-					["Landscape", "Portrait", "Landscape Left", "Landscape Right", "Portrait Flipped"],
-					function (option:Toggle):void {
-						const orientations:Array = [
-							StageOrientation.DEFAULT,
-							StageOrientation.DEFAULT,
-							StageOrientation.ROTATED_LEFT,
-							StageOrientation.ROTATED_RIGHT,
-							StageOrientation.UPSIDE_DOWN
-						];
-
-						if (option.getIndex() == 0) {
-							stage.autoOrients = true;
-							stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
-							return;
-						}
-
-						stage.autoOrients = false;
-						stage.setAspectRatio(StageAspectRatio.ANY);
-						stage.setOrientation(orientations[option.getIndex()]);
-					},
-					null,
-					function (frame:String):void {
-						const orientations:Array = [
-							StageOrientation.DEFAULT,
-							StageOrientation.DEFAULT,
-							StageOrientation.ROTATED_LEFT,
-							StageOrientation.ROTATED_RIGHT,
-							StageOrientation.UPSIDE_DOWN
-						];
-
-						const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION);
-
-						if (savedIndex == 0) {
-							stage.autoOrients = true;
-							stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
-						} else {
-							stage.autoOrients = false;
-							stage.setAspectRatio(StageAspectRatio.ANY);
-							stage.setOrientation(orientations[savedIndex]);
-						}
-					}
-				),
-				new Divide(),
-				new Check(
-					null,
-					false,
-					"Show Debug",
-					"Display debug on screen",
-					function (option:Check):void {
-						if (option.state) {
-							if (debug.parent == null) {
-								addChild(debug);
-							}
-							return;
-						}
-
-						if (debug.parent && contains(debug)) {
-							removeChild(debug);
-						}
-					}
-				)
-			];
 
 			for each (var option:Option in options) {
 				if (option.onOverlayStateChange != null) {
@@ -299,13 +312,6 @@ package ui {
 			}
 
 			notification.y = index * (notification.height + 10);
-		}
-
-		private function setWorldFilters(filters:Array):void {
-			if (this.pocket.game.world) {
-				this.pocket.game.world.map.filters = filters;
-				this.pocket.game.world.CHARS.filters = filters;
-			}
 		}
 
 		public function setOverlayButtonTransform():void {

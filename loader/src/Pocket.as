@@ -24,6 +24,12 @@
 
 	public class Pocket extends Sprite {
 
+		private static var _SINGLETON:Pocket;
+
+		public static function get SINGLETON():Pocket {
+			return _SINGLETON;
+		}
+
 		MovieClip.prototype.removeAllChildren = function ():void {
 			var i:int = this.numChildren - 1;
 
@@ -35,7 +41,7 @@
 
 		public function Pocket() {
 			NativeApplication.nativeApplication.systemIdleMode = SystemIdleMode.KEEP_AWAKE;
-			
+
 			stage.color = 0x000000;
 
 			this.versionTxt.text = "Version " + Config.APP_VERSION;
@@ -43,6 +49,8 @@
 			this.overlay.debug.log("Init");
 
 			check();
+
+			_SINGLETON = this;
 		}
 
 		public var loadingTxt:TextField;

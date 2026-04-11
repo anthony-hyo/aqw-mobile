@@ -96,7 +96,7 @@ package ui.controller {
 			handle.x = widgetEntry.target.x;
 			handle.y = widgetEntry.target.y;
 
-			parent.addChild(handle);
+			parent.addChild(handle); // null error when hide joystick
 
 			handle.drag.addEventListener(MouseEvent.MOUSE_DOWN, onHandleDown, false, 0, true);
 			handle.up.addEventListener(MouseEvent.CLICK, onResizeUp, false, 0, true);

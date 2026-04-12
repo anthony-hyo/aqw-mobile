@@ -7,6 +7,7 @@ on:
                 description: 'Version prefix (e.g. 1.0.0, 1.1.0, 2.0.0)'
                 required: true
                 default: '2.0.0'
+                
             prerelease:
                 description: 'Mark as pre-release'
                 required: true
@@ -17,11 +18,16 @@ on:
                     - 'false'
 
 jobs:
-    build:
+    patch:
         runs-on: ubuntu-latest
+        
         permissions:
             contents: write
-        
+            
+        outputs:
+            VERSION: ${{ steps.version.outputs.VERSION }}
+            VERSION_NUMBER: ${{ steps.version.outputs.VERSION_NUMBER }}
+            
         steps:
             -   name: Checkout
                 uses: actions/checkout@v4
@@ -73,7 +79,7 @@ jobs:
                 with:
                     air-version: "51.3"
                     accept-license: yes
-                    
+            
             -   name: Keystore
                 run: |
                     echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > aqwpocket_keystore.jks
@@ -82,18 +88,66 @@ jobs:
                 run: |
                     sed -i "s|<versionNumber>.*</versionNumber>|<versionNumber>${{ steps.version.outputs.VERSION_NUMBER }}</versionNumber>|" loader/Mobile-app.xml
                     sed -i "s|<versionLabel>.*</versionLabel>|<versionLabel>${{ steps.version.outputs.VERSION_NUMBER }}</versionLabel>|" loader/Mobile-app.xml
+        
+            - name: Upload patched files
+              uses: actions/upload-artifact@v4
+              with:
+                  name: patched-files
+                  path: |
+                      loader/
+                      aqwpocket_keystore.jks
+    
+    build-android:
+        needs: patch
+        runs-on: ubuntu-latest
+        
+        permissions:
+            contents: write
             
-            -   name: Build APK (armv8)
+        strategy:
+            matrix:
+                include:
+                    -   architecture: "armv8"
+                        render-mode: "auto"
+                        apk-prefix: ""
+                    
+                    -   architecture: "armv8"
+                        render-mode: "direct"
+                        apk-prefix: "-direct"
+                    
+                    -   architecture: "armv8"
+                        render-mode: "gpu"
+                        apk-prefix: "-gpu"
+                    
+                    -   architecture: "armv7"
+                        render-mode: "auto"
+                        apk-prefix: ""
+                    
+                    -   architecture: "x64"
+                        render-mode: "auto"
+                        apk-prefix: ""
+                    
+                    -   architecture: "x86"
+                        render-mode: "auto"
+                        apk-prefix: ""
+        
+        steps:
+            -   name: Download patched files
+                uses: actions/download-artifact@v4
+                with:
+                    name: patched-files
+            
+            -   name: Build APK
                 run: |
-                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>auto</renderMode>|" loader/Mobile-app.xml
+                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>${{ matrix.render-mode }}</renderMode>|" loader/Mobile-app.xml
                     adt -package \
                       -target apk-captive-runtime \
-                      -arch armv8 \
+                      -arch ${{ matrix.architecture }} \
                       -storetype JKS \
                       -keystore aqwpocket_keystore.jks \
                       -storepass ${{ secrets.KEYSTORE_PASS }} \
                       -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk \
+                      AQWPocket-${{ needs.patch.outputs.VERSION }}-${{ matrix.architecture }}${{ matrix.apk-prefix }}.apk \
                       loader/Mobile-app.xml \
                       -C loader \
                         Mobile.swf \
@@ -106,133 +160,26 @@ jobs:
                         gamefiles/game.swf \
                         gamefiles/world-map.swf \
                         gamefiles/book-of-lore.swf
-            
-            -   name: Build APK (armv8-direct)
-                run: |
-                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>direct</renderMode>|" loader/Mobile-app.xml
-                    adt -package \
-                      -target apk-captive-runtime \
-                      -arch armv8 \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-direct.apk \
-                      loader/Mobile-app.xml \
-                      -C loader \
-                        Mobile.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
-                        gamefiles/game.swf \
-                        gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Build APK (armv8-gpu)
-                run: |
-                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>gpu</renderMode>|" loader/Mobile-app.xml
-                    adt -package \
-                      -target apk-captive-runtime \
-                      -arch armv8 \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-gpu.apk \
-                      loader/Mobile-app.xml \
-                      -C loader \
-                        Mobile.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
-                        gamefiles/game.swf \
-                        gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Restore render mode
-                run: |
-                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>auto</renderMode>|" loader/Mobile-app.xml
-            
-            -   name: Build APK (armv7)
-                run: |
-                    adt -package \
-                      -target apk-captive-runtime \
-                      -arch armv7 \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk \
-                      loader/Mobile-app.xml \
-                      -C loader \
-                        Mobile.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
-                        gamefiles/game.swf \
-                        gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Build APK (x64)
-                run: |
-                    adt -package \
-                      -target apk-captive-runtime \
-                      -arch x64 \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk \
-                      loader/Mobile-app.xml \
-                      -C loader \
-                        Mobile.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
-                        gamefiles/game.swf \
-                        gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Build APK (x86)
-                run: |
-                    adt -package \
-                      -target apk-captive-runtime \
-                      -arch x86 \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk \
-                      loader/Mobile-app.xml \
-                      -C loader \
-                        Mobile.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
-                        gamefiles/game.swf \
-                        gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Tag release
-                run: |
-                    git tag -f ${{ steps.version.outputs.VERSION }}
-                    git push origin ${{ steps.version.outputs.VERSION }} --force
-            
+
+            -   name: Upload
+                uses: actions/upload-artifact@v4
+                with:
+                    name: build-${{ matrix.architecture }}${{ matrix.apk-prefix || 'auto' }}
+                    path: "*.apk"
+    publish:
+        needs: patch
+        runs-on: ubuntu-latest
+        
+        permissions:
+            contents: write
+        
+        steps:
+            - name: Download builds
+              uses: actions/download-artifact@v4
+              with:
+                  pattern: build-*
+                  merge-multiple: true
+
             -   name: Release
                 uses: softprops/action-gh-release@v2
                 with:
@@ -260,10 +207,4 @@ jobs:
                         - `AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk`
                         - `AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk`
                           For Chromebooks or devices using Intel/AMD processors.
-                    files: |
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv8.apk
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-direct.apk
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv8-gpu.apk
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-armv7.apk
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-x64.apk
-                        AQWPocket-${{ steps.version.outputs.VERSION }}-x86.apk
+                    files: "*.apk"

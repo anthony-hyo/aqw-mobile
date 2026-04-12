@@ -203,8 +203,8 @@ jobs:
                       -replace '<renderMode>.*</renderMode>', '<renderMode>${{ matrix.render-mode }}</renderMode>' `
                       | Set-Content loader/Desktop-app.xml
                     adt -package `
-                      -storetype PKCS12 \
-                      -keystore aqwpocket_keystore.p12 \
+                      -storetype PKCS12 `
+                      -keystore aqwpocket_keystore.p12 `
                       -storepass ${{ secrets.KEYSTORE_PASS }} `
                       -keypass ${{ secrets.KEY_PASS }} `
                       -target bundle `
@@ -213,10 +213,13 @@ jobs:
                       loader/Desktop-app.xml `
                       -C loader `
                         Desktop.swf `
+                        icons/icon-16x16.png `
+                        icons/icon-32x32.png `
                         icons/icon-36x36.png `
                         icons/icon-48x48.png `
                         icons/icon-72x72.png `
                         icons/icon-96x96.png `
+                        icons/icon-128x128.png `
                         icons/icon-144x144.png `
                         icons/icon-192x192.png `
                         gamefiles/game.swf `
@@ -272,10 +275,13 @@ jobs:
                       loader/Desktop-app.xml \
                       -C loader \
                         Desktop.swf \
+                        icons/icon-16x16.png \
+                        icons/icon-32x32.png \
                         icons/icon-36x36.png \
                         icons/icon-48x48.png \
                         icons/icon-72x72.png \
                         icons/icon-96x96.png \
+                        icons/icon-128x128.png \
                         icons/icon-144x144.png \
                         icons/icon-192x192.png \
                         gamefiles/game.swf \
@@ -331,10 +337,13 @@ jobs:
                       loader/Desktop-app.xml \
                       -C loader \
                         Desktop.swf \
+                        icons/icon-16x16.png \
+                        icons/icon-32x32.png \
                         icons/icon-36x36.png \
                         icons/icon-48x48.png \
                         icons/icon-72x72.png \
                         icons/icon-96x96.png \
+                        icons/icon-128x128.png \
                         icons/icon-144x144.png \
                         icons/icon-192x192.png \
                         gamefiles/game.swf \

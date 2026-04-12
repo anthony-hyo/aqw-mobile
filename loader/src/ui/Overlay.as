@@ -13,8 +13,9 @@ package ui {
 	import ui.option.Divide;
 	import ui.option.Option;
 	import ui.option.Toggle;
-	import ui.util.Helper;
 	import ui.util.Scroll;
+
+	import util.Helper;
 
 	import util.HelperScroll;
 	import util.HelperSetting;

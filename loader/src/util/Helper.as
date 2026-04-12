@@ -1,4 +1,4 @@
-package ui.util {
+package util {
 	import flash.filters.ColorMatrixFilter;
 
 	public class Helper {

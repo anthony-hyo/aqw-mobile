@@ -10,6 +10,9 @@ package util {
 		public static const OPTION_SHOW_SKILL_BAR:String = "option_show_skill_bar";
 		public static const OPTION_LOCK_ORIENTATION:String = "option_lock_orientation";
 
+		public static const OPTION_RASTERIZER:String = "option_rasterizer";
+		public static const OPTION_RASTERIZER_LEVELS:String = "option_rasterizer_levels";
+
 		public static const LAYOUT_JOYSTICK:String = "layout_joystick";
 		public static const LAYOUT_SKILL_BAR:String = "layout_skill_bar";
 

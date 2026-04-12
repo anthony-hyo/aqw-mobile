@@ -5,7 +5,6 @@ package ui {
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.display.StageAspectRatio;
-	import flash.display.StageOrientation;
 	import flash.events.MouseEvent;
 
 	import ui.option.Button;
@@ -57,7 +56,7 @@ package ui {
 				"Display joystick on screen",
 				function (option:Check):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-					
+
 					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 						return;
 					}
@@ -71,7 +70,7 @@ package ui {
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-					
+
 					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK)) {
 						return;
 					}
@@ -91,7 +90,7 @@ package ui {
 				"Display skill bar on screen",
 				function (option:Check):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-					
+
 					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 						return;
 					}
@@ -105,7 +104,7 @@ package ui {
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-					
+
 					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_SKILL_BAR)) {
 						return;
 					}
@@ -126,7 +125,7 @@ package ui {
 				"Edit",
 				function (option:Button):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-					
+
 					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 						if (pocket.game) {
 							pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
@@ -144,14 +143,14 @@ package ui {
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-					
+
 					pocket.overlay.gameUI.hideEditLayout();
 
 					pocket.worldCore.setWorldFilters([]);
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-					
+
 					if (frame !== "Panel") {
 						return;
 					}
@@ -185,14 +184,6 @@ package ui {
 				function (option:Toggle):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
-					const orientations:Array = [
-						StageOrientation.DEFAULT,
-						StageOrientation.DEFAULT,
-						StageOrientation.ROTATED_LEFT,
-						StageOrientation.ROTATED_RIGHT,
-						StageOrientation.UPSIDE_DOWN
-					];
-
 					if (option.getIndex() == 0) {
 						stage.autoOrients = true;
 						stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
@@ -201,19 +192,11 @@ package ui {
 
 					stage.autoOrients = false;
 					stage.setAspectRatio(StageAspectRatio.ANY);
-					stage.setOrientation(orientations[option.getIndex()]);
+					stage.setOrientation(Helper.ORIENTATIONS[option.getIndex()]);
 				},
 				null,
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
-
-					const orientations:Array = [
-						StageOrientation.DEFAULT,
-						StageOrientation.DEFAULT,
-						StageOrientation.ROTATED_LEFT,
-						StageOrientation.ROTATED_RIGHT,
-						StageOrientation.UPSIDE_DOWN
-					];
 
 					const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION);
 
@@ -223,11 +206,64 @@ package ui {
 					} else {
 						stage.autoOrients = false;
 						stage.setAspectRatio(StageAspectRatio.ANY);
-						stage.setOrientation(orientations[savedIndex]);
+						stage.setOrientation(Helper.ORIENTATIONS[savedIndex]);
 					}
 				}
 			),
 			new Divide(),
+			new Check(
+				HelperSetting.OPTION_RASTERIZER,
+				false,
+				"Rasterizer",
+				"<font color='#FF0000'>Experimental</font>: May improve FPS, but can crash the game",
+				function (option:Check):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+					
+					Pocket.IS_RASTERIZER_ON = option.state;
+
+					if (pocket.game) {
+						pocket.game.MsgBox.notify("Please relog to apply changes.");
+
+						if (pocket.game.ui) {
+							const modal: MovieClip = new (pocket.game.loaderInfo.applicationDomain.getDefinition('ModalMC'))();
+
+							pocket.game.ui.ModalStack.addChild(modal);
+
+							modal.init({
+								strBody: "<font color='#FF0000'>Experimental</font>: Rasterizer has been " + (option.state ? "enabled" : "disabled") + ". You must relog for this setting to take effect.\n\nNote: Enabling the Rasterizer may improve FPS in complex scenes, but can increase memory usage and cause lag or crashes on low-end devices.",
+								glow: "red,medium",
+								callback: null,
+								btns: "mono"
+							});
+						}
+					}
+				},
+				function (frame:String):void {
+					Pocket.IS_RASTERIZER_ON = HelperSetting.getBool(HelperSetting.OPTION_RASTERIZER);
+				}
+			),
+			new Toggle(
+				HelperSetting.OPTION_RASTERIZER_LEVELS,
+				0,
+				"Rasterizer Level",
+				"<font color='#FF0000'>Experimental</font>: Increase memory usage",
+				["Normal (1x)", "High (1.5x)", "Ultra (2x)", "Extreme (3x)", "Low (0.5x)", "Potato (0.1x)"],
+				function (option:Toggle):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					Pocket.RASTERIZER_QUALITY_LEVEL = Helper.RASTERIZER_LEVELS[option.getIndex()];
+				},
+				null,
+				function (frame:String):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_RASTERIZER_LEVELS);
+
+					Pocket.RASTERIZER_QUALITY_LEVEL = Helper.RASTERIZER_LEVELS[savedIndex];
+
+					trace(Pocket.RASTERIZER_QUALITY_LEVEL);
+				}
+			),
 			new Check(
 				null,
 				false,
@@ -268,12 +304,12 @@ package ui {
 			this.visible = false;
 
 			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
-			
-			var heightTotal: uint = 0;
+
+			var heightTotal:uint = 0;
 
 			for each (var option:Option in options) {
 				this.content.addChild(option);
-				
+
 				option.x = 3.75;
 				option.y = heightTotal + 2;
 

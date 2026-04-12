@@ -17,7 +17,7 @@ package ui.option {
 			}
 			
 			if (info != null) {
-				this.infoTxt.text = info;
+				this.infoTxt.htmlText = info;
 			}
 		}
 

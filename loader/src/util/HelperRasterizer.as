@@ -5,12 +5,12 @@ package util {
 	import flash.display.MovieClip;
 
 	public class HelperRasterizer {
-
+		
 		public static function hasLabel(mc:MovieClip, label:String):Boolean {
 			//TODO: Cache
 
-			for each (var fl:FrameLabel in mc.currentLabels) {
-				if (fl.name == label) {
+			for each (var frameLabel:FrameLabel in mc.currentLabels) {
+				if (frameLabel.name == label) {
 					return true;
 				}
 			}
@@ -49,39 +49,6 @@ package util {
 					simulateFrameAdvance(DisplayObjectContainer(container.getChildAt(i)));
 				}
 			}
-		}
-
-		public static function getTotalCycle(container:DisplayObjectContainer):int {
-			const counts:Array = [];
-
-			const mc:MovieClip = container as MovieClip;
-
-			if (mc && mc.totalFrames > 1) {
-				return mc.totalFrames;
-			}
-
-			findCounts(container, counts);
-
-			if (counts.length == 0) {
-				return 1;
-			}
-
-			var maxFrames:int = counts[0];
-			var cycle:int = counts[0];
-
-			for (var i:int = 1; i < counts.length; i++) {
-				if (counts[i] > maxFrames) {
-					maxFrames = counts[i];
-				}
-
-				cycle = lcm(cycle, counts[i]);
-			}
-
-			if (cycle > 150) {
-				return maxFrames;
-			}
-
-			return cycle;
 		}
 
 		public static function getMasterCycle(container:DisplayObjectContainer):int {

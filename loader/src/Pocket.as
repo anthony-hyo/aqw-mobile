@@ -7,6 +7,9 @@
 	import data.Release;
 	import data.Version;
 
+	import engine.AvatarRasterizer;
+	import engine.EntityRasterizer;
+
 	import flash.desktop.NativeApplication;
 	import flash.desktop.SystemIdleMode;
 	import flash.display.MovieClip;
@@ -24,6 +27,9 @@
 
 	public class Pocket extends Sprite {
 
+		public static var IS_RASTERIZER_ON:Boolean = true;
+		public static var RASTERIZER_QUALITY_LEVEL:Number = 1;
+		
 		private static var _SINGLETON:Pocket;
 
 		public static function get SINGLETON():Pocket {
@@ -74,6 +80,9 @@
 		public var release:Release;
 
 		public const load:Function = HelperLoader.load;
+		
+		public const avatarRasterizer:Class = AvatarRasterizer;
+		public const entityRasterizer:Class = EntityRasterizer;
 
 		public function check():void {
 			switch (HelperLoader.COUNT) {

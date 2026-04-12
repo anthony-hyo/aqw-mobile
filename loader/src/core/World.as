@@ -35,7 +35,7 @@ package core {
 		private var combatDisplayTime:uint;
 
 		public function setWorldFilters(filters:Array):void {
-			if (this.pocket.game.world) {
+			if (this.pocket.game && this.pocket.game.world) {
 				this.pocket.game.world.map.filters = filters;
 				this.pocket.game.world.CHARS.filters = filters;
 			}

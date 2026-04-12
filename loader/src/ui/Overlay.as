@@ -260,8 +260,6 @@ package ui {
 					const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_RASTERIZER_LEVELS);
 
 					Pocket.RASTERIZER_QUALITY_LEVEL = Helper.RASTERIZER_LEVELS[savedIndex];
-
-					trace(Pocket.RASTERIZER_QUALITY_LEVEL);
 				}
 			),
 			new Check(

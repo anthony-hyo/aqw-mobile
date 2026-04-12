@@ -74,6 +74,7 @@ jobs:
             -   name: Keystore
                 run: |
                     echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > aqwpocket_keystore.jks
+                    echo "${{ secrets.KEYSTORE_P12_BASE64 }}" | base64 -d > aqwpocket_keystore.p12
             
             -   name: Inject version
                 run: |
@@ -89,6 +90,7 @@ jobs:
                     path: |
                         loader/
                         aqwpocket_keystore.jks
+                        aqwpocket_keystore.p12
     
     build-android:
         needs: patch
@@ -164,7 +166,6 @@ jobs:
                     name: build-${{ matrix.architecture }}${{ matrix.suffix || 'auto' }}
                     path: "*.apk"
     
-    
     build-windows:
         needs: patch
         runs-on: windows-latest
@@ -202,8 +203,8 @@ jobs:
                       -replace '<renderMode>.*</renderMode>', '<renderMode>${{ matrix.render-mode }}</renderMode>' `
                       | Set-Content loader/Desktop-app.xml
                     adt -package `
-                      -storetype JKS `
-                      -keystore aqwpocket_keystore.jks `
+                      -storetype PKCS12 \
+                      -keystore aqwpocket_keystore.p12 \
                       -storepass ${{ secrets.KEYSTORE_PASS }} `
                       -keypass ${{ secrets.KEY_PASS }} `
                       -target bundle `
@@ -261,8 +262,8 @@ jobs:
                 run: |
                     sed -i '' "s|<renderMode>.*</renderMode>|<renderMode>${{ matrix.render-mode }}</renderMode>|" loader/Desktop-app.xml
                     adt -package \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
+                      -storetype PKCS12 \
+                      -keystore aqwpocket_keystore.p12 \
                       -storepass ${{ secrets.KEYSTORE_PASS }} \
                       -keypass ${{ secrets.KEY_PASS }} \
                       -target bundle \
@@ -320,8 +321,8 @@ jobs:
                 run: |
                     sed -i "s|<renderMode>.*</renderMode>|<renderMode>${{ matrix.render-mode }}</renderMode>|" loader/Desktop-app.xml
                     adt -package \
-                      -storetype JKS \
-                      -keystore aqwpocket_keystore.jks \
+                      -storetype PKCS12 \
+                      -keystore aqwpocket_keystore.p12 \
                       -storepass ${{ secrets.KEYSTORE_PASS }} \
                       -keypass ${{ secrets.KEY_PASS }} \
                       -target bundle \

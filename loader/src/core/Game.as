@@ -31,6 +31,31 @@ package core {
 			});
 		}
 
+		public function onBoLComplete(e:Event):void{
+			const jso:Object = JSON.parse(String(e.target.data));
+
+			pocket.game.world.bookData = jso;
+			pocket.game.BOOK_DATA_READY = jso;
+
+			pocket.game.ui.mcPopup.mcBook.removeChildAt(0);
+			
+			if (pocket.game.bolContent){
+				if (pocket.game.newInstance){
+					pocket.game.newInstance = false;
+					pocket.game.bolContent.gotoAndStop("NavMenu");
+				}
+
+				pocket.game.ui.mcPopup.mcBook.addChild(pocket.game.bolContent);
+				return;
+			}
+
+			HelperLoader.load(new Loader(), "app:/gamefiles/book-of-lore.swf", new LoaderContext(false, ApplicationDomain.currentDomain), function (event:Event):void {
+				pocket.game.bolContent = Loader(event.target.loader).content;
+				
+				pocket.game.ui.mcPopup.mcBook.addChild(MovieClip(pocket.game.bolContent));
+			});
+		}
+		
 		public function onFrameChange(frame:String):void {
 			for each (var option:Option in this.pocket.overlay.options) {
 				if (option.onFrameChange != null) {

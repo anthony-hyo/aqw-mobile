@@ -163,7 +163,7 @@ jobs:
             -   name: Upload
                 uses: actions/upload-artifact@v4
                 with:
-                    name: build-${{ matrix.architecture }}${{ matrix.suffix || 'auto' }}
+                    name: build-${{ matrix.architecture }}${{ matrix.suffix }}
                     path: "*.apk"
     
     build-windows:
@@ -233,7 +233,7 @@ jobs:
                 uses: actions/upload-artifact@v4
                 with:
                     name: build${{ matrix.suffix }}
-                    path: "*.zip"
+                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
     
     build-macos:
         needs: patch
@@ -295,7 +295,7 @@ jobs:
                 uses: actions/upload-artifact@v4
                 with:
                     name: build${{ matrix.suffix }}
-                    path: "*.zip"
+                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
     
     build-linux:
         needs: patch
@@ -357,7 +357,7 @@ jobs:
                 uses: actions/upload-artifact@v4
                 with:
                     name: build${{ matrix.suffix }}
-                    path: "*.zip"
+                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
     
     publish:
         needs: [patch, build-android, build-windows, build-macos, build-linux]

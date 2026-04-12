@@ -148,12 +148,12 @@ jobs:
                       loader/Mobile-app.xml \
                       -C loader \
                         Mobile.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
+                        icons/icon-36x36.png \
+                        icons/icon-48x48.png \
+                        icons/icon-72x72.png \
+                        icons/icon-96x96.png \
+                        icons/icon-144x144.png \
+                        icons/icon-192x192.png \
                         gamefiles/game.swf \
                         gamefiles/world-map.swf \
                         gamefiles/book-of-lore.swf
@@ -212,12 +212,12 @@ jobs:
                       loader/Desktop-app.xml `
                       -C loader `
                         Desktop.swf `
-                        icons/android-icon-36x36.png `
-                        icons/android-icon-48x48.png `
-                        icons/android-icon-72x72.png `
-                        icons/android-icon-96x96.png `
-                        icons/android-icon-144x144.png `
-                        icons/android-icon-192x192.png `
+                        icons/icon-36x36.png `
+                        icons/icon-48x48.png `
+                        icons/icon-72x72.png `
+                        icons/icon-96x96.png `
+                        icons/icon-144x144.png `
+                        icons/icon-192x192.png `
                         gamefiles/game.swf `
                         gamefiles/world-map.swf `
                         gamefiles/book-of-lore.swf
@@ -271,12 +271,12 @@ jobs:
                       loader/Desktop-app.xml \
                       -C loader \
                         Desktop.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
+                        icons/icon-36x36.png \
+                        icons/icon-48x48.png \
+                        icons/icon-72x72.png \
+                        icons/icon-96x96.png \
+                        icons/icon-144x144.png \
+                        icons/icon-192x192.png \
                         gamefiles/game.swf \
                         gamefiles/world-map.swf \
                         gamefiles/book-of-lore.swf
@@ -330,12 +330,12 @@ jobs:
                       loader/Desktop-app.xml \
                       -C loader \
                         Desktop.swf \
-                        icons/android-icon-36x36.png \
-                        icons/android-icon-48x48.png \
-                        icons/android-icon-72x72.png \
-                        icons/android-icon-96x96.png \
-                        icons/android-icon-144x144.png \
-                        icons/android-icon-192x192.png \
+                        icons/icon-36x36.png \
+                        icons/icon-48x48.png \
+                        icons/icon-72x72.png \
+                        icons/icon-96x96.png \
+                        icons/icon-144x144.png \
+                        icons/icon-192x192.png \
                         gamefiles/game.swf \
                         gamefiles/world-map.swf \
                         gamefiles/book-of-lore.swf

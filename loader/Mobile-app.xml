@@ -24,12 +24,12 @@
     <autoOrients>true</autoOrients>
   </initialWindow>
   <icon>
-    <image36x36>icons/android-icon-36x36.png</image36x36>
-    <image48x48>icons/android-icon-48x48.png</image48x48>
-    <image72x72>icons/android-icon-72x72.png</image72x72>
-    <image96x96>icons/android-icon-96x96.png</image96x96>
-    <image144x144>icons/android-icon-144x144.png</image144x144>
-    <image192x192>icons/android-icon-192x192.png</image192x192>
+    <image36x36>icons/icon-36x36.png</image36x36>
+    <image48x48>icons/icon-48x48.png</image48x48>
+    <image72x72>icons/icon-72x72.png</image72x72>
+    <image96x96>icons/icon-96x96.png</image96x96>
+    <image144x144>icons/icon-144x144.png</image144x144>
+    <image192x192>icons/icon-192x192.png</image192x192>
   </icon>
   <customUpdateUI>false</customUpdateUI>
   <allowBrowserInvocation>false</allowBrowserInvocation>

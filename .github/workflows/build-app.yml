@@ -165,202 +165,203 @@ jobs:
                 with:
                     name: build-${{ matrix.architecture }}${{ matrix.suffix }}
                     path: "*.apk"
-    
-    build-windows:
-        needs: patch
-        runs-on: windows-latest
-        permissions:
-            contents: write
-        strategy:
-            matrix:
-                include:
-                    -   architecture: "x64"
-                        render-mode: "auto"
-                        suffix: "-windows-x64"
-                    
-                    -   architecture: "x64"
-                        render-mode: "direct"
-                        suffix: "-windows-x64-direct"
-                    
-                    -   architecture: "x86"
-                        render-mode: "auto"
-                        suffix: "-windows-x86"
-        steps:
-            -   name: Download patched files
-                uses: actions/download-artifact@v4
-                with:
-                    name: patched-files
-            
-            -   name: Setup AIR SDK
-                uses: joshtynjala/setup-adobe-air-action@v2
-                with:
-                    air-version: "51.3"
-                    accept-license: yes
-            
-            -   name: Build Windows
-                run: |
-                    (Get-Content loader/Desktop-app.xml) `
-                      -replace '<renderMode>.*</renderMode>', '<renderMode>${{ matrix.render-mode }}</renderMode>' `
-                      | Set-Content loader/Desktop-app.xml
-                    adt -package `
-                      -storetype PKCS12 `
-                      -keystore aqwpocket_keystore.p12 `
-                      -storepass ${{ secrets.KEYSTORE_PASS }} `
-                      -keypass ${{ secrets.KEY_PASS }} `
-                      -target bundle `
-                      -arch ${{ matrix.architecture }} `
-                      AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} `
-                      loader/Desktop-app.xml `
-                      -C loader `
-                        Desktop.swf `
-                        icons/icon-16x16.png `
-                        icons/icon-32x32.png `
-                        icons/icon-36x36.png `
-                        icons/icon-48x48.png `
-                        icons/icon-72x72.png `
-                        icons/icon-96x96.png `
-                        icons/icon-128x128.png `
-                        icons/icon-144x144.png `
-                        icons/icon-192x192.png `
-                        gamefiles/game.swf `
-                        gamefiles/world-map.swf `
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Zip
-                run: Compress-Archive -Path "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}" -DestinationPath "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
-            
-            -   name: Upload
-                uses: actions/upload-artifact@v4
-                with:
-                    name: build${{ matrix.suffix }}
-                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
-    
-    build-macos:
-        needs: patch
-        runs-on: macos-latest
-        permissions:
-            contents: write
-        strategy:
-            matrix:
-                include:
-                    -   architecture: "x64"
-                        render-mode: "auto"
-                        suffix: "-macos-x64"
-                    -   architecture: "x64"
-                        render-mode: "direct"
-                        suffix: "-macos-x64-direct"
-        steps:
-            -   name: Download patched files
-                uses: actions/download-artifact@v4
-                with:
-                    name: patched-files
-            
-            -   name: Setup AIR SDK
-                uses: joshtynjala/setup-adobe-air-action@v2
-                with:
-                    air-version: "51.3"
-                    accept-license: yes
-            
-            -   name: Build macOS
-                run: |
-                    sed -i '' "s|<renderMode>.*</renderMode>|<renderMode>${{ matrix.render-mode }}</renderMode>|" loader/Desktop-app.xml
-                    adt -package \
-                      -storetype PKCS12 \
-                      -keystore aqwpocket_keystore.p12 \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      -target bundle \
-                      -arch ${{ matrix.architecture }} \
-                      AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} \
-                      loader/Desktop-app.xml \
-                      -C loader \
-                        Desktop.swf \
-                        icons/icon-16x16.png \
-                        icons/icon-32x32.png \
-                        icons/icon-36x36.png \
-                        icons/icon-48x48.png \
-                        icons/icon-72x72.png \
-                        icons/icon-96x96.png \
-                        icons/icon-128x128.png \
-                        icons/icon-144x144.png \
-                        icons/icon-192x192.png \
-                        gamefiles/game.swf \
-                        gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Zip
-                run: zip -r AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}/
-            
-            -   name: Upload
-                uses: actions/upload-artifact@v4
-                with:
-                    name: build${{ matrix.suffix }}
-                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
-    
-    build-linux:
-        needs: patch
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-        strategy:
-            matrix:
-                include:
-                    -   architecture: "x64"
-                        render-mode: "auto"
-                        suffix: "-linux-x64"
-                    -   architecture: "x64"
-                        render-mode: "direct"
-                        suffix: "-linux-x64-direct"
-        steps:
-            -   name: Download patched files
-                uses: actions/download-artifact@v4
-                with:
-                    name: patched-files
-            
-            -   name: Setup AIR SDK
-                uses: joshtynjala/setup-adobe-air-action@v2
-                with:
-                    air-version: "51.3"
-                    accept-license: yes
-            
-            -   name: Build Linux
-                run: |
-                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>${{ matrix.render-mode }}</renderMode>|" loader/Desktop-app.xml
-                    adt -package \
-                      -storetype PKCS12 \
-                      -keystore aqwpocket_keystore.p12 \
-                      -storepass ${{ secrets.KEYSTORE_PASS }} \
-                      -keypass ${{ secrets.KEY_PASS }} \
-                      -target bundle \
-                      -arch ${{ matrix.architecture }} \
-                      AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} \
-                      loader/Desktop-app.xml \
-                      -C loader \
-                        Desktop.swf \
-                        icons/icon-16x16.png \
-                        icons/icon-32x32.png \
-                        icons/icon-36x36.png \
-                        icons/icon-48x48.png \
-                        icons/icon-72x72.png \
-                        icons/icon-96x96.png \
-                        icons/icon-128x128.png \
-                        icons/icon-144x144.png \
-                        icons/icon-192x192.png \
-                        gamefiles/game.swf \
-                        gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
-            
-            -   name: Zip
-                run: zip -r AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}/
-            
-            -   name: Upload
-                uses: actions/upload-artifact@v4
-                with:
-                    name: build${{ matrix.suffix }}
-                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
-    
+#    
+#    build-windows:
+#        needs: patch
+#        runs-on: windows-latest
+#        permissions:
+#            contents: write
+#        strategy:
+#            matrix:
+#                include:
+#                    -   architecture: "x64"
+#                        render-mode: "auto"
+#                        suffix: "-windows-x64"
+#                    
+#                    -   architecture: "x64"
+#                        render-mode: "direct"
+#                        suffix: "-windows-x64-direct"
+#                    
+#                    -   architecture: "x86"
+#                        render-mode: "auto"
+#                        suffix: "-windows-x86"
+#        steps:
+#            -   name: Download patched files
+#                uses: actions/download-artifact@v4
+#                with:
+#                    name: patched-files
+#            
+#            -   name: Setup AIR SDK
+#                uses: joshtynjala/setup-adobe-air-action@v2
+#                with:
+#                    air-version: "51.3"
+#                    accept-license: yes
+#            
+#            -   name: Build Windows
+#                run: |
+#                    (Get-Content loader/Desktop-app.xml) `
+#                      -replace '<renderMode>.*</renderMode>', '<renderMode>${{ matrix.render-mode }}</renderMode>' `
+#                      | Set-Content loader/Desktop-app.xml
+#                    adt -package `
+#                      -storetype PKCS12 `
+#                      -keystore aqwpocket_keystore.p12 `
+#                      -storepass ${{ secrets.KEYSTORE_PASS }} `
+#                      -keypass ${{ secrets.KEY_PASS }} `
+#                      -target bundle `
+#                      -arch ${{ matrix.architecture }} `
+#                      AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} `
+#                      loader/Desktop-app.xml `
+#                      -C loader `
+#                        Desktop.swf `
+#                        icons/icon-16x16.png `
+#                        icons/icon-32x32.png `
+#                        icons/icon-36x36.png `
+#                        icons/icon-48x48.png `
+#                        icons/icon-72x72.png `
+#                        icons/icon-96x96.png `
+#                        icons/icon-128x128.png `
+#                        icons/icon-144x144.png `
+#                        icons/icon-192x192.png `
+#                        gamefiles/game.swf `
+#                        gamefiles/world-map.swf `
+#                        gamefiles/book-of-lore.swf
+#            
+#            -   name: Zip
+#                run: Compress-Archive -Path "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}" -DestinationPath "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
+#            
+#            -   name: Upload
+#                uses: actions/upload-artifact@v4
+#                with:
+#                    name: build${{ matrix.suffix }}
+#                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
+#    
+#    build-macos:
+#        needs: patch
+#        runs-on: macos-latest
+#        permissions:
+#            contents: write
+#        strategy:
+#            matrix:
+#                include:
+#                    -   architecture: "x64"
+#                        render-mode: "auto"
+#                        suffix: "-macos-x64"
+#                    -   architecture: "x64"
+#                        render-mode: "direct"
+#                        suffix: "-macos-x64-direct"
+#        steps:
+#            -   name: Download patched files
+#                uses: actions/download-artifact@v4
+#                with:
+#                    name: patched-files
+#            
+#            -   name: Setup AIR SDK
+#                uses: joshtynjala/setup-adobe-air-action@v2
+#                with:
+#                    air-version: "51.3"
+#                    accept-license: yes
+#            
+#            -   name: Build macOS
+#                run: |
+#                    sed -i '' "s|<renderMode>.*</renderMode>|<renderMode>${{ matrix.render-mode }}</renderMode>|" loader/Desktop-app.xml
+#                    adt -package \
+#                      -storetype PKCS12 \
+#                      -keystore aqwpocket_keystore.p12 \
+#                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+#                      -keypass ${{ secrets.KEY_PASS }} \
+#                      -target bundle \
+#                      -arch ${{ matrix.architecture }} \
+#                      AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} \
+#                      loader/Desktop-app.xml \
+#                      -C loader \
+#                        Desktop.swf \
+#                        icons/icon-16x16.png \
+#                        icons/icon-32x32.png \
+#                        icons/icon-36x36.png \
+#                        icons/icon-48x48.png \
+#                        icons/icon-72x72.png \
+#                        icons/icon-96x96.png \
+#                        icons/icon-128x128.png \
+#                        icons/icon-144x144.png \
+#                        icons/icon-192x192.png \
+#                        gamefiles/game.swf \
+#                        gamefiles/world-map.swf \
+#                        gamefiles/book-of-lore.swf
+#            
+#            -   name: Zip
+#                run: zip -r AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}/
+#            
+#            -   name: Upload
+#                uses: actions/upload-artifact@v4
+#                with:
+#                    name: build${{ matrix.suffix }}
+#                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
+#    
+#    build-linux:
+#        needs: patch
+#        runs-on: ubuntu-latest
+#        permissions:
+#            contents: write
+#        strategy:
+#            matrix:
+#                include:
+#                    -   architecture: "x64"
+#                        render-mode: "auto"
+#                        suffix: "-linux-x64"
+#                    -   architecture: "x64"
+#                        render-mode: "direct"
+#                        suffix: "-linux-x64-direct"
+#        steps:
+#            -   name: Download patched files
+#                uses: actions/download-artifact@v4
+#                with:
+#                    name: patched-files
+#            
+#            -   name: Setup AIR SDK
+#                uses: joshtynjala/setup-adobe-air-action@v2
+#                with:
+#                    air-version: "51.3"
+#                    accept-license: yes
+#            
+#            -   name: Build Linux
+#                run: |
+#                    sed -i "s|<renderMode>.*</renderMode>|<renderMode>${{ matrix.render-mode }}</renderMode>|" loader/Desktop-app.xml
+#                    adt -package \
+#                      -storetype PKCS12 \
+#                      -keystore aqwpocket_keystore.p12 \
+#                      -storepass ${{ secrets.KEYSTORE_PASS }} \
+#                      -keypass ${{ secrets.KEY_PASS }} \
+#                      -target bundle \
+#                      -arch ${{ matrix.architecture }} \
+#                      AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} \
+#                      loader/Desktop-app.xml \
+#                      -C loader \
+#                        Desktop.swf \
+#                        icons/icon-16x16.png \
+#                        icons/icon-32x32.png \
+#                        icons/icon-36x36.png \
+#                        icons/icon-48x48.png \
+#                        icons/icon-72x72.png \
+#                        icons/icon-96x96.png \
+#                        icons/icon-128x128.png \
+#                        icons/icon-144x144.png \
+#                        icons/icon-192x192.png \
+#                        gamefiles/game.swf \
+#                        gamefiles/world-map.swf \
+#                        gamefiles/book-of-lore.swf
+#            
+#            -   name: Zip
+#                run: zip -r AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}/
+#            
+#            -   name: Upload
+#                uses: actions/upload-artifact@v4
+#                with:
+#                    name: build${{ matrix.suffix }}
+#                    path: "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
+#    
     publish:
-        needs: [patch, build-android, build-windows, build-macos, build-linux]
+#        needs: [patch, build-android, build-windows, build-macos, build-linux]
+        needs: [patch, build-android]
         runs-on: ubuntu-latest
         permissions:
             contents: write
@@ -381,6 +382,66 @@ jobs:
                     tag_name: ${{ needs.patch.outputs.VERSION }}
                     name: ${{ needs.patch.outputs.VERSION }}${{ github.event.inputs.prerelease == 'true' && ' (test)' || '' }}
                     prerelease: ${{ github.event.inputs.prerelease }}
+#                    body: |
+#                        ## Which file should I download?
+#                        
+#                        ### Android
+#                        
+#                            * **armv8 (recommended)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-armv8.apk`
+#                            → For most modern devices
+#                        
+#                            * **armv8-direct (alternative)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-armv8-direct.apk`
+#                            → Use if the recommended version has issues
+#                        
+#                            * **armv8-gpu (legacy)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-armv8-gpu.apk`
+#                            → Not recommended; fallback only
+#                        
+#                            * **armv7 (32-bit)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-armv7.apk`
+#                            → For older devices only
+#                        
+#                        ---
+#                        
+#                        ### ChromeOS
+#                        
+#                        * `AQWPocket-${{ needs.patch.outputs.VERSION }}-x86.apk`
+#                        * `AQWPocket-${{ needs.patch.outputs.VERSION }}-x64.apk`
+#                        
+#                        ---
+#                        
+#                        ### Windows
+#                        
+#                            * **x64 (recommended)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-windows-x64.zip`
+#                        
+#                            * **x64-direct (alternative)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-windows-x64-direct.zip`
+#                        
+#                            * **x86 (older systems)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-windows-x86.zip`
+#                        
+#                        ---
+#                        
+#                        ### macOS
+#                        
+#                            * **x64 (recommended)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-macos-x64.zip`
+#                        
+#                            * **x64-direct (alternative)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-macos-x64-direct.zip`
+#                        
+#                        ---
+#                        
+#                        ### Linux
+#                        
+#                            * **x64 (recommended)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-linux-x64.zip`
+#                        
+#                            * **x64-direct (alternative)**
+#                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-linux-x64-direct.zip`
                     body: |
                         ## Which file should I download?
                         
@@ -404,43 +465,10 @@ jobs:
                         
                         ---
                         
-                        ### ChromeOS / x86 devices
+                        ### ChromeOS
                         
                         * `AQWPocket-${{ needs.patch.outputs.VERSION }}-x86.apk`
                         * `AQWPocket-${{ needs.patch.outputs.VERSION }}-x64.apk`
-                        
-                        ---
-                        
-                        ### Windows
-                        
-                            * **x64 (recommended)**
-                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-windows-x64.zip`
-                        
-                            * **x64-direct (alternative)**
-                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-windows-x64-direct.zip`
-                        
-                            * **x86 (older systems)**
-                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-windows-x86.zip`
-                        
-                        ---
-                        
-                        ### macOS
-                        
-                            * **x64 (recommended)**
-                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-macos-x64.zip`
-                        
-                            * **x64-direct (alternative)**
-                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-macos-x64-direct.zip`
-                        
-                        ---
-                        
-                        ### Linux
-                        
-                            * **x64 (recommended)**
-                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-linux-x64.zip`
-                        
-                            * **x64-direct (alternative)**
-                            `AQWPocket-${{ needs.patch.outputs.VERSION }}-linux-x64-direct.zip`
                     files: |
                         *.apk
                         *.zip

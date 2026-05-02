@@ -211,6 +211,33 @@ package ui {
 				}
 			),
 			new Divide(),
+			/*new Check(
+				HelperSetting.OPTION_ANIMATION,
+				false,
+				"Animations",
+				"<font color='#FF0000'>Experimental</font>: May improve FPS, but can crash the game",
+				function (option:Check):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					Pocket.IS_ANIMATION_OFF = option.state;
+
+					if (pocket.game && pocket.game.ui) {
+						const modal:MovieClip = new (pocket.game.loaderInfo.applicationDomain.getDefinition("ModalMC"))();
+
+						pocket.game.ui.ModalStack.addChild(modal);
+
+						modal.init({
+							strBody: "<font color='#FF0000'>Experimental</font>: Animations has been " + (option.state ? "enabled" : "disabled") + ".\n\nNote: This may improve FPS, but cause crashes.",
+							glow: "red,medium",
+							callback: null,
+							btns: "mono"
+						});
+					}
+				},
+				function (frame:String):void {
+					Pocket.IS_ANIMATION_OFF = HelperSetting.getBool(HelperSetting.OPTION_ANIMATION);
+				}
+			),
 			new Check(
 				HelperSetting.OPTION_RASTERIZER,
 				false,
@@ -261,7 +288,7 @@ package ui {
 
 					Pocket.RASTERIZER_QUALITY_LEVEL = Helper.RASTERIZER_LEVELS[savedIndex];
 				}
-			),
+			),*/
 			new Check(
 				null,
 				false,

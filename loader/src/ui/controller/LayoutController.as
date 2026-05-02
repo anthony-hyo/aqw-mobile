@@ -24,6 +24,15 @@ package ui.controller {
 			this.widgets.push(new WidgetEntry(id, target, defaultPositionX, defaultPositionY, defaultScaleX, defaultScaleY));
 		}
 
+		public function unregister(id:String):void {
+			for (var i:uint = 0; i < this.widgets.length; i++) {
+				if (this.widgets[i].id == id) {
+					this.widgets.removeAt(i);
+					return;
+				}
+			}
+		}
+
 		public function load():void {
 			var saved:Object;
 			var widgetEntry:WidgetEntry;
@@ -96,7 +105,7 @@ package ui.controller {
 			handle.x = widgetEntry.target.x;
 			handle.y = widgetEntry.target.y;
 
-			parent.addChild(handle); // null error when hide joystick
+			parent.addChild(handle);
 
 			handle.drag.addEventListener(MouseEvent.MOUSE_DOWN, onHandleDown, false, 0, true);
 			handle.up.addEventListener(MouseEvent.CLICK, onResizeUp, false, 0, true);

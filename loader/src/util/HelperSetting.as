@@ -6,7 +6,9 @@ package util {
 
 		private static const SAVE_KEY:String = "aqw_pocket_settings";
 
-		public static const OPTION_SHOW_JOYSTICK:String = "option_show_joystick";
+		public static const OPTION_SHOW_JOYSTICK_MOUSE:String = "option_show_joystick";
+		public static const OPTION_SHOW_JOYSTICK_KEYBOARD:String = "option_show_joystick_keyboard";
+		
 		public static const OPTION_SHOW_SKILL_BAR:String = "option_show_skill_bar";
 		public static const OPTION_LOCK_ORIENTATION:String = "option_lock_orientation";
 
@@ -15,7 +17,9 @@ package util {
 
 		public static const OPTION_ANIMATION:String = "option_animation";
 
-		public static const LAYOUT_JOYSTICK:String = "layout_joystick";
+		public static const LAYOUT_JOYSTICK_MOUSE:String = "layout_joystick";
+		public static const LAYOUT_JOYSTICK_KEYBOARD:String = "layout_joystick_keyboard";
+		
 		public static const LAYOUT_SKILL_BAR:String = "layout_skill_bar";
 
 		private static var _so:SharedObject;

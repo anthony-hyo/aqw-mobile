@@ -1,4 +1,5 @@
 package ui.controller {
+
 	import data.WidgetEntry;
 
 	import flash.display.*;
@@ -14,11 +15,11 @@ package ui.controller {
 		private static const SCALE_MIN:Number = 0.1;
 		private static const SCALE_MAX:Number = 5.0;
 
+		public static var editMode:Boolean = false;
+
+		private static var current:WidgetEntry;
+
 		private var widgets:Vector.<WidgetEntry> = new Vector.<WidgetEntry>();
-
-		private var current:WidgetEntry;
-
-		public var editMode:Boolean = false;
 
 		public function register(id:String, target:Sprite, defaultPositionX:Number, defaultPositionY:Number, defaultScaleX:Number, defaultScaleY:Number):void {
 			this.widgets.push(new WidgetEntry(id, target, defaultPositionX, defaultPositionY, defaultScaleX, defaultScaleY));
@@ -27,6 +28,8 @@ package ui.controller {
 		public function unregister(id:String):void {
 			for (var i:uint = 0; i < this.widgets.length; i++) {
 				if (this.widgets[i].id == id) {
+					hideHandles(this.widgets[i]);
+					
 					this.widgets.removeAt(i);
 					return;
 				}
@@ -49,12 +52,12 @@ package ui.controller {
 		}
 
 		public function toggleEdit(state:Boolean):void {
-			this.editMode = state;
+			editMode = state;
 
 			var widgetEntry:WidgetEntry;
 
 			for each (widgetEntry in this.widgets) {
-				if (this.editMode) {
+				if (editMode) {
 					showHandles(widgetEntry);
 					continue;
 				}
@@ -72,12 +75,12 @@ package ui.controller {
 		}
 
 		public function resetToDefaults():void {
-			if (this.editMode) {
+			if (editMode) {
 				for each (var e:WidgetEntry in this.widgets) {
 					hideHandles(e);
 				}
 
-				this.editMode = false;
+				editMode = false;
 			}
 
 			var widgetEntry:WidgetEntry;
@@ -133,9 +136,9 @@ package ui.controller {
 			widgetEntry.handle.down.removeEventListener(MouseEvent.CLICK, onResizeDown);
 
 			if (widgetEntry.handle.parent) {
-				widgetEntry.handle.parent.removeChild(widgetEntry.handle)
+				widgetEntry.handle.parent.removeChild(widgetEntry.handle);
 			}
-			
+
 			widgetEntry.handle = null;
 		}
 
@@ -152,25 +155,25 @@ package ui.controller {
 		}
 
 		private function onHandleDown(mouseEvent:MouseEvent):void {
-			this.current = entryForHandle(SimpleButton(mouseEvent.currentTarget));
+			current = entryForHandle(SimpleButton(mouseEvent.currentTarget));
 
-			if (this.current == null) {
+			if (current == null) {
 				return;
 			}
 
-			this.current.handle.visible = false;
+			current.handle.visible = false;
 
-			this.current.target.startDrag(false);
-			this.current.target.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp, false, 0, true);
+			current.target.startDrag(false);
+			current.target.stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp, false, 0, true);
 		}
 
 		private function onMouseUp(e:MouseEvent):void {
-			this.current.handle.visible = true;
-			
-			this.current.target.stopDrag();
-			this.current.target.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			current.handle.visible = true;
 
-			repositionHandles(this.current);
+			current.target.stopDrag();
+			current.target.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+
+			repositionHandles(current);
 		}
 
 		private function onResizeUp(e:MouseEvent):void {

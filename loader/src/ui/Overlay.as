@@ -50,7 +50,7 @@ package ui {
 
 		public var options:Vector.<Option> = new <Option> [
 			new Check(
-				HelperSetting.OPTION_SHOW_JOYSTICK,
+				HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE,
 				true,
 				"Show Joystick",
 				"Display joystick on screen",
@@ -62,25 +62,59 @@ package ui {
 					}
 
 					if (option.state) {
-						pocket.overlay.gameUI.showJoystick();
+						pocket.overlay.gameUI.showJoystickMouseSimulator();
 						return;
 					}
 
-					pocket.overlay.gameUI.hideJoystick();
+					pocket.overlay.gameUI.hideJoystickMouseSimulator();
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
-					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK)) {
+					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE)) {
 						return;
 					}
 
 					if (frame != "Game") {
-						pocket.overlay.gameUI.hideJoystick();
+						pocket.overlay.gameUI.hideJoystickMouseSimulator();
 						return;
 					}
 
-					pocket.overlay.gameUI.showJoystick();
+					pocket.overlay.gameUI.showJoystickMouseSimulator();
+				}
+			),
+			new Check(
+				HelperSetting.OPTION_SHOW_JOYSTICK_KEYBOARD,
+				false,
+				"Show Arrow keys",
+				"Keyboard arrow key simulator",
+				function (option:Check):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						return;
+					}
+
+					if (option.state) {
+						pocket.overlay.gameUI.showJoystickKeyboardSimulator();
+						return;
+					}
+
+					pocket.overlay.gameUI.hideJoystickKeyboardSimulator();
+				},
+				function (frame:String):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK_KEYBOARD)) {
+						return;
+					}
+
+					if (frame != "Game") {
+						pocket.overlay.gameUI.hideJoystickKeyboardSimulator();
+						return;
+					}
+
+					pocket.overlay.gameUI.showJoystickKeyboardSimulator();
 				}
 			),
 			new Check(

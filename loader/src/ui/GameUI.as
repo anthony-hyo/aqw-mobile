@@ -1,11 +1,11 @@
 package ui {
 
 	import flash.display.*;
-	import flash.events.*;
 
 	import ui.controller.LayoutController;
-	import ui.controller.WalkController;
-	import ui.input.*;
+	import ui.controller.walk.KeyboardWalkSimulatorController;
+	import ui.controller.walk.MouseWalkSimulatorController;
+	import ui.input.Joystick;
 
 	import util.HelperSetting;
 
@@ -17,42 +17,73 @@ package ui {
 
 		private var pocket:Pocket;
 
-		private var joystick:Joystick;
+		public var joystickMouseSimulator:Joystick;
+		public var joystickKeyboardSimulator:Joystick;
 
 		public var layoutController:LayoutController = new LayoutController();
-		private var walkController:WalkController;
 
-		public function showJoystick():void {
-			if (this.joystick && contains(this.joystick)) {
+		private function showJoystick(layout:String, joystickName:String, walkControllerClass:Class, xPosition:int, yPosition:int):void {
+			var joystick:Joystick = Joystick(this.getChildByName(joystickName));
+
+			if (joystick != null) {
 				return;
 			}
 
-			this.joystick = Joystick(addChild(new Joystick()));
+			joystick = new Joystick(new walkControllerClass(this.pocket));
 
-			this.walkController = new WalkController(this.pocket, this.joystick);
+			joystick.name = joystickName;
 
-			const joystick_default_x:Number = 73;
-			const joystick_default_y:Number = 348;
+			const joystick_default_x:Number = xPosition;
+			const joystick_default_y:Number = yPosition;
 
-			this.joystick.x = joystick_default_x;
-			this.joystick.y = joystick_default_y;
+			joystick.x = joystick_default_x;
+			joystick.y = joystick_default_y;
 
-			this.layoutController.register(HelperSetting.LAYOUT_JOYSTICK, this.joystick, joystick_default_x, joystick_default_y, this.joystick.scaleX, this.joystick.scaleY);
+			this.layoutController.register(layout, joystick, joystick_default_x, joystick_default_y, joystick.scaleX, joystick.scaleY);
 			this.layoutController.load();
 
-			this.joystick.addEventListener(MouseEvent.MOUSE_DOWN, onDown, false, 0, true);
+			this[joystickName] = Joystick(addChild(joystick));
 		}
 
-		public function hideJoystick():void {
-			if (this.joystick && contains(this.joystick)) {
-				removeChild(this.joystick);
+		private function hideJoystick(layout:String, joystickName:String):void {
+			var joystick:Joystick = Joystick(this.getChildByName(joystickName));
+
+			if (joystick == null) {
+				this[joystickName] = null;
+				return;
 			}
 
-			this.joystick = null;
+			removeChild(joystick);
+
+			this.layoutController.unregister(layout);
+			this.layoutController.load();
+
+			joystick = null;
+			this[joystickName] = null;
+		}
+
+		public function showJoystickMouseSimulator():void {
+			this.showJoystick(HelperSetting.LAYOUT_JOYSTICK_MOUSE, "joystickMouseSimulator", MouseWalkSimulatorController, 73, 348);
+		}
+
+		public function hideJoystickMouseSimulator():void {
+			this.hideJoystick(HelperSetting.LAYOUT_JOYSTICK_MOUSE, "joystickMouseSimulator");
+		}
+
+		public function showJoystickKeyboardSimulator():void {
+			this.showJoystick(HelperSetting.LAYOUT_JOYSTICK_KEYBOARD, "joystickKeyboardSimulator", KeyboardWalkSimulatorController, 73 + 100, 348);
+		}
+
+		public function hideJoystickKeyboardSimulator():void {
+			this.hideJoystick(HelperSetting.LAYOUT_JOYSTICK_KEYBOARD, "joystickKeyboardSimulator");
 		}
 
 		public function showSkillBar():void {
-			if (this.pocket.game && this.pocket.game.currentFrameLabel != "Game") {
+			if (!this.pocket.game) {
+				return;
+			}
+
+			if (this.pocket.game.currentFrameLabel != "Game") {
 				return;
 			}
 
@@ -60,7 +91,11 @@ package ui {
 		}
 
 		public function hideSkillBar():void {
-			if (this.pocket.game && this.pocket.game.currentFrameLabel != "Game") {
+			if (!this.pocket.game) {
+				return;
+			}
+
+			if (this.pocket.game.currentFrameLabel != "Game") {
 				return;
 			}
 
@@ -77,51 +112,6 @@ package ui {
 
 		public function resetLayout():void {
 			this.layoutController.resetToDefaults();
-		}
-
-		private function onAdded(e:Event):void {
-			removeEventListener(Event.ADDED_TO_STAGE, onAdded);
-
-		}
-
-		private function onDown(e:MouseEvent):void {
-			if (!this.visible || this.layoutController.editMode) {
-				return;
-			}
-
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMove);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
-			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMove, false, 0, true);
-			stage.addEventListener(MouseEvent.MOUSE_UP, onUp, false, 0, true);
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
-
-			this.joystick.move(e.stageX, e.stageY);
-		}
-
-		private function onMove(e:MouseEvent):void {
-			if (this.joystick.dirX != 0 || this.joystick.dirY != 0) {
-				this.joystick.move(e.stageX, e.stageY);
-			}
-		}
-
-		private function onUp(e:MouseEvent):void {
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMove);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
-			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-
-			if (this.joystick.dirX == 0 && this.joystick.dirY == 0) {
-				return;
-			}
-
-			this.joystick.snapHome();
-
-			this.walkController.stop();
-		}
-
-		private function onEnterFrame(e:Event):void {
-			this.walkController.update();
 		}
 
 	}

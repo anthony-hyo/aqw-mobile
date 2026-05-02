@@ -7,11 +7,15 @@ package engine {
 	public class AvatarRasterizer extends Rasterizer {
 
 		public function AvatarRasterizer(avatar:*) {
-			if (!Pocket.IS_RASTERIZER_ON) {
-				return
-			}
-			
 			const source:MovieClip = avatar.mcChar;
+
+			if (Pocket.IS_ANIMATION_OFF) {
+				source.stopAllMovieClips();
+			}
+
+			if (!Pocket.IS_RASTERIZER_ON) {
+				return;
+			}
 
 			_partsToMonitor = new <DisplayObject>[
 				source.idlefoot,

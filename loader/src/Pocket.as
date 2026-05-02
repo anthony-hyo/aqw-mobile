@@ -30,6 +30,8 @@
 		public static var IS_RASTERIZER_ON:Boolean = true;
 		public static var RASTERIZER_QUALITY_LEVEL:Number = 1;
 		
+		public static var IS_ANIMATION_OFF:Boolean = false;
+		
 		private static var _SINGLETON:Pocket;
 
 		public static function get SINGLETON():Pocket {

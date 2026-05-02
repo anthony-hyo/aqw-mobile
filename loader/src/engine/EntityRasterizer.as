@@ -7,11 +7,15 @@ package engine {
 	public class EntityRasterizer extends Rasterizer {
 
 		public function EntityRasterizer(entity:*) {
-			if (!Pocket.IS_RASTERIZER_ON) {
-				return
+			const source:MovieClip = entity.mcChar;
+
+			if (Pocket.IS_ANIMATION_OFF) {
+				source.stopAllMovieClips();
 			}
 
-			const source:MovieClip = entity.mcChar;
+			if (!Pocket.IS_RASTERIZER_ON) {
+				return;
+			}
 
 			_partsToMonitor = new <DisplayObject>[
 				source

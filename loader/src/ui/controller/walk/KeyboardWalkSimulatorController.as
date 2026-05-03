@@ -1,5 +1,6 @@
 package ui.controller.walk {
 
+	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
@@ -52,19 +53,47 @@ package ui.controller.walk {
 		}
 
 		private function _pressKey(keyCode:uint):void {
+			const target:DisplayObject = _target;
+
+			if (!target) {
+				return;
+			}
+			
 			this._lastKeyCode = keyCode;
 
-			MovieClip(this.pocket.game.mcExtSWF).dispatchEvent(_makeEvent(KeyboardEvent.KEY_DOWN, keyCode));
+			target.dispatchEvent(_makeEvent(KeyboardEvent.KEY_DOWN, keyCode));
 		}
 
 		private function _releaseKey():void {
 			if (this._lastKeyCode == 0) {
 				return;
 			}
-			
-			MovieClip(this.pocket.game.mcExtSWF).dispatchEvent(_makeEvent(KeyboardEvent.KEY_UP, this._lastKeyCode));
+
+			const target:DisplayObject = _target;
+
+			if (!target) {
+				return;
+			}
+
+			target.dispatchEvent(_makeEvent(KeyboardEvent.KEY_UP, this._lastKeyCode));
 
 			this._lastKeyCode = 0;
+		}
+
+		private function get _target():DisplayObject {
+			const ext:MovieClip = MovieClip(this.pocket.game.mcExtSWF);
+
+			if (!ext || ext.numChildren == 0) {
+				return null;
+			}
+
+			try {
+				return ext.getChildAt(0);
+			} catch (e:RangeError) {
+				return null;
+			} catch (e:SecurityError) {
+				return null;
+			}
 		}
 
 		private function _makeEvent(ttype:String, keyCode:uint):KeyboardEvent {

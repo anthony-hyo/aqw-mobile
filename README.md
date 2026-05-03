@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/Rust-stable-orange.svg)](https://www.rust-lang.org/)
 [![ActionScript](https://img.shields.io/badge/ActionScript-3.0-orange.svg)](https://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/)
-[![Adobe AIR](https://img.shields.io/badge/Adobe%20AIR-51.1-red.svg)](https://airsdk.harman.com/)
+[![Adobe AIR](https://img.shields.io/badge/Adobe%20AIR-51.3-red.svg)](https://airsdk.harman.com/)
 
 ### Join our Discord [discord.gg/EXS5qM35ff](https://discord.gg/EXS5qM35ff)
 

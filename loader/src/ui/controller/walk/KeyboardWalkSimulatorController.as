@@ -1,5 +1,6 @@
 package ui.controller.walk {
 
+	import flash.display.MovieClip;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 
@@ -52,8 +53,8 @@ package ui.controller.walk {
 
 		private function _pressKey(keyCode:uint):void {
 			this._lastKeyCode = keyCode;
-			
-			this.pocket.stage.dispatchEvent(_makeEvent(KeyboardEvent.KEY_DOWN, keyCode));
+
+			MovieClip(this.pocket.game.mcExtSWF).dispatchEvent(_makeEvent(KeyboardEvent.KEY_DOWN, keyCode));
 		}
 
 		private function _releaseKey():void {
@@ -61,7 +62,7 @@ package ui.controller.walk {
 				return;
 			}
 			
-			this.pocket.stage.dispatchEvent(_makeEvent(KeyboardEvent.KEY_UP, this._lastKeyCode));
+			MovieClip(this.pocket.game.mcExtSWF).dispatchEvent(_makeEvent(KeyboardEvent.KEY_UP, this._lastKeyCode));
 
 			this._lastKeyCode = 0;
 		}

@@ -1,30 +1,25 @@
 package ui.controller.walk {
 
-	import flash.errors.IllegalOperationError;
+    import flash.errors.IllegalOperationError;
 
-	import ui.input.Joystick;
+    public class WalkController {
 
-	public class WalkController {
+        public function WalkController(pocket:Pocket) {
+            this.pocket = pocket;
+        }
 
-		protected static const SEND_EVERY_N_FRAMES:int = 5;
-		protected static const MOVE_SPEED_MULTIPLIER:Number = 8;
+        protected var pocket:Pocket;
 
-		public function WalkController(pocket:Pocket) {
-			this.pocket = pocket;
-		}
+        protected var frameTick:int = 0;
 
-		protected var pocket:Pocket;
+        public function update():void {
+            throw new IllegalOperationError("Must override update Function");
+        }
 
-		protected var frameTick:int = 0;
+        public function stop():void {
+            throw new IllegalOperationError("Must override stop Function");
+        }
 
-		public function update():void {
-			throw new IllegalOperationError("Must override update Function");
-		}
-
-		public function stop():void {
-			throw new IllegalOperationError("Must override stop Function");
-		}
-
-	}
+    }
 }
 

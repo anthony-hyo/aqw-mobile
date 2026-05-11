@@ -12,10 +12,10 @@ package ui {
 	import ui.option.Divide;
 	import ui.option.Option;
 	import ui.option.Toggle;
+	import ui.shortcut.ShortcutPicker;
 	import ui.util.Scroll;
 
 	import util.Helper;
-
 	import util.HelperScroll;
 	import util.HelperSetting;
 
@@ -154,6 +154,64 @@ package ui {
 			new Divide(),
 			new Button(
 				null,
+				"Add Shortcut",
+				"Place an action button on screen",
+				"Add",
+				function (option:Button):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Only available in-game.");
+						}
+						return;
+					}
+
+					pocket.overlay.onHidePanel(null);
+
+					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker")
+
+					if (shortcutPicker) {
+						pocket.game.stage.removeChild(shortcutPicker);
+					}
+
+					pocket.game.stage.addChild(
+						new ShortcutPicker(pocket, function (actionName:String):void {
+							pocket.overlay.gameUI.addShortcutButton(actionName);
+						})
+					);
+				}
+			),
+			new Button(
+				null,
+				"Remove Shortcut",
+				"Remove a shortcut button from screen",
+				"Remove",
+				function (option:Button):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						return;
+					}
+
+					pocket.overlay.onHidePanel(null);
+					
+					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker")
+					
+					if (shortcutPicker) {
+						pocket.game.stage.removeChild(shortcutPicker);
+					}
+
+					pocket.game.stage.addChild(
+						new ShortcutPicker(pocket, function (actionName:String):void {
+							pocket.overlay.gameUI.removeShortcutButton(actionName);
+						})
+					);
+				}
+			),
+			new Divide(),
+			new Button(
+				null,
 				"Edit Layout",
 				"Drag to reposition UI elements",
 				"Edit",
@@ -209,6 +267,22 @@ package ui {
 					pocket.overlay.gameUI.resetLayout();
 				}
 			),
+			new Button(
+				null,
+				"Reset Shortcuts",
+				"Remove all shortcut buttons from screen",
+				"Reset",
+				function (option:Button):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					pocket.overlay.gameUI.resetShortcuts();
+
+					if (pocket.game) {
+						pocket.game.MsgBox.notify("Shortcuts cleared.");
+					}
+				}
+			),
+			new Divide(),
 			new Toggle(
 				HelperSetting.OPTION_LOCK_ORIENTATION,
 				0,
@@ -355,6 +429,8 @@ package ui {
 			}
 
 			this.pocket.overlay.setOverlayButtonTransform();
+
+			this.pocket.overlay.gameUI.loadPersistedShortcuts();
 
 			stop();
 		}

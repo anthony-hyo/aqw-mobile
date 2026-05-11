@@ -6,7 +6,9 @@ package ui {
 	import ui.controller.walk.KeyboardWalkSimulatorController;
 	import ui.controller.walk.MouseWalkSimulatorController;
 	import ui.input.Joystick;
+	import ui.shortcut.ShortcutButton;
 
+	import util.Helper;
 	import util.HelperSetting;
 
 	public class GameUI extends Sprite {
@@ -21,6 +23,8 @@ package ui {
 		public var joystickKeyboardSimulator:Joystick;
 
 		public var layoutController:LayoutController = new LayoutController();
+
+		public var shortcutButtons:Object = {};
 
 		private function showJoystick(layout:String, joystickName:String, walkControllerClass:Class, xPosition:int, yPosition:int):void {
 			var joystick:Joystick = Joystick(this.getChildByName(joystickName));
@@ -102,6 +106,90 @@ package ui {
 			this.pocket.game.ui.mcInterface.actBar.visible = false;
 		}
 
+		public function addShortcutButton(actionName:String):void {
+			if (shortcutButtons[actionName] != null) {
+				return; // already on screen
+			}
+
+			const layoutKey:String = "shortcut_" + Helper.sanitize(actionName);
+			const index:int = countShortcuts();
+			const defaultX:Number = 10 + (index % 4) * 66;
+			const defaultY:Number = 280 - Math.floor(index / 4) * 66;
+
+			const btn:ShortcutButton = new ShortcutButton(this.pocket, actionName);
+			btn.name = layoutKey;
+			btn.x = defaultX;
+			btn.y = defaultY;
+
+			this.layoutController.register(layoutKey, btn, defaultX, defaultY, btn.scaleX, btn.scaleY);
+			this.layoutController.load();
+
+			shortcutButtons[actionName] = ShortcutButton(addChild(btn));
+			
+			persistShortcuts();
+		}
+
+		public function removeShortcutButton(actionName:String):void {
+			const btn:ShortcutButton = ShortcutButton(shortcutButtons[actionName]);
+
+			if (btn == null) {
+				return;
+			}
+
+			const layoutKey:String = "shortcut_" + Helper.sanitize(actionName);
+
+			if (btn.parent) {
+				removeChild(btn);
+			}
+
+			this.layoutController.unregister(layoutKey);
+			this.layoutController.load();
+
+			delete shortcutButtons[actionName];
+
+			persistShortcuts();
+		}
+
+		public function loadPersistedShortcuts():void {
+			const saved:String = HelperSetting.getString(HelperSetting.OPTION_SHORTCUTS);
+
+			if (!saved || saved.length == 0) {
+				return;
+			}
+
+			var action:String;
+
+			for each (action in saved.split(",")) {
+				if (action.length > 0) {
+					addShortcutButton(action);
+				}
+			}
+		}
+
+		private function persistShortcuts():void {
+			const keys:Array = [];
+
+			var k:String;
+
+			for (k in shortcutButtons) {
+				keys.push(k);
+			}
+
+			HelperSetting.setString(HelperSetting.OPTION_SHORTCUTS, keys.join(","));
+		}
+
+		private function countShortcuts():int {
+			var n:int = 0;
+
+			var k:String;
+
+			for (k in shortcutButtons) {
+				n++;
+			}
+
+			return n;
+		}
+
 		public function showEditLayout():void {
 			this.layoutController.toggleEdit(true);
 		}
@@ -112,6 +200,26 @@ package ui {
 
 		public function resetLayout():void {
 			this.layoutController.resetToDefaults();
+		}
+
+		public function resetShortcuts():void {
+			var btn:ShortcutButton;
+
+			for (var actionName:String in shortcutButtons) {
+				btn = ShortcutButton(shortcutButtons[actionName]);
+
+				if (btn && btn.parent) {
+					removeChild(btn);
+				}
+
+				this.layoutController.unregister("shortcut_" + Helper.sanitize(actionName));
+			}
+
+			this.layoutController.load();
+
+			this.shortcutButtons = {};
+
+			persistShortcuts();
 		}
 
 	}

@@ -27,6 +27,9 @@ package util {
 			0.5,
 			0.1
 		];
+		public static function sanitize(s:String):String {
+			return s.replace(/[^a-zA-Z0-9]/g, "_");
+		}
 		
 	}
 }

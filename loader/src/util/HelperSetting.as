@@ -8,9 +8,11 @@ package util {
 
 		public static const OPTION_SHOW_JOYSTICK_MOUSE:String = "option_show_joystick";
 		public static const OPTION_SHOW_JOYSTICK_KEYBOARD:String = "option_show_joystick_keyboard";
-		
+
 		public static const OPTION_SHOW_SKILL_BAR:String = "option_show_skill_bar";
 		public static const OPTION_LOCK_ORIENTATION:String = "option_lock_orientation";
+
+		public static const OPTION_SHORTCUTS:String = "shortcut_buttons";
 
 		public static const OPTION_RASTERIZER:String = "option_rasterizer";
 		public static const OPTION_RASTERIZER_LEVELS:String = "option_rasterizer_levels";
@@ -19,7 +21,7 @@ package util {
 
 		public static const LAYOUT_JOYSTICK_MOUSE:String = "layout_joystick";
 		public static const LAYOUT_JOYSTICK_KEYBOARD:String = "layout_joystick_keyboard";
-		
+
 		public static const LAYOUT_SKILL_BAR:String = "layout_skill_bar";
 
 		private static var _so:SharedObject;
@@ -36,7 +38,7 @@ package util {
 			if (so.data.hasOwnProperty(key)) {
 				return so.data[key];
 			}
-			
+
 			_set(key, defaultValue);
 
 			return defaultValue;
@@ -65,6 +67,14 @@ package util {
 		}
 
 		public static function setInt(key:String, value:int):void {
+			_set(key, value);
+		}
+
+		public static function getString(key:String, defaultValue:String = ""):String {
+			return String(_get(key, defaultValue));
+		}
+
+		public static function setString(key:String, value:String):void {
 			_set(key, value);
 		}
 

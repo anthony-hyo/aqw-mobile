@@ -112,7 +112,7 @@ package ui.shortcut {
 				if (mons.length > 0) {
 					var rnd:uint = uint(Math.round(Math.random() * (mons.length - 1)));
 
-					while (mons.length > 1 && !(mons[rnd]) && !mons[rnd].pMC && mons[rnd].dataLeaf.intState == 0 && pocket.game.world.myAvatar.target == mons[rnd]) {
+					while (mons.length > 1 && !mons[rnd] && !mons[rnd].pMC && mons[rnd].dataLeaf.intState == 0 && pocket.game.world.myAvatar.target == mons[rnd]) {
 						if (pocket.game.world.strFrame != pocket.game.world.strFrame) {
 							break;
 						}
@@ -207,7 +207,9 @@ package ui.shortcut {
 					return;
 				}
 
-				pocket.game.world.toggleBank();
+				if (pocket.game.hasBankItem()){
+					pocket.game.world.toggleBank();
+				}
 			}),
 			new Action("Friends List", function (pocket:Pocket):void {
 				if (!pocket.game || !pocket.game.ui) {

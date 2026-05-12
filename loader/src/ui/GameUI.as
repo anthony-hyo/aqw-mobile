@@ -19,8 +19,8 @@ package ui {
 
 		private var pocket:Pocket;
 
-		public var joystickMouseSimulator:Joystick;
-		public var joystickKeyboardSimulator:Joystick;
+		public var joystickMouseSimulator:Joystick = null;
+		public var joystickKeyboardSimulator:Joystick = null;
 
 		public var layoutController:LayoutController = new LayoutController();
 

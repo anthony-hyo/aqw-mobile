@@ -16,6 +16,13 @@ package ui.shortcut {
 	public class ShortcutPicker extends Sprite {
 
 		public static const ACTIONS:Vector.<Action> = new <Action>[
+			new Action("Fix Lag", function (pocket:Pocket):void {
+				if (!pocket.game) {
+					return;
+				}
+
+				pocket.game.stopAllMovieClips();
+			}),
 			new Action("Auto Attack", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -306,6 +313,17 @@ package ui.shortcut {
 				}
 
 				pocket.game.optionHandler.cmd(pocket.game, "Hide UI");
+			}),
+			new Action("Toggle Joystick", function (pocket:Pocket):void {
+				if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+					return;
+				}
+
+				if (pocket.overlay.gameUI.joystickMouseSimulator) {
+					pocket.overlay.gameUI.hideJoystickMouseSimulator()
+				} else {
+					pocket.overlay.gameUI.showJoystickMouseSimulator()
+				}
 			}),
 
 			new Action("Friendships UI"),

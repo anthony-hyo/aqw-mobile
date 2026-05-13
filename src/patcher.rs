@@ -133,6 +133,7 @@ impl Patcher {
         PathBuf::from(self.get_build_swf_file_string())
     }
 
+    #[allow(dead_code)]
     fn get_build_abc_file(&self) -> PathBuf {
         PathBuf::from(self.get_build_abc_file_string())
     }

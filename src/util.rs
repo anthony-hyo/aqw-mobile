@@ -56,7 +56,7 @@ pub fn copy_files(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
 
         if path.is_dir() {
             copy_files(&path, target)?;
-        } else if path.extension().map_or(false, |ext| ext == "asasm") {
+        } else if path.extension().is_some_and(|ext| ext == "asasm") {
             let file_name = path.file_name().unwrap();
             let dest = target.join(file_name);
 

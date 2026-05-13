@@ -1,7 +1,7 @@
 use crate::util;
 use reqwest::{Client, Response};
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fs;
 use std::fs::File;
@@ -17,7 +17,9 @@ pub enum DownloadFile {
 pub struct Patcher {
     name: &'static str,
     source: DownloadFile,
+    
     patches: HashMap<String, String>,
+    patches_applied: HashSet<String>,
 }
 
 impl Patcher {
@@ -26,6 +28,7 @@ impl Patcher {
             name,
             source,
             patches: HashMap::new(),
+            patches_applied: HashSet::new(),
         }
     }
 
@@ -70,11 +73,18 @@ impl Patcher {
             self.patches.len()
         );
 
+        
         match self.apply_patch(&self.get_build_rabcdasm_path()) {
             Ok(()) => tracing::info!("[{}] Patches applied", self.name),
             Err(e) => {
                 tracing::error!("[{}] Failed to apply patches: {}", self.name, e);
                 return;
+            }
+        }
+
+        for (find, _) in &self.patches {
+            if !self.patches_applied.contains(find) {
+                tracing::warn!("[{}] Patch never applied:\n{}", self.name, find);
             }
         }
 
@@ -238,58 +248,50 @@ impl Patcher {
         Ok(())
     }
 
-    fn apply_patch(&self, path: &Path) -> Result<(), Box<dyn Error>> {
+
+    fn apply_patch(&mut self, path: &Path) -> Result<(), Box<dyn Error>> {
         for files in fs::read_dir(path)? {
             if let Ok(file) = files {
                 if file.file_type()?.is_dir() {
                     let _ = self.apply_patch(&file.path());
-                } else {
-                    if file.path().extension().map_or(false, |ext| ext == "asasm") {
-                        let mut content = fs::read_to_string(&file.path())?;
+                    continue;
+                }
+                
+                if file.path().extension().is_some_and(|ext| ext == "asasm") {
+                    let mut content = fs::read_to_string(&file.path())?;
 
-                        let mut matched = false;
+                    for (find, replace) in &self.patches {
+                        let find_normalized = find
+                            .lines()
+                            .map(|l| l.trim())
+                            .filter(|l| !l.is_empty())
+                            .collect::<Vec<_>>()
+                            .join("\n");
 
-                        for (find, replace) in &self.patches {
-                            let find_normalized = find
-                                .lines()
-                                .map(|l| l.trim())
-                                .filter(|l| !l.is_empty())
-                                .collect::<Vec<_>>()
-                                .join("\n");
+                        let content_normalized = content
+                            .lines()
+                            .map(|l| l.trim())
+                            .filter(|l| !l.is_empty())
+                            .collect::<Vec<_>>()
+                            .join("\n");
 
-                            let content_normalized = content
-                                .lines()
-                                .map(|l| l.trim())
-                                .filter(|l| !l.is_empty())
-                                .collect::<Vec<_>>()
-                                .join("\n");
+                        if content_normalized.contains(&find_normalized) {
+                            self.patches_applied.insert(find.clone());
 
-                            if content_normalized.contains(&find_normalized) {
-                                matched = true;
+                            let blocks =
+                                util::find_all_original_blocks(&content, &find_normalized);
 
-                                let blocks =
-                                    util::find_all_original_blocks(&content, &find_normalized);
-
-                                tracing::info!(
+                            tracing::info!(
                                     "[{}] Applying patch to {:?}",
                                     self.name,
                                     file.path()
                                 );
 
-                                for original in blocks {
-                                    content = content.replacen(&original, replace, 1);
-                                }
-
-                                fs::write(file.path(), &content)?;
+                            for original in blocks {
+                                content = content.replacen(&original, replace, 1);
                             }
-                        }
 
-                        if !matched {
-                            tracing::debug!(
-                                "[{}] No patches matched in {:?}",
-                                self.name,
-                                file.path()
-                            );
+                            fs::write(file.path(), &content)?;
                         }
                     }
                 }

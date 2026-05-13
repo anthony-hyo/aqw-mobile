@@ -23,6 +23,30 @@ package ui.shortcut {
 
 				pocket.game.stopAllMovieClips();
 			}),
+			new Action("Toggle World", function (pocket:Pocket):void {
+				if (!pocket.game || !pocket.game.world || !pocket.game.world.map) {
+					return;
+				}
+
+				pocket.game.world.map.visible = !pocket.game.world.map.visible;
+			}),
+			new Action("Toggle Shortcuts", function (pocket:Pocket):void {
+				if (!pocket.game) {
+					return;
+				}
+
+				var btn:ShortcutButton;
+
+				for (var actionName:String in pocket.overlay.gameUI.shortcutButtons) {
+					if (actionName == "Toggle Shortcuts") {
+						continue;
+					}
+					
+					btn = ShortcutButton(pocket.overlay.gameUI.shortcutButtons[actionName]);
+
+					btn.visible = !btn.visible;
+				}
+			}),
 			new Action("Auto Attack", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -44,7 +68,7 @@ package ui.shortcut {
 				}
 
 				const icon:* = pocket.game.ui.mcInterface.actBar.getChildByName("i2");
-				
+
 				if (icon != null && icon.actObj != null) {
 					if (icon.actObj.auto) {
 						pocket.game.world.approachTarget();
@@ -214,7 +238,7 @@ package ui.shortcut {
 					return;
 				}
 
-				if (pocket.game.hasBankItem()){
+				if (pocket.game.hasBankItem()) {
 					pocket.game.world.toggleBank();
 				}
 			}),
@@ -309,9 +333,9 @@ package ui.shortcut {
 				}
 
 				if (pocket.overlay.gameUI.joystickMouseSimulator) {
-					pocket.overlay.gameUI.hideJoystickMouseSimulator()
+					pocket.overlay.gameUI.hideJoystickMouseSimulator();
 				} else {
-					pocket.overlay.gameUI.showJoystickMouseSimulator()
+					pocket.overlay.gameUI.showJoystickMouseSimulator();
 				}
 			}),
 
@@ -327,13 +351,13 @@ package ui.shortcut {
 		public function ShortcutPicker(pocket:Pocket, onPick:Function) {
 			this.pocket = pocket;
 			this.onPick = onPick;
-			
+
 			this.name = "ShortcutPicker";
 
 			addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 0, true);
 		}
 
-		public var closeBtn:SimpleButton
+		public var closeBtn:SimpleButton;
 
 		public var content:Sprite;
 		public var contentMask:DisplayObject;

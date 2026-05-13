@@ -17,7 +17,7 @@ pub enum DownloadFile {
 pub struct Patcher {
     name: &'static str,
     source: DownloadFile,
-    
+
     patches: HashMap<String, String>,
     patches_applied: HashSet<String>,
 }
@@ -73,7 +73,6 @@ impl Patcher {
             self.patches.len()
         );
 
-        
         match self.apply_patch(&self.get_build_rabcdasm_path()) {
             Ok(()) => tracing::info!("[{}] Patches applied", self.name),
             Err(e) => {
@@ -88,7 +87,15 @@ impl Patcher {
             }
         }
 
-        match util::copy_files(&self.get_bytecode_path(), &self.get_build_rabcdasm_path()) {
+        match self.apply_method(&self.get_bytecode_path(), &self.get_build_rabcdasm_path()) {
+            Ok(()) => tracing::info!("[{}] Patches methods applied", self.name),
+            Err(e) => {
+                tracing::error!("[{}] Failed to apply methods: {}", self.name, e);
+                return;
+            }
+        }
+
+        match self.copy_files(&self.get_bytecode_path(), &self.get_build_rabcdasm_path()) {
             Ok(()) => tracing::info!("[{}] Patches copied", self.name),
             Err(e) => {
                 tracing::error!("[{}] Failed to copy patches: {}", self.name, e);
@@ -211,7 +218,10 @@ impl Patcher {
         tracing::info!("[{}] Loading patches from {:?}", self.name, path);
 
         if !path.exists() {
-            tracing::warn!("[{}] No bytecodes directory found, skipping patches", self.name);
+            tracing::warn!(
+                "[{}] No bytecodes directory found, skipping patches",
+                self.name
+            );
             return Ok(());
         }
 
@@ -249,7 +259,6 @@ impl Patcher {
         Ok(())
     }
 
-
     fn apply_patch(&mut self, path: &Path) -> Result<(), Box<dyn Error>> {
         for files in fs::read_dir(path)? {
             if let Ok(file) = files {
@@ -257,7 +266,7 @@ impl Patcher {
                     let _ = self.apply_patch(&file.path());
                     continue;
                 }
-                
+
                 if file.path().extension().is_some_and(|ext| ext == "asasm") {
                     let mut content = fs::read_to_string(&file.path())?;
 
@@ -279,14 +288,9 @@ impl Patcher {
                         if content_normalized.contains(&find_normalized) {
                             self.patches_applied.insert(find.clone());
 
-                            let blocks =
-                                util::find_all_original_blocks(&content, &find_normalized);
+                            let blocks = util::find_all_original_blocks(&content, &find_normalized);
 
-                            tracing::info!(
-                                    "[{}] Applying patch to {:?}",
-                                    self.name,
-                                    file.path()
-                                );
+                            tracing::info!("[{}] Applying patch to {:?}", self.name, file.path());
 
                             for original in blocks {
                                 content = content.replacen(&original, replace, 1);
@@ -296,6 +300,107 @@ impl Patcher {
                         }
                     }
                 }
+            }
+        }
+
+        Ok(())
+    }
+
+    fn apply_method(&self, bytecodes: &Path, build: &Path) -> Result<(), Box<dyn Error>> {
+        if !bytecodes.exists() {
+            return Ok(());
+        }
+
+        for entry in fs::read_dir(bytecodes)? {
+            let entry = entry?;
+            let path = entry.path();
+
+            if path.is_dir() {
+                self.apply_method(&path, build)?;
+                continue;
+            }
+
+            let file_name = path.file_name().unwrap().to_string_lossy();
+
+            if !file_name.ends_with(".method.asasm") {
+                continue;
+            }
+
+            let method_name = file_name.trim_end_matches(".method.asasm").to_string();
+
+            let replacement = fs::read_to_string(&path)?;
+
+            self.apply_method_to_build(build, &method_name, &replacement)?;
+        }
+
+        Ok(())
+    }
+
+    fn apply_method_to_build(
+        &self,
+        build: &Path,
+        method_name: &str,
+        replacement: &str,
+    ) -> Result<(), Box<dyn Error>> {
+        for entry in fs::read_dir(build)? {
+            let entry = entry?;
+            let path = entry.path();
+
+            if path.is_dir() {
+                self.apply_method_to_build(&path, method_name, replacement)?;
+                continue;
+            }
+
+            if !path.extension().is_some_and(|e| e == "asasm") {
+                continue;
+            }
+
+            let content = fs::read_to_string(&path)?;
+
+            if let Some(new_content) =
+                util::replace_trait_method(&content, method_name, replacement)
+            {
+                tracing::info!(
+                    "[{}] Applying method patch {} to {:?}",
+                    self.name,
+                    method_name,
+                    path
+                );
+                fs::write(&path, new_content)?;
+            }
+        }
+
+        Ok(())
+    }
+
+    fn copy_files(&self, source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
+        if !source.exists() {
+            return Ok(());
+        }
+
+        for entry in fs::read_dir(source)? {
+            let entry = entry?;
+            let path = entry.path();
+
+            if path.is_dir() {
+                self.copy_files(&path, target)?;
+                continue;
+            }
+
+            let file_name_str = path.file_name().unwrap().to_string_lossy();
+
+            if file_name_str.ends_with(".copy.asasm") {
+                let dest_name = file_name_str.replace(".copy.asasm", ".asasm");
+                let dest = target.join(dest_name);
+
+                tracing::info!(
+                    "[{}] Copying patch {} to {:?}",
+                    self.name,
+                    dest.display(),
+                    path
+                );
+
+                fs::copy(&path, &dest)?;
             }
         }
 

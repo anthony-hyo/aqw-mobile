@@ -45,30 +45,6 @@ pub fn copy_dir(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn copy_files(source: &Path, target: &Path) -> Result<(), Box<dyn Error>> {
-    if !source.exists() {
-        return Ok(());
-    }
-
-    for entry in fs::read_dir(source)? {
-        let entry = entry?;
-        let path = entry.path();
-
-        if path.is_dir() {
-            copy_files(&path, target)?;
-        } else if path.extension().is_some_and(|ext| ext == "asasm") {
-            let file_name = path.file_name().unwrap();
-            let dest = target.join(file_name);
-
-            println!("Adding new file: {:?}", dest);
-
-            fs::copy(&path, &dest)?;
-        }
-    }
-
-    Ok(())
-}
-
 pub fn find_all_original_blocks(content: &str, find_normalized: &str) -> Vec<String> {
     let find_lines: Vec<&str> = find_normalized.lines().collect();
     let content_lines: Vec<&str> = content.lines().collect();
@@ -111,4 +87,51 @@ pub fn find_all_original_blocks(content: &str, find_normalized: &str) -> Vec<Str
     }
 
     results
+}
+
+pub fn replace_trait_method(content: &str, method_name: &str, replacement: &str) -> Option<String> {
+    let content = content.replace("\r\n", "\n");
+    let lines: Vec<&str> = content.lines().collect();
+
+    let start = lines.iter().position(|l| {
+        let t = l.trim();
+        t.starts_with("trait ") && t.contains(&format!("\"{}\"", method_name))
+    })?;
+
+    let mut depth = 0usize;
+    let mut end = None;
+
+    for (offset, line) in lines[start..].iter().enumerate() {
+        let t = line.trim();
+        if t.starts_with("trait ") {
+            depth += 1;
+        } else if t.starts_with("end ; trait") {
+            depth = depth.saturating_sub(1);
+            if depth == 0 {
+                end = Some(start + offset);
+                break;
+            }
+        }
+    }
+
+    let end = end?;
+
+    let mut result = lines[..start].join("\n");
+    if !result.is_empty() {
+        result.push('\n');
+    }
+
+    result.push_str(replacement.trim_end());
+    result.push('\n');
+
+    let tail = lines[end + 1..].join("\n");
+    if !tail.is_empty() {
+        result.push_str(&tail);
+    }
+
+    if !result.ends_with('\n') {
+        result.push('\n');
+    }
+
+    Some(result)
 }

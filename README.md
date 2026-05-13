@@ -25,7 +25,7 @@ Pick **armv8** for anything recent (2017+) or **armv7** for older devices.
 - **Joystick**, **skills bar** and **UI**, reposition, reset, or hide via the top left menu
 - In-game update notifications, checks GitHub for new releases automatically
 
-<img width="500" height="auto" alt="image" src="https://github.com/user-attachments/assets/65fe7ec8-d406-44d7-abc8-018cc6399deb" />
+<img width="auto" height="auto" alt="image" src="https://github.com/user-attachments/assets/a2fca19f-5c63-4857-b3dc-b6b87a94c848" />
 
 ## How It Works
 

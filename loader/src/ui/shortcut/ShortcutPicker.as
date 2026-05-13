@@ -240,17 +240,6 @@ package ui.shortcut {
 					pocket.game.ui.mcPopup.fOpen("Option");
 				}
 			}),
-			new Action("Area List", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.ui) {
-					return;
-				}
-
-				if (!pocket.game.ui.mcOFrame.isOpen) {
-					pocket.game.world.sendWhoRequest();
-				} else {
-					pocket.game.ui.mcOFrame.fClose();
-				}
-			}),
 			new Action("Stats Overview", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -326,6 +315,7 @@ package ui.shortcut {
 				}
 			}),
 
+			new Action("Area List"),
 			new Action("Friendships UI"),
 			new Action("Outfits"),
 			new Action("Travel Menu's Travel"),

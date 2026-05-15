@@ -156,33 +156,7 @@ package ui.shortcut {
 					}
 				}
 			}),
-			new Action("Cancel Target", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				if (pocket.game.cancelTargetTimer.running) {
-					return;
-				}
-
-				if (pocket.game.world.autoActionTimer != null && pocket.game.world.autoActionTimer.running) {
-					pocket.game.world.cancelAutoAttack();
-					pocket.game.world.myAvatar.pMC.mcChar.gotoAndStop("Idle");
-				}
-
-				if (pocket.game.world.myAvatar.target != null) {
-					pocket.game.world.setTarget(null);
-				}
-
-				if (!pocket.game.cancelTargetTimer.hasEventListener(TimerEvent.TIMER)) {
-					pocket.game.cancelTargetTimer.addEventListener(TimerEvent.TIMER, pocket.game.hasCanceledAlready, false, 0, true);
-				}
-
-				const _local_7:int = parseInt(pocket.game.world.getActionByRef(pocket.game.world.actionMap[0]).cd);
-
-				pocket.game.cancelTargetTimer.delay = _local_7 < 2000 ? 2000 : _local_7;
-				pocket.game.cancelTargetTimer.start();
-			}),
+			new Action("Cancel Target"),
 			new Action("Dash", function (pocket:Pocket):void {
 				if (!pocket.game || !pocket.game.world) {
 					return;
@@ -198,135 +172,23 @@ package ui.shortcut {
 					pocket.game.pDash = true;
 				}
 			}),
-			new Action("Jump", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.world.myAvatar.pMC.mcChar.gotoAndPlay("Jump");
-			}),
-			new Action("Rest", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.world.rest();
-			}),
-			new Action("Inventory", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.ui) {
-					return;
-				}
-
-				pocket.game.ui.mcInterface.mcMenu.toggleInventory();
-			}),
-			new Action("Character Panel", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.toggleCharpanel("overview");
-			}),
-			new Action("Quest Log", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.world.toggleQuestLog();
-			}),
-			new Action("Bank", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				if (pocket.game.hasBankItem()) {
-					pocket.game.world.toggleBank();
-				}
-			}),
-			new Action("Friends List", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.ui) {
-					return;
-				}
-
-				if (pocket.game.ui.mcOFrame.isOpen) {
-					pocket.game.ui.mcOFrame.fClose();
-				} else {
-					pocket.game.world.showFriendsList();
-				}
-			}),
-			new Action("Options", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.ui) {
-					return;
-				}
-
-				if (pocket.game.ui.mcPopup.currentLabel == "Option") {
-					pocket.game.ui.mcPopup.onClose();
-				} else {
-					pocket.game.ui.mcPopup.fOpen("Option");
-				}
-			}),
-			new Action("Stats Overview", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.toggleStatspanel();
-			}),
-			new Action("Battle Analyzer", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.optionHandler) {
-					return;
-				}
-
-				pocket.game.optionHandler.cmd(pocket.game, "Battle Analyzer");
-			}),
-			new Action("Battle Analyzer Toggle", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.ui || !pocket.game.bAnalyzer) {
-					return;
-				}
-
-				pocket.game.bAnalyzer.toggle();
-			}),
-			new Action("Custom Drops UI", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.ui || !pocket.game.ui.mcPortrait.iconDrops || pocket.game.ui.mcPortrait.iconDrops.visible) {
-					return;
-				}
-
-				pocket.game.ui.mcPortrait.iconDrops.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
-			}),
-			new Action("Decline All Drops", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.optionHandler) {
-					return;
-				}
-
-				pocket.game.optionHandler.cmd(pocket.game, "Decline All Drops");
-			}),
-			new Action("Player HP Bar", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.world.toggleHPBar();
-			}),
-			new Action("Hide Monsters", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.world.toggleMonsters();
-			}),
-			new Action("Hide Players", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.optionHandler) {
-					return;
-				}
-
-				pocket.game.optionHandler.cmd(pocket.game, "Hide Players");
-			}),
-			new Action("Hide UI", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.optionHandler) {
-					return;
-				}
-
-				pocket.game.optionHandler.cmd(pocket.game, "Hide UI");
-			}),
+			new Action("Jump"),
+			new Action("Rest"),
+			new Action("Inventory"),
+			new Action("Character Panel"),
+			new Action("Quest Log"),
+			new Action("Bank"),
+			new Action("Friends List"),
+			new Action("Options"),
+			new Action("Stats Overview"),
+			new Action("Battle Analyzer"),
+			new Action("Battle Analyzer Toggle"),
+			new Action("Custom Drops UI"),
+			new Action("Decline All Drops"),
+			new Action("Player HP Bar"),
+			new Action("Hide Monsters"),
+			new Action("Hide Players"),
+			new Action("Hide UI"),
 			new Action("Toggle Joystick", function (pocket:Pocket):void {
 				if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 					return;

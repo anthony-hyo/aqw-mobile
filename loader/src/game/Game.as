@@ -1,4 +1,4 @@
-package core {
+package game {
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.events.Event;

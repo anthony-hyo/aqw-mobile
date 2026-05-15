@@ -1,4 +1,4 @@
-package core {
+package game {
 
 	public class AvatarMC {
 

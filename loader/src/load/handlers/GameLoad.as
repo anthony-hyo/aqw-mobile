@@ -1,6 +1,6 @@
 package load.handlers {
 
-	import core.Network;
+	import game.Network;
 
 	import flash.display.Loader;
 	import flash.display.MovieClip;

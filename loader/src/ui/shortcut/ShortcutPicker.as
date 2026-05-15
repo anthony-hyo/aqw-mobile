@@ -37,12 +37,12 @@ package ui.shortcut {
 
 				var btn:ShortcutButton;
 
-				for (var actionName:String in pocket.overlay.gameUI.shortcutButtons) {
+				for (var actionName:String in pocket.gameUI.shortcutButtons) {
 					if (actionName == "Toggle Shortcuts") {
 						continue;
 					}
 					
-					btn = ShortcutButton(pocket.overlay.gameUI.shortcutButtons[actionName]);
+					btn = ShortcutButton(pocket.gameUI.shortcutButtons[actionName]);
 
 					btn.visible = !btn.visible;
 				}
@@ -194,10 +194,10 @@ package ui.shortcut {
 					return;
 				}
 
-				if (pocket.overlay.gameUI.joystickMouseSimulator) {
-					pocket.overlay.gameUI.hideJoystickMouseSimulator();
+				if (pocket.gameUI.joystickMouseSimulator) {
+					pocket.gameUI.hideJoystickMouseSimulator();
 				} else {
-					pocket.overlay.gameUI.showJoystickMouseSimulator();
+					pocket.gameUI.showJoystickMouseSimulator();
 				}
 			}),
 

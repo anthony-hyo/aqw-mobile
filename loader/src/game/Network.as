@@ -43,11 +43,11 @@ package game {
 					continue;
 				}
 
-				this.pocket.overlay.gameUI.layoutController.register(HelperSetting.LAYOUT_SKILL_BAR + "_i" + (i + 1), icon, icon.x, icon.y, icon.scaleX, icon.scaleY);
+				this.pocket.gameUI.layoutController.register(HelperSetting.LAYOUT_SKILL_BAR + "_i" + (i + 1), icon, icon.x, icon.y, icon.scaleX, icon.scaleY);
 
 			}
 
-			this.pocket.overlay.gameUI.layoutController.load();
+			this.pocket.gameUI.layoutController.load();
 		}
 
 	}

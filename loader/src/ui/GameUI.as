@@ -15,6 +15,8 @@ package ui {
 
 		public function GameUI(pocket:Pocket) {
 			this.pocket = pocket;
+
+			this.pocket.addChild(this);
 		}
 
 		private var pocket:Pocket;

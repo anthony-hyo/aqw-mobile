@@ -32,10 +32,12 @@ package load.handlers {
 			this.pocket.overlay.debug.log("Game client loaded");
 
 			this.pocket.removeChild(this.pocket.overlay);
+			this.pocket.removeChild(this.pocket.gameUI);
 
 			this.pocket.game = MovieClip(this.pocket.stage.addChild(MovieClip(Loader(event.target.loader).content)));
 
 			this.pocket.game.addChild(this.pocket.overlay);
+			this.pocket.game.addChild(this.pocket.gameUI);
 
 			this.pocket.game.params.sTitle = this.pocket.version.sTitle;
 			this.pocket.game.params.isWeb = false;

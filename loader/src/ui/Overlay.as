@@ -32,7 +32,6 @@ package ui {
 			this.pocket.addChild(this);
 
 			this.notifications = Sprite(addChild(new Sprite()));
-			this.gameUI = GameUI(addChild(new GameUI(Pocket.SINGLETON)));
 		}
 
 		public var showPanelBtn:SimpleButton;
@@ -62,11 +61,11 @@ package ui {
 					}
 
 					if (option.state) {
-						pocket.overlay.gameUI.showJoystickMouseSimulator();
+						pocket.gameUI.showJoystickMouseSimulator();
 						return;
 					}
 
-					pocket.overlay.gameUI.hideJoystickMouseSimulator();
+					pocket.gameUI.hideJoystickMouseSimulator();
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
@@ -76,11 +75,11 @@ package ui {
 					}
 
 					if (frame != "Game") {
-						pocket.overlay.gameUI.hideJoystickMouseSimulator();
+						pocket.gameUI.hideJoystickMouseSimulator();
 						return;
 					}
 
-					pocket.overlay.gameUI.showJoystickMouseSimulator();
+					pocket.gameUI.showJoystickMouseSimulator();
 				}
 			),
 			new Check(
@@ -96,11 +95,11 @@ package ui {
 					}
 
 					if (option.state) {
-						pocket.overlay.gameUI.showJoystickKeyboardSimulator();
+						pocket.gameUI.showJoystickKeyboardSimulator();
 						return;
 					}
 
-					pocket.overlay.gameUI.hideJoystickKeyboardSimulator();
+					pocket.gameUI.hideJoystickKeyboardSimulator();
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
@@ -110,11 +109,11 @@ package ui {
 					}
 
 					if (frame != "Game") {
-						pocket.overlay.gameUI.hideJoystickKeyboardSimulator();
+						pocket.gameUI.hideJoystickKeyboardSimulator();
 						return;
 					}
 
-					pocket.overlay.gameUI.showJoystickKeyboardSimulator();
+					pocket.gameUI.showJoystickKeyboardSimulator();
 				}
 			),
 			new Check(
@@ -130,11 +129,11 @@ package ui {
 					}
 
 					if (option.state) {
-						pocket.overlay.gameUI.showSkillBar();
+						pocket.gameUI.showSkillBar();
 						return;
 					}
 
-					pocket.overlay.gameUI.hideSkillBar();
+					pocket.gameUI.hideSkillBar();
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
@@ -144,11 +143,11 @@ package ui {
 					}
 
 					if (frame != "Game") {
-						pocket.overlay.gameUI.hideSkillBar();
+						pocket.gameUI.hideSkillBar();
 						return;
 					}
 
-					pocket.overlay.gameUI.showSkillBar();
+					pocket.gameUI.showSkillBar();
 				}
 			),
 			new Divide(),
@@ -169,7 +168,7 @@ package ui {
 
 					pocket.overlay.onHidePanel(null);
 
-					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker")
+					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker");
 
 					if (shortcutPicker) {
 						pocket.game.stage.removeChild(shortcutPicker);
@@ -177,7 +176,7 @@ package ui {
 
 					pocket.game.stage.addChild(
 						new ShortcutPicker(pocket, function (actionName:String):void {
-							pocket.overlay.gameUI.addShortcutButton(actionName);
+							pocket.gameUI.addShortcutButton(actionName);
 						})
 					);
 				}
@@ -195,16 +194,16 @@ package ui {
 					}
 
 					pocket.overlay.onHidePanel(null);
-					
-					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker")
-					
+
+					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker");
+
 					if (shortcutPicker) {
 						pocket.game.stage.removeChild(shortcutPicker);
 					}
 
 					pocket.game.stage.addChild(
 						new ShortcutPicker(pocket, function (actionName:String):void {
-							pocket.overlay.gameUI.removeShortcutButton(actionName);
+							pocket.gameUI.removeShortcutButton(actionName);
 						})
 					);
 				}
@@ -231,12 +230,12 @@ package ui {
 
 					pocket.overlay.onHidePanel(null);
 
-					pocket.overlay.gameUI.showEditLayout();
+					pocket.gameUI.showEditLayout();
 				},
 				function (frame:String):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
-					pocket.overlay.gameUI.hideEditLayout();
+					pocket.gameUI.hideEditLayout();
 
 					pocket.worldCore.setWorldFilters([]);
 				},
@@ -249,7 +248,7 @@ package ui {
 
 					pocket.worldCore.setWorldFilters([]);
 
-					pocket.overlay.gameUI.hideEditLayout();
+					pocket.gameUI.hideEditLayout();
 				}
 			),
 			new Button(
@@ -264,7 +263,7 @@ package ui {
 						pocket.game.MsgBox.notify("Layout successfully restored.");
 					}
 
-					pocket.overlay.gameUI.resetLayout();
+					pocket.gameUI.resetLayout();
 				}
 			),
 			new Button(
@@ -275,7 +274,7 @@ package ui {
 				function (option:Button):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
-					pocket.overlay.gameUI.resetShortcuts();
+					pocket.gameUI.resetShortcuts();
 
 					if (pocket.game) {
 						pocket.game.MsgBox.notify("Shortcuts cleared.");
@@ -430,7 +429,7 @@ package ui {
 
 			this.pocket.overlay.setOverlayButtonTransform();
 
-			this.pocket.overlay.gameUI.loadPersistedShortcuts();
+			this.pocket.gameUI.loadPersistedShortcuts();
 
 			stop();
 		}

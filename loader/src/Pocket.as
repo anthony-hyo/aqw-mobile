@@ -21,6 +21,7 @@
 	import load.handlers.UpdateLoad;
 	import load.handlers.VersionLoad;
 
+	import ui.GameUI;
 	import ui.Overlay;
 
 	import util.HelperLoader;
@@ -29,9 +30,9 @@
 
 		public static var IS_RASTERIZER_ON:Boolean = true;
 		public static var RASTERIZER_QUALITY_LEVEL:Number = 1;
-		
+
 		public static var IS_ANIMATION_OFF:Boolean = false;
-		
+
 		private static var _SINGLETON:Pocket;
 
 		public static function get SINGLETON():Pocket {
@@ -66,6 +67,7 @@
 		public var background:MovieClip;
 
 		public var overlay:Overlay = new Overlay(this);
+		public var gameUI:GameUI = new GameUI(this);
 
 		public var game:MovieClip;
 
@@ -82,7 +84,7 @@
 		public var release:Release;
 
 		public const load:Function = HelperLoader.load;
-		
+
 		public const avatarRasterizer:Class = AvatarRasterizer;
 		public const entityRasterizer:Class = EntityRasterizer;
 

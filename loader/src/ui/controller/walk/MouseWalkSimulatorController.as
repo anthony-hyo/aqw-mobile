@@ -33,7 +33,7 @@ package ui.controller.walk {
             }
 
             const pMC:MovieClip = MovieClip(this.pocket.game.world.myAvatar.pMC);
-            const joystick:* = this.pocket.overlay.gameUI.joystickMouseSimulator;
+            const joystick:* = this.pocket.gameUI.joystickMouseSimulator;
 
             const dirX:Number = joystick.dirX;
             const dirY:Number = joystick.dirY;
@@ -137,7 +137,7 @@ package ui.controller.walk {
             }
 
             if (this.isDashingVisual) {
-                const joystick:* = this.pocket.overlay.gameUI.joystickMouseSimulator;
+                const joystick:* = this.pocket.gameUI.joystickMouseSimulator;
                 if (joystick && joystick.knob) {
                     joystick.knob.transform.colorTransform = normalColor;
                 }

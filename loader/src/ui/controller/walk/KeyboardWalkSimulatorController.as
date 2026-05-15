@@ -14,8 +14,8 @@ package ui.controller.walk {
 		}
 
 		public override function update():void {
-			const dirX:Number = this.pocket.overlay.gameUI.joystickKeyboardSimulator.dirX;
-			const dirY:Number = this.pocket.overlay.gameUI.joystickKeyboardSimulator.dirY;
+			const dirX:Number = this.pocket.gameUI.joystickKeyboardSimulator.dirX;
+			const dirY:Number = this.pocket.gameUI.joystickKeyboardSimulator.dirY;
 
 			if (dirX == 0 && dirY == 0) {
 				_releaseKey();

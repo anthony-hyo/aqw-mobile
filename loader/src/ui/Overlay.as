@@ -6,6 +6,8 @@ package ui {
 	import flash.display.Sprite;
 	import flash.display.StageAspectRatio;
 	import flash.events.MouseEvent;
+	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
 
 	import ui.option.Button;
 	import ui.option.Check;
@@ -36,6 +38,10 @@ package ui {
 
 		public var showPanelBtn:SimpleButton;
 		public var hidePanelBtn:SimpleButton;
+
+		public var reportBugBtn:SimpleButton;
+		public var updateBtn:SimpleButton;
+		public var discordBtn:SimpleButton;
 
 		public var content:Sprite;
 		public var contentMask:DisplayObject;
@@ -460,6 +466,10 @@ package ui {
 				this.contentMask
 			);
 
+			this.reportBugBtn.addEventListener(MouseEvent.CLICK, onReportBug);
+			this.updateBtn.addEventListener(MouseEvent.CLICK, onUpdate);
+			this.discordBtn.addEventListener(MouseEvent.CLICK, onDiscord);
+
 			this.visible = true;
 
 			stop();
@@ -471,6 +481,18 @@ package ui {
 
 		private function onHidePanel(mouseEvent:MouseEvent):void {
 			gotoAndStop("Init");
+		}
+
+		private function onReportBug(e:MouseEvent):void {
+			navigateToURL(new URLRequest("https://github.com/anthony-hyo/aqw-mobile/issues"), "_blank");
+		}
+
+		private function onUpdate(e:MouseEvent):void {
+			navigateToURL(new URLRequest("https://github.com/anthony-hyo/aqw-mobile/releases/latest"), "_blank");
+		}
+
+		private function onDiscord(e:MouseEvent):void {
+			navigateToURL(new URLRequest("https://discord.gg/EXS5qM35ff"), "_blank");
 		}
 
 		public function notification(message:String):void {

@@ -32,7 +32,7 @@ package ui {
 			this.pocket.addChild(this);
 
 			this.notifications = Sprite(addChild(new Sprite()));
-			this.gameUI = GameUI(addChild(new GameUI(this.pocket)));
+			this.gameUI = GameUI(addChild(new GameUI(Pocket.SINGLETON)));
 		}
 
 		public var showPanelBtn:SimpleButton;
@@ -42,7 +42,7 @@ package ui {
 		public var contentMask:DisplayObject;
 		public var contentScroll:Scroll;
 
-		public var debug:Debug = new Debug(this.pocket);
+		public var debug:Debug = new Debug(Pocket.SINGLETON);
 		public var gameUI:GameUI;
 		public var notifications:Sprite;
 

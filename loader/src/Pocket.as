@@ -1,9 +1,5 @@
 ﻿package {
 
-	import core.Game;
-	import core.Network;
-	import core.World;
-
 	import data.Release;
 	import data.Version;
 
@@ -15,6 +11,10 @@
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.text.TextField;
+
+	import game.Game;
+	import game.Network;
+	import game.World;
 
 	import load.handlers.BackgroundLoad;
 	import load.handlers.GameLoad;

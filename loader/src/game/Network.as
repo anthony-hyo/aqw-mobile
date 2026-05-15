@@ -1,4 +1,4 @@
-package core {
+package game {
 	
 	import flash.display.Sprite;
 

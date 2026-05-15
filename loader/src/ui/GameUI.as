@@ -108,13 +108,22 @@ package ui {
 
 		public function addShortcutButton(actionName:String):void {
 			if (shortcutButtons[actionName] != null) {
-				return; // already on screen
+				return;
 			}
 
 			const layoutKey:String = "shortcut_" + Helper.sanitize(actionName);
 			const index:int = countShortcuts();
-			const defaultX:Number = 10 + (index % 4) * 66;
-			const defaultY:Number = 280 - Math.floor(index / 4) * 66;
+
+			const COLS:int = 4;
+			const CELL:int = 66;
+			const ORIGIN_X:Number = 480;
+			const ORIGIN_Y:Number = 245;
+
+			const col:int = index % COLS;
+			const row:int = Math.floor(index / COLS);
+
+			const defaultX:Number = ORIGIN_X + col * CELL;
+			const defaultY:Number = ORIGIN_Y + row * CELL;
 
 			const btn:ShortcutButton = new ShortcutButton(this.pocket, actionName);
 			btn.name = layoutKey;
@@ -125,7 +134,7 @@ package ui {
 			this.layoutController.load();
 
 			shortcutButtons[actionName] = ShortcutButton(addChild(btn));
-			
+
 			persistShortcuts();
 		}
 

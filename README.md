@@ -5,7 +5,7 @@
 [![ActionScript](https://img.shields.io/badge/ActionScript-3.0-orange.svg)](https://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/)
 [![Adobe AIR](https://img.shields.io/badge/Adobe%20AIR-51.3-red.svg)](https://airsdk.harman.com/)
 
-### Join our Discord [discord.gg/EXS5qM35ff](https://discord.gg/EXS5qM35ff)
+### Join our Discord  <a href="https://discord.gg/EXS5qM35ff" target="_blank"><img src="https://img.shields.io/discord/1477853380855468219?label=Discord&logo=discord"></a>
 
 AdventureQuest Worlds Mobile, AQW Pocket is a free, community-built alternative that runs the game natively on Android.
 

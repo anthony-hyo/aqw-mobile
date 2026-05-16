@@ -217,7 +217,7 @@ package game {
 			}
 
 			if (key != 0) {
-				listItem.y = iList.height - 4;
+				listItem.y = iList.height;
 			}
 		}
 

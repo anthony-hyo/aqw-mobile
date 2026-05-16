@@ -311,6 +311,12 @@ impl Patcher {
             return Ok(());
         }
 
+        let target_class: Option<String> = bytecodes
+            .file_name()
+            .and_then(|n| n.to_str())
+            .filter(|n| n.ends_with(".class.asasm"))
+            .map(|n| n.to_string());
+
         for entry in fs::read_dir(bytecodes)? {
             let entry = entry?;
             let path = entry.path();
@@ -327,10 +333,52 @@ impl Patcher {
             }
 
             let method_name = file_name.trim_end_matches(".method.asasm").to_string();
-
             let replacement = fs::read_to_string(&path)?;
 
-            self.apply_method_to_build(build, &method_name, &replacement)?;
+            match &target_class {
+                Some(class_file) => {
+                    self.apply_method_to_file(build, class_file, &method_name, &replacement)?;
+                }
+                None => {
+                    self.apply_method_to_build(build, &method_name, &replacement)?;
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    fn apply_method_to_file(
+        &self,
+        build: &Path,
+        class_file: &str,
+        method_name: &str,
+        replacement: &str,
+    ) -> Result<(), Box<dyn Error>> {
+        for entry in fs::read_dir(build)? {
+            let entry = entry?;
+            let path = entry.path();
+
+            if path.is_dir() {
+                self.apply_method_to_file(&path, class_file, method_name, replacement)?;
+                continue;
+            }
+
+            if path.file_name().unwrap().to_string_lossy() != class_file {
+                continue;
+            }
+
+            let content = fs::read_to_string(&path)?;
+
+            if let Some(new_content) = util::replace_trait_method(&content, method_name, replacement) {
+                tracing::info!(
+                "[{}] Applying method patch {} to {:?}",
+                self.name,
+                method_name,
+                path
+            );
+                fs::write(&path, new_content)?;
+            }
         }
 
         Ok(())

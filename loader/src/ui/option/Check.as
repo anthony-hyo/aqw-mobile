@@ -28,7 +28,7 @@ package ui.option {
 			this.checkMark.visible = this.state;
 		}
 
-		private function onToggle(e:MouseEvent):void {
+		public function onToggle(e:MouseEvent = null):void {
 			this.state = !this.state;
 
 			if (this.key != null) {

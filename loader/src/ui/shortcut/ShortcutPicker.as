@@ -7,11 +7,13 @@ package ui.shortcut {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
 
+	import ui.option.Check;
+	import ui.option.Option;
 	import ui.util.Scroll;
 
 	import util.HelperScroll;
+	import util.HelperSetting;
 
 	public class ShortcutPicker extends Sprite {
 
@@ -41,7 +43,7 @@ package ui.shortcut {
 					if (actionName == "Toggle Shortcuts") {
 						continue;
 					}
-					
+
 					btn = ShortcutButton(pocket.gameUI.shortcutButtons[actionName]);
 
 					btn.visible = !btn.visible;
@@ -194,10 +196,11 @@ package ui.shortcut {
 					return;
 				}
 
-				if (pocket.gameUI.joystickMouseSimulator) {
-					pocket.gameUI.hideJoystickMouseSimulator();
-				} else {
-					pocket.gameUI.showJoystickMouseSimulator();
+				for each (var option:Option in pocket.overlay.options) {
+					if (option.key == HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE) {
+						Check(option).onToggle();
+						return;
+					}
 				}
 			}),
 

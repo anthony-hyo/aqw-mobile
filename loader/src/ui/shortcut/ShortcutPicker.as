@@ -6,6 +6,7 @@ package ui.shortcut {
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 
 	import ui.option.Check;
@@ -48,6 +49,14 @@ package ui.shortcut {
 
 					btn.visible = !btn.visible;
 				}
+			}),
+			new Action("Open Chat", function (pocket:Pocket):void {
+				if (!pocket.game) {
+					return;
+				}
+
+				pocket.game.stage.focus = null;
+				pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, 13, 13));
 			}),
 			new Action("Auto Attack", function (pocket:Pocket):void {
 				if (!pocket.game) {

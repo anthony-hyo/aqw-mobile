@@ -58,7 +58,7 @@ package ui {
 		}
 
 		public function logError(msg:String):void {
-			if (parent == null) {
+			if (parent == null && this.pocket.overlay != null) {
 				this.pocket.overlay.addChild(this);
 			}
 

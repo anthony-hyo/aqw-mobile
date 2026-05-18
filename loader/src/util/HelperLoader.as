@@ -18,6 +18,8 @@ package util {
 		public static function load(ldr:Loader, url:String, context:LoaderContext, onComplete:Function = null, onProgress:Function = null, onError:Function = null, onHTTPError:Function = null):void {
 			prepareContext(context);
 
+			url = Helper.trimUrl(url);
+
 			loadBinary(url,
 				function (bytes:ByteArray):void {
 					if (onComplete != null) {

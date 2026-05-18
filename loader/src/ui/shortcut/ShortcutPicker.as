@@ -26,38 +26,11 @@ package ui.shortcut {
 
 				pocket.game.stopAllMovieClips();
 			}),
-			new Action("Toggle World", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.world || !pocket.game.world.map) {
-					return;
-				}
 
-				pocket.game.world.map.visible = !pocket.game.world.map.visible;
-			}),
-			new Action("Toggle Shortcuts", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				var btn:ShortcutButton;
-
-				for (var actionName:String in pocket.gameUI.shortcutButtons) {
-					if (actionName == "Toggle Shortcuts") {
-						continue;
-					}
-
-					btn = ShortcutButton(pocket.gameUI.shortcutButtons[actionName]);
-
-					btn.visible = !btn.visible;
-				}
-			}),
-			new Action("Open Chat", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.stage.focus = null;
-				pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, 13, 13));
-			}),
+			new Action("Hide Monsters"),
+			new Action("Hide Players"),
+			new Action("Hide UI"),
+			
 			new Action("Auto Attack", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -144,6 +117,7 @@ package ui.shortcut {
 					}
 				}
 			}),
+			
 			new Action("Target Random Monster", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -168,6 +142,8 @@ package ui.shortcut {
 				}
 			}),
 			new Action("Cancel Target"),
+
+			new Action("Rest"),
 			new Action("Dash", function (pocket:Pocket):void {
 				if (!pocket.game || !pocket.game.world) {
 					return;
@@ -184,22 +160,44 @@ package ui.shortcut {
 				}
 			}),
 			new Action("Jump"),
-			new Action("Rest"),
+			new Action("Player HP Bar"),
+			
+			new Action("Focus Chat", function (pocket:Pocket):void {
+				if (!pocket.game) {
+					return;
+				}
+
+				pocket.game.stage.focus = null;
+				pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, 13, 13));
+			}),
+			
 			new Action("Inventory"),
-			new Action("Character Panel"),
-			new Action("Quest Log"),
 			new Action("Bank"),
-			new Action("Friends List"),
-			new Action("Options"),
+			new Action("Outfits"),
+
+			new Action("Quest Log"),
+			
+			new Action("Character Panel"),
 			new Action("Stats Overview"),
 			new Action("Battle Analyzer"),
 			new Action("Battle Analyzer Toggle"),
+			
+			new Action("Friends List"),
+			new Action("Friendships UI"),
+			new Action("Area List"),
+			
+			new Action("Options"),
+			
 			new Action("Custom Drops UI"),
 			new Action("Decline All Drops"),
-			new Action("Player HP Bar"),
-			new Action("Hide Monsters"),
-			new Action("Hide Players"),
-			new Action("Hide UI"),
+
+			new Action("Toggle World", function (pocket:Pocket):void {
+				if (!pocket.game || !pocket.game.world || !pocket.game.world.map) {
+					return;
+				}
+
+				pocket.game.world.map.visible = !pocket.game.world.map.visible;
+			}),
 			new Action("Toggle Joystick", function (pocket:Pocket):void {
 				if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 					return;
@@ -212,10 +210,24 @@ package ui.shortcut {
 					}
 				}
 			}),
+			new Action("Toggle Shortcuts", function (pocket:Pocket):void {
+				if (!pocket.game) {
+					return;
+				}
 
-			new Action("Area List"),
-			new Action("Friendships UI"),
-			new Action("Outfits"),
+				var btn:ShortcutButton;
+
+				for (var actionName:String in pocket.gameUI.shortcutButtons) {
+					if (actionName == "Toggle Shortcuts") {
+						continue;
+					}
+
+					btn = ShortcutButton(pocket.gameUI.shortcutButtons[actionName]);
+
+					btn.visible = !btn.visible;
+				}
+			}),
+
 			new Action("Travel Menu's Travel"),
 			new Action("Camera Tool"),
 			new Action("World Camera"),

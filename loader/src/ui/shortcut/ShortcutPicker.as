@@ -222,6 +222,34 @@ package ui.shortcut {
 					}
 				}
 			}),
+			new Action("Toggle Skills Shortcuts", function (pocket:Pocket):void {
+				if (!pocket.game) {
+					return;
+				}
+
+				var btn:ShortcutButton;
+				
+				var is_visible: Boolean = null;
+
+				for (var actionName:String in pocket.gameUI.shortcutButtons) {
+					switch (actionName) {
+						case "Auto Attack":
+						case "Skill 2":
+						case "Skill 3":
+						case "Skill 4":
+						case "Skill 5":
+						case "Skill 6":
+							btn = ShortcutButton(pocket.gameUI.shortcutButtons[actionName]);
+							
+							if (is_visible === null) {
+								is_visible = btn.visible;
+							}
+
+							btn.visible = !is_visible;
+							break;
+					}
+				}
+			}),
 			new Action("Toggle Shortcuts", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;

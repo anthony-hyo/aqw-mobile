@@ -8,6 +8,8 @@ package util {
 
 		public static const OPTION_SHOW_JOYSTICK_MOUSE:String = "option_show_joystick";
 		public static const OPTION_SHOW_JOYSTICK_KEYBOARD:String = "option_show_joystick_keyboard";
+		
+		public static const OPTION_JOYSTICK_DASH:String = "option_joystick_dash";
 
 		public static const OPTION_SHOW_SKILL_BAR:String = "option_show_skill_bar";
 		public static const OPTION_LOCK_ORIENTATION:String = "option_lock_orientation";

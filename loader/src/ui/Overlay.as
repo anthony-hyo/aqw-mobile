@@ -9,6 +9,7 @@ package ui {
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 
+	import ui.controller.walk.MouseWalkSimulatorController;
 	import ui.option.Button;
 	import ui.option.Check;
 	import ui.option.Divide;
@@ -154,6 +155,18 @@ package ui {
 					}
 
 					pocket.gameUI.showSkillBar();
+				}
+			),
+			new Check(
+				HelperSetting.OPTION_JOYSTICK_DASH,
+				false,
+				"Joystick Dash",
+				"Enable dashing using joystick",
+				function (option:Check):void {
+					MouseWalkSimulatorController.IS_DASHING_ON = option.state;
+				},
+				function (frame:String):void {
+					MouseWalkSimulatorController.IS_DASHING_ON = HelperSetting.getBool(HelperSetting.OPTION_ANIMATION);
 				}
 			),
 			new Divide(),

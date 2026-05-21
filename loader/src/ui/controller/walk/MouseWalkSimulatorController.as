@@ -8,6 +8,8 @@ package ui.controller.walk {
 
     public class MouseWalkSimulatorController extends WalkController {
 
+        public static var IS_DASHING_ON:Boolean = false;
+
         private static const SEND_EVERY_N_FRAMES:int = 5;
         private static const MOVE_SPEED_MULTIPLIER:Number = 8;
 
@@ -53,13 +55,13 @@ package ui.controller.walk {
 
             var moveSpeed:Number = baseSpeed;
 
-            if (directionMagnitude >= DASH_THRESHOLD && !this.isDashingVisual) {
+            if (IS_DASHING_ON && directionMagnitude >= DASH_THRESHOLD && !this.isDashingVisual) {
                 if (joystick.knob) {
                     joystick.knob.transform.colorTransform = dashColor;
                 }
 
                 this.isDashingVisual = true;
-            } else if (directionMagnitude < DASH_THRESHOLD && this.isDashingVisual) {
+            } else if ((!IS_DASHING_ON || directionMagnitude < DASH_THRESHOLD) && this.isDashingVisual) {
                 if (joystick.knob) {
                     joystick.knob.transform.colorTransform = normalColor;
                 }
@@ -71,7 +73,7 @@ package ui.controller.walk {
                 moveSpeed = Math.max(baseSpeed * 0.3, baseSpeed * (directionMagnitude / WALK_MAX_THRESHOLD));
             } else if (directionMagnitude >= WALK_MAX_THRESHOLD && directionMagnitude < DASH_THRESHOLD) {
                 moveSpeed = baseSpeed;
-            } else if (!this.pocket.game.world.justRan) {
+            } else if (IS_DASHING_ON && !this.pocket.game.world.justRan) {
                 const currentTime:int = getTimer();
 
                 if (currentTime - this.lastDashTime >= DASH_COOLDOWN_MS) {

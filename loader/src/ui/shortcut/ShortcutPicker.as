@@ -210,6 +210,18 @@ package ui.shortcut {
 					}
 				}
 			}),
+			new Action("Toggle Skills", function (pocket:Pocket):void {
+				if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+					return;
+				}
+
+				for each (var option:Option in pocket.overlay.options) {
+					if (option.key == HelperSetting.OPTION_SHOW_SKILL_BAR) {
+						Check(option).onToggle();
+						return;
+					}
+				}
+			}),
 			new Action("Toggle Shortcuts", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;

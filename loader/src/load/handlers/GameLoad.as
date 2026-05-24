@@ -1,12 +1,12 @@
 package load.handlers {
 
-	import game.Network;
-
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
+
+	import game.Network;
 
 	import load.Load;
 
@@ -63,6 +63,12 @@ package load.handlers {
 		}
 
 		override protected function onError(error:IOErrorEvent):void {
+			this.pocket.loadingErrorTxt.htmlText =
+				"Failed to load the game client.\n" +
+				"Your installation may be <font color='#FFCC00'>corrupt or incomplete</font>.\n\n" +
+				"Try <font color='#FFCC00'>reinstalling the launcher</font> to fix this.\n\n" +
+				"<font color='#888888'>Error: " + error.text + "</font>";
+
 			this.pocket.overlay.debug.logError("Game load failed: " + error.text);
 
 			//this.pocket.advance();

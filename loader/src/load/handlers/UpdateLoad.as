@@ -66,6 +66,8 @@ package load.handlers {
 		override protected function onError(error:IOErrorEvent):void {
 			this.pocket.overlay.debug.logError("Update check failed: " + error.text);
 
+			this.pocket.overlay.notification("Could not check for updates. Check your connection.");
+
 			this.pocket.advance();
 		}
 

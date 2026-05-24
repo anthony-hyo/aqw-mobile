@@ -13,9 +13,9 @@
 	import flash.text.TextField;
 
 	import game.Game;
+	import game.LPFFrameListViewTabbed;
 	import game.Network;
 	import game.World;
-	import game.LPFFrameListViewTabbed;
 
 	import load.handlers.BackgroundLoad;
 	import load.handlers.GameLoad;
@@ -65,6 +65,7 @@
 
 		public var loadingTxt:TextField;
 		public var versionTxt:TextField;
+		public var loadingErrorTxt:TextField;
 		public var background:MovieClip;
 
 		public var overlay:Overlay = new Overlay(this);
@@ -74,9 +75,9 @@
 
 		public const gameCore:Game = new Game(this);
 		public const worldCore:World = new World(this);
-		
+
 		public const lpfFrameListViewTabbedCore:LPFFrameListViewTabbed = new LPFFrameListViewTabbed(this);
-		
+
 		public var networkCore:Network;
 
 		private const backgroundLoad:BackgroundLoad = new BackgroundLoad(this);

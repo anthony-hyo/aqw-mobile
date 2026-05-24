@@ -67,11 +67,11 @@ package ui.input {
 
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMove);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
-			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrameJoystick);
 
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMove, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, onUp, false, 0, true);
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true);
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrameJoystick, false, 0, true);
 
 			this.move(e.stageX, e.stageY);
 		}
@@ -85,7 +85,7 @@ package ui.input {
 		private function onUp(e:MouseEvent):void {
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMove);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onUp);
-			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.removeEventListener(Event.ENTER_FRAME, onEnterFrameJoystick);
 
 			if (this.dirX == 0 && this.dirY == 0) {
 				return;
@@ -96,7 +96,7 @@ package ui.input {
 			this.walkController.stop();
 		}
 
-		private function onEnterFrame(e:Event):void {
+		private function onEnterFrameJoystick(e:Event):void {
 			this.walkController.update();
 		}
 

@@ -9,16 +9,13 @@ package ui {
 
 		public var logTxt:TextField;
 
-		public function Debug(pocket:Pocket) {
-			this.pocket = pocket;
-
+		public function Debug() {
 			this.x = 30;
 			this.y = 330;
 
 			this.closeBtn.addEventListener(MouseEvent.CLICK, onClose, false, 0, true);
 		}
 
-		private var pocket:Pocket;
 		public var closeBtn:SimpleButton;
 
 		private function onClose(e:MouseEvent):void {
@@ -58,8 +55,8 @@ package ui {
 		}
 
 		public function logError(msg:String):void {
-			if (parent == null && this.pocket.overlay != null) {
-				this.pocket.overlay.addChild(this);
+			if (!parent) {
+				Pocket.SINGLETON.overlay.addChild(this);
 			}
 
 			log("ERROR: " + msg);

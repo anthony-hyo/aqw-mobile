@@ -38,7 +38,7 @@ package load.handlers {
 			try {
 				this.pocket.version = new Version(JSON.parse(URLLoader(event.target).data));
 
-				const backgrounds: Array = [
+				const backgrounds:Array = [
 					"DageScorn.swf",
 					"Mirror2.swf",
 					"ravenloss2.swf",
@@ -48,7 +48,7 @@ package load.handlers {
 				];
 
 				this.pocket.version.sBG = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-				
+
 				this.pocket.overlay.debug.log("Version fetched");
 				this.pocket.overlay.debug.log("File: " + this.pocket.version.sFile);
 				this.pocket.overlay.debug.log("Title: " + this.pocket.version.sTitle);
@@ -66,8 +66,14 @@ package load.handlers {
 		}
 
 		override protected function onError(error:IOErrorEvent):void {
-			this.pocket.loadingTxt.text = "Version load failed: " + error.text;
-			this.pocket.overlay.debug.logError("Version load failed: " + error.text);
+			this.pocket.loadingErrorTxt.htmlText =
+				"Version load failed. Check your internet connection and try again.\n\n" +
+				"1. Open your browser, visit <font color='#FFCC00'><a href='https://www.aq.com'>www.aq.com</a></font> then relaunch the game.\n" +
+				"2. Disable your <font color='#FFCC00'>VPN or proxy</font> if you are using one.\n" +
+				"3. Restart your <font color='#FFCC00'>modem/router</font> to get a fresh IP.\n\n" +
+				"<font color='#888888'>Error: " + error.text + "</font>";
+
+			this.pocket.overlay.debug.logError("Version load failed: " + JSON.stringify(error));
 
 			//this.pocket.advance();
 		}

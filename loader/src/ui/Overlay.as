@@ -48,8 +48,7 @@ package ui {
 		public var contentMask:DisplayObject;
 		public var contentScroll:Scroll;
 
-		public var debug:Debug = new Debug(Pocket.SINGLETON);
-		public var gameUI:GameUI;
+		public var debug:Debug = new Debug();
 		public var notifications:Sprite;
 
 		private var pocket:Pocket;

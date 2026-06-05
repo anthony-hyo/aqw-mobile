@@ -7,7 +7,7 @@
 
 ### Join our Discord  <a href="https://discord.gg/EXS5qM35ff" target="_blank"><img src="https://img.shields.io/discord/1477853380855468219?label=Discord&logo=discord"></a>
 
-AdventureQuest Worlds Mobile, AQW Pocket is a free, community-built alternative that runs the game natively on Android.
+AdventureQuest Worlds Mobile, AQW Pocket is a free, community-built alternative that runs the game natively on Android and Desktop.
 
 > **Disclaimer:** This is an unofficial community project, not affiliated with or endorsed by Artix Entertainment. AdventureQuest Worlds and all related assets are the property of Artix Entertainment. Use at your own risk.
 
@@ -15,12 +15,38 @@ AdventureQuest Worlds Mobile, AQW Pocket is a free, community-built alternative 
 
 ## Download
 
-Grab the latest APK from the [Releases](../../releases/latest) tab.
-Pick **armv8** for anything recent (2017+) or **armv7** for older devices.
+Grab the latest release from the [Releases](../../releases/latest) tab.
 
-**Only download from this repository. APKs from other sources may be modified.**
+### Android
+
+Pick **armv8** for most modern devices or **armv7** for older 32-bit devices.
+
+* **armv8**: recommended for most phones and tablets
+* **armv8-direct**: alternative renderer if the recommended build has issues
+* **armv8-gpu**: legacy fallback, not recommended unless needed
+* **armv7**: older 32-bit Android devices
+* **x86 / x64**: ChromeOS or Android emulators
+
+### Desktop
+
+Desktop builds may be available for:
+
+* Windows
+* Linux
+* macOS
+
+Use the build matching your operating system and architecture.
+
+**Only download from this repository. Builds from other sources may be modified.**
 
 ## Features
+
+* Native Adobe AIR client for Android and desktop
+* Mobile controls with **Joystick**, **skills bar**, and **adjustable UI**
+* Reposition, reset, or hide mobile UI elements from the top-left menu
+* In-game update notifications through GitHub releases
+* Shared client codebase across supported platforms
+* Automated builds through GitHub Actions
 
 - **Joystick**, **skills bar** and **UI**, reposition, reset, or hide via the top left menu
 - In-game update notifications, checks GitHub for new releases automatically
@@ -32,7 +58,7 @@ Pick **armv8** for anything recent (2017+) or **armv7** for older devices.
 - The build process always uses the latest game client.
 - A set of patches are applied to the ActionScript bytecode to make the client compatible with mobile/AIR constraints.
 - An ActionScript loader wraps the patched game and handles initialization.
-- Everything is packaged into an Android APK using the Adobe AIR SDK. The entire build process runs openly on GitHub Actions, what you see in the code is exactly what gets built.
+- Everything is packaged into an Android APK/Desktop using the Adobe AIR SDK. The entire build process runs openly on GitHub Actions, what you see in the code is exactly what gets built.
 - Private patches are included to prevent abuse (e.g., botting) but are fully audited in the compiled SWF.
 - - Users can audit the SWF to:
 - - - Review game logic

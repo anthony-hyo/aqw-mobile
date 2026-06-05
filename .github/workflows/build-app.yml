@@ -469,6 +469,6 @@ jobs:
 #                        
 #                        * `AQWPocket-${{ needs.patch.outputs.VERSION }}-x86.apk`
 #                        * `AQWPocket-${{ needs.patch.outputs.VERSION }}-x64.apk`
-#                    files: |
-#                        *.apk
-#                        *.zip
+                    files: |
+                        *.apk
+                        *.zip

@@ -74,6 +74,9 @@ Use the build matching your operating system and architecture.
 - Only download APKs from this repository or build from source.
 - Avoid reusing passwords from other accounts.
 
+## Notes
+- **GrapheneOS:** Keep "Disable DCL via memory" off; Adobe AIR's JIT requires it, same as browsers/JS engines. Not a bug.
+
 ---
 
 ## Contributing

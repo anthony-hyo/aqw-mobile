@@ -62,6 +62,10 @@ package ui {
 				function (option:Check):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
+					/*MovieClip(pocket.game.cDropsUI).scaleX = 1.5;
+					MovieClip(pocket.game.cDropsUI).scaleY = 1.5;
+					MovieClip(pocket.game.cDropsUI).x -= 65;*/
+
 					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
 						return;
 					}

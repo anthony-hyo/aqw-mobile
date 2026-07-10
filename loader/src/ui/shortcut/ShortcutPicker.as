@@ -8,6 +8,7 @@ package ui.shortcut {
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.ui.Keyboard;
 
 	import ui.option.Check;
 	import ui.option.Option;
@@ -30,7 +31,7 @@ package ui.shortcut {
 			new Action("Hide Monsters"),
 			new Action("Hide Players"),
 			new Action("Hide UI"),
-			
+
 			new Action("Auto Attack", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -117,7 +118,7 @@ package ui.shortcut {
 					}
 				}
 			}),
-			
+
 			new Action("Target Random Monster", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -161,7 +162,7 @@ package ui.shortcut {
 			}),
 			new Action("Jump"),
 			new Action("Player HP Bar"),
-			
+
 			new Action("Focus Chat", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
@@ -170,24 +171,32 @@ package ui.shortcut {
 				pocket.game.stage.focus = null;
 				pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, 13, 13));
 			}),
-			
+
 			new Action("Inventory"),
 			new Action("Bank"),
 			new Action("Outfits"),
 
 			new Action("Quest Log"),
-			
+
 			new Action("Character Panel"),
 			new Action("Stats Overview"),
 			new Action("Battle Analyzer"),
 			new Action("Battle Analyzer Toggle"),
-			
+
 			new Action("Friends List"),
 			new Action("Friendships UI"),
 			new Action("Area List"),
-			
+
 			new Action("Options"),
-			
+
+			new Action("Keyboard: Shift", function (pocket:Pocket):void {
+				if (!pocket.game) {
+					return;
+				}
+
+				pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, Keyboard.SHIFT, Keyboard.SHIFT));
+			}),
+
 			new Action("Custom Drops UI"),
 			new Action("Decline All Drops"),
 
@@ -228,8 +237,8 @@ package ui.shortcut {
 				}
 
 				var btn:ShortcutButton;
-				
-				var is_visible: Boolean = null;
+
+				var is_visible:Boolean = null;
 
 				for (var actionName:String in pocket.gameUI.shortcutButtons) {
 					switch (actionName) {
@@ -240,7 +249,7 @@ package ui.shortcut {
 						case "Skill 5":
 						case "Skill 6":
 							btn = ShortcutButton(pocket.gameUI.shortcutButtons[actionName]);
-							
+
 							if (is_visible === null) {
 								is_visible = btn.visible;
 							}

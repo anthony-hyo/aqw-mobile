@@ -189,13 +189,13 @@ package ui.shortcut {
 
 			new Action("Options"),
 
-			new Action("Keyboard: Shift", function (pocket:Pocket):void {
+			/*new Action("Keyboard: Shift", function (pocket:Pocket):void {
 				if (!pocket.game) {
 					return;
 				}
 
 				pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, Keyboard.SHIFT, Keyboard.SHIFT));
-			}),
+			}),*/
 
 			new Action("Custom Drops UI"),
 			new Action("Decline All Drops"),

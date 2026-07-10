@@ -15,3 +15,5 @@
 /pocket-patches/
 /patches/*
 loader.iml
+
+.env

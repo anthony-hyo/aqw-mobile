@@ -50,6 +50,8 @@
 		};
 
 		public function Pocket() {
+			//new ChatGlobal()
+
 			NativeApplication.nativeApplication.systemIdleMode = SystemIdleMode.KEEP_AWAKE;
 
 			stage.color = 0x000000;

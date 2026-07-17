@@ -211,7 +211,7 @@ jobs:
                       -arch ${{ matrix.architecture }} `
                       AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} `
                       loader/Desktop-app.xml `
-                      -extdir libs `
+                      -extdir loader/libs `
                       -C loader `
                         Desktop.swf `
                         icons/icon-16x16.png `
@@ -274,7 +274,7 @@ jobs:
                       -arch ${{ matrix.architecture }} \
                       AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} \
                       loader/Desktop-app.xml \
-                      -extdir libs \
+                      -extdir loader/libs \
                       -C loader \
                         Desktop.swf \
                         icons/icon-16x16.png \

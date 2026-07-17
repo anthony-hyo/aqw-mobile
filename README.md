@@ -50,8 +50,10 @@ Use the build matching your operating system and architecture.
 
 - **Joystick**, **skills bar** and **UI**, reposition, reset, or hide via the top left menu
 - In-game update notifications, checks GitHub for new releases automatically
+- Discord Rich Presence (Desktop Build)
 
-<img width="auto" height="auto" alt="image" src="https://github.com/user-attachments/assets/a2fca19f-5c63-4857-b3dc-b6b87a94c848" />
+<img width="75%" height="auto" alt="image" src="https://github.com/user-attachments/assets/a2fca19f-5c63-4857-b3dc-b6b87a94c848" />
+<img width="auto" height="auto" alt="image" src="https://github.com/user-attachments/assets/658ddfdc-78b6-4416-bb4b-a80a8b162cda" />
 
 ## How It Works
 

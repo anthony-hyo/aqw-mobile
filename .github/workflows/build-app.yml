@@ -133,7 +133,7 @@ jobs:
             -   name: Setup AIR SDK
                 uses: joshtynjala/setup-adobe-air-action@v2
                 with:
-                    air-version: "51.3"
+                    air-version: "51.3.1"
                     accept-license: yes
             
             -   name: Build APK
@@ -194,7 +194,7 @@ jobs:
             -   name: Setup AIR SDK
                 uses: joshtynjala/setup-adobe-air-action@v2
                 with:
-                    air-version: "51.3"
+                    air-version: "51.3.1"
                     accept-license: yes
 
             -   name: Build Windows
@@ -259,7 +259,7 @@ jobs:
             -   name: Setup AIR SDK
                 uses: joshtynjala/setup-adobe-air-action@v2
                 with:
-                    air-version: "51.3"
+                    air-version: "51.3.1"
                     accept-license: yes
 
             -   name: Build macOS

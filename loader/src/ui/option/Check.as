@@ -8,7 +8,7 @@ package ui.option {
 	public class Check extends Option {
 
 		public function Check(key:String, defaultValue:Boolean, name:String, info:String, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
-			super(key, name, info, onChange, onFrameChange, onOverlayStateChange);
+			super(key, name, info, true, onChange, onFrameChange, onOverlayStateChange);
 
 			this.state = this.key != null ? HelperSetting.getBool(this.key, defaultValue) : defaultValue;
 

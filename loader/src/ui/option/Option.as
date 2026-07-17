@@ -5,7 +5,9 @@ package ui.option {
 
 	public class Option extends Sprite {
 
-		public function Option(key:String, name:String, info:String, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+		public function Option(key:String, name:String, info:String, visible: Boolean = true, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+			this.visible = visible;
+			
 			this.key = key;
 
 			this.onChange = onChange;

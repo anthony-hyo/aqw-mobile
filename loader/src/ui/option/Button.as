@@ -7,7 +7,7 @@ package ui.option {
 	public class Button extends Option {
 
 		public function Button(key:String, name:String, info:String, buttonLabel:String, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
-			super(key, name, info, onChange, onFrameChange, onOverlayStateChange);
+			super(key, name, info, true, onChange, onFrameChange, onOverlayStateChange);
 
 			this.buttonTxt.text = buttonLabel;
 			this.buttonTxt.mouseEnabled = false;

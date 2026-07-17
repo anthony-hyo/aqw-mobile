@@ -303,12 +303,13 @@ package ui {
 					}
 				}
 			),
-			new Divide(),
+			new Divide(POCKET::IS_MOBILE),
 			new Toggle(
 				HelperSetting.OPTION_LOCK_ORIENTATION,
 				0,
 				"Screen Orientation",
 				"Choose how the screen rotates",
+				POCKET::IS_MOBILE,
 				["Landscape", "Portrait", "Landscape Left", "Landscape Right", "Portrait Flipped"],
 				function (option:Toggle):void {
 					const pocket:Pocket = Pocket.SINGLETON;
@@ -464,6 +465,10 @@ package ui {
 			var heightTotal:uint = 0;
 
 			for each (var option:Option in options) {
+				if (!option.visible) {
+					continue;
+				}
+				
 				this.content.addChild(option);
 
 				option.x = 3.75;

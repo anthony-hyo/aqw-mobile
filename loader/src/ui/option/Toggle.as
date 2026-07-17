@@ -8,8 +8,8 @@ package ui.option {
 
 	public class Toggle extends Option {
 
-		public function Toggle(key:String, defaultValue:int, label:String, info:String, toggleLabels:Array = null, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
-			super(key, label, info, onChange, onFrameChange, onOverlayStateChange);
+		public function Toggle(key:String, defaultValue:int, label:String, info:String, visible: Boolean, toggleLabels:Array = null, onChange:Function = null, onFrameChange:Function = null, onOverlayStateChange:Function = null) {
+			super(key, label, info, visible, onChange, onFrameChange, onOverlayStateChange);
 
 			this.toggleLabels = toggleLabels;
 			this.index = this.key != null ? HelperSetting.getInt(this.key, defaultValue) : defaultValue;

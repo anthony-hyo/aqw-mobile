@@ -37,7 +37,15 @@
     <allowBrowserInvocation>false</allowBrowserInvocation>
     <supportedProfiles>desktop extendedDesktop</supportedProfiles>
     <supportedLanguages>en</supportedLanguages>
-    <extensions>
-        <extensionID>fi.joniaromaa.adobeair.discordrpc</extensionID>
-    </extensions>
+    
+  
+  
+  
+  
+  
+  
+  
+  <extensions>
+    <extensionID>fi.joniaromaa.adobeair.discordrpc</extensionID>
+  </extensions>
 </application>

@@ -59,6 +59,7 @@ package ui {
 				true,
 				"Show Joystick",
 				"Display joystick on screen",
+				true,
 				function (option:Check):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
@@ -97,6 +98,7 @@ package ui {
 				false,
 				"Show Arrow keys",
 				"Keyboard arrow key simulator",
+				true,
 				function (option:Check):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
@@ -131,6 +133,7 @@ package ui {
 				true,
 				"Show Skill Bar",
 				"Display skill bar on screen",
+				true,
 				function (option:Check):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 
@@ -165,6 +168,7 @@ package ui {
 				false,
 				"Joystick Dash",
 				"Enable dashing using joystick",
+				true,
 				function (option:Check):void {
 					MouseWalkSimulatorController.IS_DASHING_ON = option.state;
 				},
@@ -424,6 +428,7 @@ package ui {
 				false,
 				"Show Debug",
 				"Display debug on screen",
+				true,
 				function (option:Check):void {
 					const pocket:Pocket = Pocket.SINGLETON;
 

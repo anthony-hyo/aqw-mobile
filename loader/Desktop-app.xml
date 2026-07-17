@@ -35,6 +35,9 @@
     </icon>
     <customUpdateUI>false</customUpdateUI>
     <allowBrowserInvocation>false</allowBrowserInvocation>
-    <supportedProfiles>desktop extendedDesktop </supportedProfiles>
+    <supportedProfiles>desktop extendedDesktop</supportedProfiles>
     <supportedLanguages>en</supportedLanguages>
+    <extensions>
+        <extensionID>fi.joniaromaa.adobeair.discordrpc</extensionID>
+    </extensions>
 </application>

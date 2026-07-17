@@ -27,6 +27,11 @@
 
 	import util.HelperLoader;
 
+	POCKET::IS_DESKTOP
+	{
+		import discord.DiscordRichPresence;
+	}
+
 	public class Pocket extends Sprite {
 
 		public static var IS_RASTERIZER_ON:Boolean = true;
@@ -79,6 +84,11 @@
 		public const worldCore:World = new World(this);
 
 		public const lpfFrameListViewTabbedCore:LPFFrameListViewTabbed = new LPFFrameListViewTabbed(this);
+
+		POCKET::IS_DESKTOP
+		{
+			public const discordRichPresence:DiscordRichPresence = new DiscordRichPresence(this);
+		}
 
 		public var networkCore:Network;
 

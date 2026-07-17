@@ -11,6 +11,7 @@ package game {
 		private static const TICK_SPECIAL_DEPTH:int = 6;
 		private static const TICK_COMBAT_QUEUE:int = 2;
 		private static const TICK_BOOST:int = 150; // ~5s at 30 FPS | 5s × 30 = 150
+		private static const TICK_DISCORD_RPC:int = 150;
 
 		private static const arrQuality:Array = ["LOW", "MEDIUM", "HIGH"];
 
@@ -24,6 +25,7 @@ package game {
 		private var _tickSpecialDepth:int = 0;
 		private var _tickCombatQueue:int = 0;
 		private var _tickBoost:int = 0;
+		private var _tickDiscordRPC:int = 0;
 
 		private var fpsTS:Number = 0;
 		private var fpsQualityCounter:int = 0;
@@ -63,6 +65,14 @@ package game {
 				checkAndRenewBoosts();
 			}
 
+			POCKET::IS_DESKTOP {
+				// Low priority
+				if (++_tickDiscordRPC >= TICK_DISCORD_RPC) {
+					_tickDiscordRPC = 0;
+					this.pocket.discordRichPresence.refreshPresence();
+				}
+			}
+
 			// High priority
 			if (++_tickCombatQueue >= TICK_COMBAT_QUEUE) {
 				_tickCombatQueue = 0;
@@ -85,11 +95,11 @@ package game {
 
 				var tickFinal:Number = 1000 / (tickSum / tickList.length);
 
-				if (pocket.game.ui && pocket.game.ui.mcFPS.visible) {
-					pocket.game.ui.mcFPS.txtFPS.text = tickFinal.toPrecision(3);
+				if (this.pocket.game.ui && this.pocket.game.ui.mcFPS.visible) {
+					this.pocket.game.ui.mcFPS.txtFPS.text = tickFinal.toPrecision(3);
 				}
 
-				if (++fpsQualityCounter % TICK_MAX == 0 && tickList.length == TICK_MAX && pocket.game.userPreference.data.quality == "AUTO") {
+				if (++fpsQualityCounter % TICK_MAX == 0 && tickList.length == TICK_MAX && this.pocket.game.userPreference.data.quality == "AUTO") {
 					fpsArrayQuality.push(tickFinal);
 
 					if (fpsArrayQuality.length == 5) {
@@ -100,14 +110,14 @@ package game {
 						}
 
 						const qualityFinal:Number = quality / fpsArrayQuality.length;
-						const qualityIndex:int = arrQuality.indexOf(pocket.game.stage.quality);
+						const qualityIndex:int = arrQuality.indexOf(this.pocket.game.stage.quality);
 
 						if (qualityFinal < 12 && qualityIndex > 0) {
-							pocket.game.stage.quality = arrQuality[(qualityIndex - 1)];
+							this.pocket.game.stage.quality = arrQuality[(qualityIndex - 1)];
 						}
 
 						if (qualityFinal >= 12 && qualityIndex < 2) {
-							pocket.game.stage.quality = arrQuality[(qualityIndex + 1)];
+							this.pocket.game.stage.quality = arrQuality[(qualityIndex + 1)];
 						}
 
 						fpsArrayQuality = [];
@@ -123,8 +133,8 @@ package game {
 
 			var displayObject:DisplayObject;
 
-			for (var i:int = 0; i < pocket.game.world.CHARS.numChildren; i++) {
-				displayObject = pocket.game.world.CHARS.getChildAt(i);
+			for (var i:int = 0; i < this.pocket.game.world.CHARS.numChildren; i++) {
+				displayObject = this.pocket.game.world.CHARS.getChildAt(i);
 
 				entries.push({
 					dio: displayObject,
@@ -141,10 +151,10 @@ package game {
 
 			for (var j:int = 0; j < entries.length; j++) {
 				child = entries[j].dio;
-				currentIndex = pocket.game.world.CHARS.getChildIndex(child);
+				currentIndex = this.pocket.game.world.CHARS.getChildIndex(child);
 
 				if (currentIndex != j) {
-					pocket.game.world.CHARS.swapChildrenAt(currentIndex, j);
+					this.pocket.game.world.CHARS.swapChildrenAt(currentIndex, j);
 				}
 
 				child = null;
@@ -154,11 +164,11 @@ package game {
 		}
 
 		private function enforceSpecialMapDepth():void {
-			if (pocket.game.world.strFrame != "Enter") {
+			if (this.pocket.game.world.strFrame != "Enter") {
 				return;
 			}
 
-			switch (pocket.game.world.strMapName) {
+			switch (this.pocket.game.world.strMapName) {
 				case "trickortreat":
 					bringToFront("mcPlayerNPCTrickOrTreat");
 					break;
@@ -169,41 +179,40 @@ package game {
 		}
 
 		private function bringToFront(npcName:String):void {
-			const target:DisplayObject = pocket.game.world.CHARS.getChildByName(npcName);
+			const target:DisplayObject = this.pocket.game.world.CHARS.getChildByName(npcName);
 
 			if (target) {
-				pocket.game.world.CHARS.setChildIndex(target, pocket.game.world.CHARS.numChildren - 1);
+				this.pocket.game.world.CHARS.setChildIndex(target, this.pocket.game.world.CHARS.numChildren - 1);
 				return;
 			}
 
 			try {
-				const firstMonster:Array = pocket.game.world.getMonsters(1)[0].pMC;
+				const firstMonster:Array = this.pocket.game.world.getMonsters(1)[0].pMC;
 
 				if (firstMonster) {
-					pocket.game.world.CHARS.setChildIndex(firstMonster, pocket.game.world.CHARS.numChildren - 1);
+					this.pocket.game.world.CHARS.setChildIndex(firstMonster, this.pocket.game.world.CHARS.numChildren - 1);
 				}
 			} catch (e:Error) {
 			}
 		}
 
 		private function checkAndRenewBoosts():void {
-
-			if (pocket.game.stage == null) {
-				pocket.game.world.killTimers();
-				pocket.game.world.killListeners();
+			if (this.pocket.game.stage == null) {
+				this.pocket.game.world.killTimers();
+				this.pocket.game.world.killListeners();
 				return;
 			}
 
-			if (pocket.game.ui == null || pocket.game.ui.mcPortrait == null) {
+			if (this.pocket.game.ui == null || this.pocket.game.ui.mcPortrait == null) {
 				return;
 			}
 
-			if (pocket.game.world.myAvatar == null || pocket.game.world.myAvatar.objData == null) {
+			if (this.pocket.game.world.myAvatar == null || this.pocket.game.world.myAvatar.objData == null) {
 				return;
 			}
 
 			const now:Number = new Date().getTime();
-			const portrait:MovieClip = pocket.game.ui.mcPortrait;
+			const portrait:MovieClip = this.pocket.game.ui.mcPortrait;
 
 			checkBoost(now, portrait.iconBoostXP, "iBoostXP", "xpboost");
 			checkBoost(now, portrait.iconBoostG, "iBoostG", "gboost");
@@ -212,14 +221,14 @@ package game {
 		}
 
 		private function checkBoost(now:Number, icon:*, boostKey:String, boostType:String):void {
-			if (icon == null || pocket.game.world.myAvatar.objData[boostKey] == null) {
+			if (icon == null || this.pocket.game.world.myAvatar.objData[boostKey] == null) {
 				return;
 			}
 
 			const expiresAt:Number = icon.boostTS + icon[boostKey] * 1000;
 
 			if (expiresAt < now + 1000) {
-				pocket.game.sfc.sendXtMessage("zm", "serverUseItem", ["-", boostType], "str", -1);
+				this.pocket.game.sfc.sendXtMessage("zm", "serverUseItem", ["-", boostType], "str", -1);
 			}
 		}
 
@@ -236,20 +245,20 @@ package game {
 
 			var didDisplay:Boolean = false;
 
-			if (pocket.game.world.ActionResults.length > 0) {
-				pocket.game.world.showActionImpact(pocket.game.world.ActionResults.shift());
+			if (this.pocket.game.world.ActionResults.length > 0) {
+				this.pocket.game.world.showActionImpact(this.pocket.game.world.ActionResults.shift());
 
 				didDisplay = true;
 			}
 
-			if (pocket.game.world.ActionResultsAura.length > 0) {
-				pocket.game.world.showAuraImpact(pocket.game.world.ActionResultsAura.shift());
+			if (this.pocket.game.world.ActionResultsAura.length > 0) {
+				this.pocket.game.world.showAuraImpact(this.pocket.game.world.ActionResultsAura.shift());
 
 				didDisplay = true;
 			}
 
-			if (pocket.game.world.ActionResultsMon.length > 0) {
-				pocket.game.world.showActionImpact(pocket.game.world.ActionResultsMon.shift());
+			if (this.pocket.game.world.ActionResultsMon.length > 0) {
+				this.pocket.game.world.showActionImpact(this.pocket.game.world.ActionResultsMon.shift());
 
 				didDisplay = true;
 			}

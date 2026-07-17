@@ -3,21 +3,59 @@ package discord {
 	import fi.joniaromaa.adobeair.discordrpc.DiscordRpc;
 
 	import util.Helper;
+	import util.HelperSetting;
 
 	public class DiscordRichPresence {
 
 		private var pocket:Pocket;
 
-		private var discordRpc:DiscordRpc = new DiscordRpc();
+		private var discordRpc:DiscordRpc;
 
 		private var sessionStartTime:Number = Math.round(new Date().valueOf() / 1000);
 
 		public function DiscordRichPresence(pocket:Pocket) {
 			this.pocket = pocket;
+			
+			this.enable();
+		}
 
+		public function enable():void {
+			if (this.discordRpc) {
+				return;
+			}
+
+			if (!HelperSetting.getBool(HelperSetting.OPTION_DISCORD_RPC)) {
+				return;
+			}
+
+			this.discordRpc = new DiscordRpc();
 			this.discordRpc.init("1526842696306659328");
 
 			refreshPresence();
+		}
+
+		public function disable():void {
+			if (!this.discordRpc) {
+				return;
+			}
+
+			this.discordRpc.updatePresence(
+				null,
+				null,
+				0,
+				0,
+				null,
+				null,
+				null,
+				null,
+				null,
+				0,
+				0,
+				null,
+				null
+			);
+
+			this.discordRpc = null;
 		}
 
 		public function refreshPresence():void {

@@ -307,7 +307,7 @@ package ui {
 					}
 				}
 			),
-			new Divide(POCKET::IS_MOBILE),
+			new Divide(),
 			new Toggle(
 				HelperSetting.OPTION_LOCK_ORIENTATION,
 				0,
@@ -341,6 +341,25 @@ package ui {
 						stage.autoOrients = false;
 						stage.setAspectRatio(StageAspectRatio.ANY);
 						stage.setOrientation(Helper.ORIENTATIONS[savedIndex]);
+					}
+				}
+			),
+			new Check(
+				HelperSetting.OPTION_DISCORD_RPC,
+				true,
+				"Discord RPC",
+				"Enable Discord Rich Presence",
+				POCKET::IS_DESKTOP,
+				function (option:Check):void {
+					POCKET::IS_DESKTOP {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (option.state) {
+							pocket.discordRichPresence.enable();
+							return;
+						}
+
+						pocket.discordRichPresence.disable();
 					}
 				}
 			),

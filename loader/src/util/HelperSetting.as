@@ -13,6 +13,7 @@ package util {
 
 		public static const OPTION_SHOW_SKILL_BAR:String = "option_show_skill_bar";
 		public static const OPTION_LOCK_ORIENTATION:String = "option_lock_orientation";
+		public static const OPTION_DISCORD_RPC:String = "option_discord_rpc";
 
 		public static const OPTION_SHORTCUTS:String = "shortcut_buttons";
 

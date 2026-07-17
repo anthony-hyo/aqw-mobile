@@ -2,6 +2,8 @@ package discord {
 
 	import fi.joniaromaa.adobeair.discordrpc.DiscordRpc;
 
+	import util.Helper;
+
 	public class DiscordRichPresence {
 
 		private var pocket:Pocket;
@@ -56,22 +58,22 @@ package discord {
 
 						switch (true) {
 							case uLeaf && uLeaf.afk:
-								state = "AFK in " + this.pocket.game.world.strMapName;
+								state = "AFK in " + Helper.capitalizeFirstLetter(this.pocket.game.world.strMapName);
 								smallImage = "iball3";
 								smallImageDescription = "AFK";
 								break;
 							case this.pocket.game.world.myAvatar.dataLeaf.intState == 0:
-								state = "Dead in " + this.pocket.game.world.strMapName;
+								state = "Dead in " + Helper.capitalizeFirstLetter(this.pocket.game.world.strMapName);
 								smallImage = "iball1";
 								smallImageDescription = "Dead";
 								break;
 							case this.pocket.game.world.myAvatar.dataLeaf.intState == 1:
-								state = "In " + this.pocket.game.world.strMapName;
+								state = "In " + Helper.capitalizeFirstLetter(this.pocket.game.world.strMapName);
 								smallImage = "iball4";
 								smallImageDescription = "Idle";
 								break;
 							case this.pocket.game.world.myAvatar.dataLeaf.intState == 2:
-								state = "In battle at " + this.pocket.game.world.strMapName;
+								state = "In battle at " + Helper.capitalizeFirstLetter(this.pocket.game.world.strMapName);
 								smallImage = "iball2";
 								smallImageDescription = "Combat";
 								break;

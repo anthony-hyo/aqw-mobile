@@ -66,5 +66,9 @@ package util {
 			return str.substring(0, end + 1);
 		}
 
+		public static function capitalizeFirstLetter(text:String):String {
+			return text == null || text.length == 0 ? text : text.charAt(0).toUpperCase() + text.slice(1);
+		}
+
 	}
 }

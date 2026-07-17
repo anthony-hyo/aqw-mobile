@@ -209,6 +209,7 @@ jobs:
                       -keypass ${{ secrets.KEY_PASS }} `
                       -target bundle `
                       -arch ${{ matrix.architecture }} `
+                      -extdir libs `
                       AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} `
                       loader/Desktop-app.xml `
                       -C loader `
@@ -271,6 +272,7 @@ jobs:
                       -keypass ${{ secrets.KEY_PASS }} \
                       -target bundle \
                       -arch ${{ matrix.architecture }} \
+                      -extdir libs `
                       AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }} \
                       loader/Desktop-app.xml \
                       -C loader \

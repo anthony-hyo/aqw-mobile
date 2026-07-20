@@ -17,6 +17,9 @@ package ui {
 			this.pocket = pocket;
 
 			this.pocket.addChild(this);
+			
+			this.mouseChildren = true;
+			this.mouseEnabled = false;
 		}
 
 		private var pocket:Pocket;

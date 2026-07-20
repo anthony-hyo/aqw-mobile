@@ -2,6 +2,8 @@ package ui.shortcut {
 
 	import data.Action;
 
+	import flash.display.SimpleButton;
+
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -14,14 +16,19 @@ package ui.shortcut {
 			this.actionName = actionName;
 
 			this.shortcutTxt.text = actionName;
-
 			this.shortcutTxt.wordWrap = true;
 			this.shortcutTxt.selectable = false;
+			
 			this.shortcutTxt.mouseEnabled = false;
+			this.shortcutTxt.tabEnabled = false;
 
-			addEventListener(MouseEvent.CLICK, onClick);
+			this.mouseChildren = true;
+			this.mouseEnabled = false;
+
+			this.shortcutBtn.addEventListener(MouseEvent.CLICK, onClick, false, 0, true);
 		}
 
+		public var shortcutBtn:SimpleButton;
 		public var shortcutTxt:TextField;
 
 		private var pocket:Pocket;

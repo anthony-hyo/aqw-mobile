@@ -9,6 +9,9 @@ package ui {
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.events.SecurityErrorEvent;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
 	import flash.net.FileFilter;
 	import flash.net.FileReference;
 	import flash.net.URLRequest;
@@ -598,6 +601,89 @@ package ui {
 		}
 
 		private function saveLayoutFile():void {
+			POCKET::IS_MOBILE {
+				saveLayoutFileMobile();
+				return;
+			}
+
+			POCKET::IS_DESKTOP {
+				saveLayoutFileDesktop();
+				return;
+			}
+		}
+
+		private function loadLayoutFile():void {
+			POCKET::IS_MOBILE {
+				loadLayoutFileMobile();
+				return;
+			}
+
+			POCKET::IS_DESKTOP {
+				loadLayoutFileDesktop();
+				return;
+			}
+		}
+
+		private function saveLayoutFileMobile():void {
+			var stream:FileStream;
+
+			try {
+				const directory:File = File.documentsDirectory.resolvePath("AQW Pocket");
+				directory.createDirectory();
+
+				const file:File = directory.resolvePath(HelperSetting.LAYOUT_FILE_NAME);
+				stream = new FileStream();
+				stream.open(file, FileMode.WRITE);
+				stream.writeUTFBytes(JSON.stringify(this.pocket.gameUI.exportLayoutProfile()));
+				stream.close();
+
+				if (this.pocket.game) {
+					this.pocket.game.MsgBox.notify("Layout saved to Documents/AQW Pocket.");
+				}
+			} catch (error:Error) {
+				if (stream) {
+					stream.close();
+				}
+
+				notifyLayoutFileError("Could not save layout file.");
+			}
+		}
+
+		private function loadLayoutFileMobile():void {
+			var stream:FileStream;
+
+			try {
+				const file:File = File.documentsDirectory.resolvePath("AQW Pocket/" + HelperSetting.LAYOUT_FILE_NAME);
+
+				if (!file.exists) {
+					notifyLayoutFileError("No saved layout file found.");
+					return;
+				}
+
+				stream = new FileStream();
+				stream.open(file, FileMode.READ);
+
+				const profile:Object = JSON.parse(stream.readUTFBytes(stream.bytesAvailable));
+				stream.close();
+
+				if (!this.pocket.gameUI.importLayoutProfile(profile)) {
+					notifyLayoutFileError("Invalid layout file.");
+					return;
+				}
+
+				if (this.pocket.game) {
+					this.pocket.game.MsgBox.notify("Layout loaded.");
+				}
+			} catch (error:Error) {
+				if (stream) {
+					stream.close();
+				}
+
+				notifyLayoutFileError("Invalid layout file.");
+			}
+		}
+
+		private function saveLayoutFileDesktop():void {
 			try {
 				cleanupLayoutFile();
 
@@ -612,7 +698,7 @@ package ui {
 			}
 		}
 
-		private function loadLayoutFile():void {
+		private function loadLayoutFileDesktop():void {
 			try {
 				cleanupLayoutFile();
 

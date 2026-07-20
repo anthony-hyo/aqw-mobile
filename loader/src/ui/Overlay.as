@@ -235,6 +235,20 @@ package ui {
 				}
 			),
 			new Divide(),
+			new Check(
+				HelperSetting.OPTION_SNAP_TO_GRID,
+				true,
+				"Snap To Grid",
+				"Show an alignment grid while editing layout",
+				true,
+				function (option:Check):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (pocket.gameUI) {
+						pocket.gameUI.layoutController.refreshGrid();
+					}
+				}
+			),
 			new Button(
 				null,
 				"Edit Layout",

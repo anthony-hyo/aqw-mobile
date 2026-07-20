@@ -5,9 +5,15 @@ package ui {
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.display.StageAspectRatio;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
+	import flash.events.SecurityErrorEvent;
+	import flash.net.FileFilter;
+	import flash.net.FileReference;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
+	import flash.utils.ByteArray;
 
 	import ui.controller.walk.MouseWalkSimulatorController;
 	import ui.option.Button;
@@ -52,6 +58,7 @@ package ui {
 		public var notifications:Sprite;
 
 		private var pocket:Pocket;
+		private var layoutFile:FileReference;
 
 		public var options:Vector.<Option> = new <Option> [
 			new Check(
@@ -321,6 +328,42 @@ package ui {
 					}
 				}
 			),
+			new Button(
+				null,
+				"Save Layout",
+				"Save buttons and shortcuts to a file",
+				"Save",
+				function (option:Button):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Only available in-game.");
+						}
+						return;
+					}
+
+					pocket.overlay.saveLayoutFile();
+				}
+			),
+			new Button(
+				null,
+				"Load Layout",
+				"Load buttons and shortcuts from a file",
+				"Load",
+				function (option:Button):void {
+					const pocket:Pocket = Pocket.SINGLETON;
+
+					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Only available in-game.");
+						}
+						return;
+					}
+
+					pocket.overlay.loadLayoutFile();
+				}
+			),
 			new Divide(),
 			new Toggle(
 				HelperSetting.OPTION_LOCK_ORIENTATION,
@@ -552,6 +595,103 @@ package ui {
 
 		private function onDiscord(e:MouseEvent):void {
 			navigateToURL(new URLRequest("https://discord.gg/EXS5qM35ff"), "_blank");
+		}
+
+		private function saveLayoutFile():void {
+			try {
+				cleanupLayoutFile();
+
+				this.layoutFile = new FileReference();
+				this.layoutFile.addEventListener(Event.COMPLETE, onLayoutSaveComplete, false, 0, true);
+				this.layoutFile.addEventListener(Event.CANCEL, onLayoutFileDone, false, 0, true);
+				this.layoutFile.addEventListener(IOErrorEvent.IO_ERROR, onLayoutFileError, false, 0, true);
+				this.layoutFile.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onLayoutFileError, false, 0, true);
+				this.layoutFile.save(JSON.stringify(this.pocket.gameUI.exportLayoutProfile()), HelperSetting.LAYOUT_FILE_NAME);
+			} catch (error:Error) {
+				notifyLayoutFileError("Could not save layout file.");
+			}
+		}
+
+		private function loadLayoutFile():void {
+			try {
+				cleanupLayoutFile();
+
+				this.layoutFile = new FileReference();
+				this.layoutFile.addEventListener(Event.SELECT, onLayoutFileSelected, false, 0, true);
+				this.layoutFile.addEventListener(Event.COMPLETE, onLayoutLoadComplete, false, 0, true);
+				this.layoutFile.addEventListener(Event.CANCEL, onLayoutFileDone, false, 0, true);
+				this.layoutFile.addEventListener(IOErrorEvent.IO_ERROR, onLayoutFileError, false, 0, true);
+				this.layoutFile.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onLayoutFileError, false, 0, true);
+				this.layoutFile.browse([new FileFilter("AQW Pocket Layout (*.json)", "*.json")]);
+			} catch (error:Error) {
+				notifyLayoutFileError("Could not open layout file.");
+			}
+		}
+
+		private function onLayoutFileSelected(e:Event):void {
+			this.layoutFile.load();
+		}
+
+		private function onLayoutSaveComplete(e:Event):void {
+			if (this.pocket.game) {
+				this.pocket.game.MsgBox.notify("Layout saved.");
+			}
+
+			cleanupLayoutFile();
+		}
+
+		private function onLayoutLoadComplete(e:Event):void {
+			try {
+				const bytes:ByteArray = this.layoutFile.data;
+				bytes.position = 0;
+
+				const profile:Object = JSON.parse(bytes.readUTFBytes(bytes.length));
+
+				if (!this.pocket.gameUI.importLayoutProfile(profile)) {
+					notifyLayoutFileError("Invalid layout file.");
+					return;
+				}
+
+				if (this.pocket.game) {
+					this.pocket.game.MsgBox.notify("Layout loaded.");
+				}
+			} catch (error:Error) {
+				notifyLayoutFileError("Invalid layout file.");
+				return;
+			}
+
+			cleanupLayoutFile();
+		}
+
+		private function onLayoutFileError(e:Event):void {
+			notifyLayoutFileError("Layout file failed.");
+		}
+
+		private function onLayoutFileDone(e:Event):void {
+			cleanupLayoutFile();
+		}
+
+		private function notifyLayoutFileError(message:String):void {
+			if (this.pocket.game) {
+				this.pocket.game.MsgBox.notify(message);
+			}
+
+			cleanupLayoutFile();
+		}
+
+		private function cleanupLayoutFile():void {
+			if (this.layoutFile == null) {
+				return;
+			}
+
+			this.layoutFile.removeEventListener(Event.SELECT, onLayoutFileSelected);
+			this.layoutFile.removeEventListener(Event.COMPLETE, onLayoutSaveComplete);
+			this.layoutFile.removeEventListener(Event.COMPLETE, onLayoutLoadComplete);
+			this.layoutFile.removeEventListener(Event.CANCEL, onLayoutFileDone);
+			this.layoutFile.removeEventListener(IOErrorEvent.IO_ERROR, onLayoutFileError);
+			this.layoutFile.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onLayoutFileError);
+
+			this.layoutFile = null;
 		}
 
 		public function notification(message:String):void {

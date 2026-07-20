@@ -192,6 +192,99 @@ package ui {
 			HelperSetting.setString(HelperSetting.OPTION_SHORTCUTS, keys.join(","));
 		}
 
+		public function exportLayoutProfile():Object {
+			return {
+				format: "aqw-pocket-layout",
+				version: 1,
+				shortcuts: getShortcutNames(),
+				layouts: this.layoutController.exportLayouts()
+			};
+		}
+
+		public function importLayoutProfile(profile:Object):Boolean {
+			if (profile == null) {
+				return false;
+			}
+
+			const shortcuts:Array = normalizeShortcuts(profile.shortcuts);
+
+			if (shortcuts.length == 0 && profile.layouts == null) {
+				return false;
+			}
+
+			const wasEditing:Boolean = LayoutController.editMode;
+
+			if (wasEditing) {
+				hideEditLayout();
+			}
+
+			resetShortcuts();
+
+			for each (var actionName:String in shortcuts) {
+				addShortcutButton(actionName);
+			}
+
+			this.layoutController.importLayouts(profile.layouts);
+
+			persistShortcuts();
+
+			if (wasEditing) {
+				showEditLayout();
+			}
+
+			return true;
+		}
+
+		private function getShortcutNames():Array {
+			const shortcuts:Array = [];
+			const saved:String = HelperSetting.getString(HelperSetting.OPTION_SHORTCUTS);
+			var actionName:String;
+
+			if (saved && saved.length > 0) {
+				for each (actionName in saved.split(",")) {
+					if (actionName.length > 0 && shortcutButtons[actionName] != null && shortcuts.indexOf(actionName) == -1) {
+						shortcuts.push(actionName);
+					}
+				}
+			}
+
+			for (actionName in shortcutButtons) {
+				if (shortcuts.indexOf(actionName) == -1) {
+					shortcuts.push(actionName);
+				}
+			}
+
+			return shortcuts;
+		}
+
+		private function normalizeShortcuts(value:Object):Array {
+			const shortcuts:Array = [];
+			var actionName:String;
+			var actionValue:Object;
+
+			if (value is Array) {
+				const actionList:Array = value as Array;
+
+				for each (actionValue in actionList) {
+					addNormalizedShortcut(shortcuts, actionValue == null ? null : String(actionValue));
+				}
+			} else if (value is String) {
+				for each (actionName in String(value).split(",")) {
+					addNormalizedShortcut(shortcuts, actionName);
+				}
+			}
+
+			return shortcuts;
+		}
+
+		private function addNormalizedShortcut(shortcuts:Array, actionName:String):void {
+			if (actionName == null || actionName.length == 0 || shortcuts.indexOf(actionName) != -1) {
+				return;
+			}
+
+			shortcuts.push(actionName);
+		}
+
 		private function countShortcuts():int {
 			var n:int = 0;
 
@@ -238,4 +331,3 @@ package ui {
 
 	}
 }
-

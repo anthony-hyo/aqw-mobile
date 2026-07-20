@@ -59,6 +59,53 @@ package ui.controller {
 				widgetEntry.target.scaleX = saved ? saved.scaleX : widgetEntry.defaultScaleX;
 				widgetEntry.target.scaleY = saved ? saved.scaleY : widgetEntry.defaultScaleY;
 			}
+
+			repositionAllHandles();
+		}
+
+		public function exportLayouts():Object {
+			const layouts:Object = {};
+
+			var widgetEntry:WidgetEntry;
+
+			for each (widgetEntry in this.widgets) {
+				layouts[widgetEntry.id] = {
+					x: widgetEntry.target.x,
+					y: widgetEntry.target.y,
+
+					scaleX: widgetEntry.target.scaleX,
+					scaleY: widgetEntry.target.scaleY
+				};
+			}
+
+			return layouts;
+		}
+
+		public function importLayouts(layouts:Object):void {
+			if (layouts == null) {
+				return;
+			}
+
+			var id:String;
+			var saved:Object;
+
+			for (id in layouts) {
+				saved = layouts[id];
+
+				if (!isValidLayout(saved)) {
+					continue;
+				}
+
+				HelperSetting._set(id, {
+					x: Number(saved.x),
+					y: Number(saved.y),
+
+					scaleX: Number(saved.scaleX),
+					scaleY: Number(saved.scaleY)
+				});
+			}
+
+			load();
 		}
 
 		public function toggleEdit(state:Boolean):void {
@@ -157,6 +204,12 @@ package ui.controller {
 
 			widgetEntry.handle.x = widgetEntry.target.x;
 			widgetEntry.handle.y = widgetEntry.target.y;
+		}
+
+		private function repositionAllHandles():void {
+			for each (var widgetEntry:WidgetEntry in this.widgets) {
+				repositionHandles(widgetEntry);
+			}
 		}
 
 		private function hideHandles(widgetEntry:WidgetEntry):void {
@@ -348,6 +401,17 @@ package ui.controller {
 
 		private function snap(value:Number):Number {
 			return Math.round(value / GRID_SIZE) * GRID_SIZE;
+		}
+
+		private function isValidLayout(layout:Object):Boolean {
+			if (layout == null) {
+				return false;
+			}
+
+			return isFinite(Number(layout.x)) &&
+				isFinite(Number(layout.y)) &&
+				isFinite(Number(layout.scaleX)) &&
+				isFinite(Number(layout.scaleY));
 		}
 
 	}

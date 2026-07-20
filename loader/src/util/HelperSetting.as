@@ -6,9 +6,11 @@ package util {
 
 		private static const SAVE_KEY:String = "aqw_pocket_settings";
 
+		public static const LAYOUT_FILE_NAME:String = SAVE_KEY + "_layout.json";
+
 		public static const OPTION_SHOW_JOYSTICK_MOUSE:String = "option_show_joystick";
 		public static const OPTION_SHOW_JOYSTICK_KEYBOARD:String = "option_show_joystick_keyboard";
-		
+
 		public static const OPTION_JOYSTICK_DASH:String = "option_joystick_dash";
 
 		public static const OPTION_SHOW_SKILL_BAR:String = "option_show_skill_bar";

@@ -16,7 +16,7 @@ package ui.option {
 
 			this.checkMark.mouseEnabled = false;
 
-			this.checkBackground.addEventListener(MouseEvent.CLICK, onToggle);
+			this.checkBackground.addEventListener(MouseEvent.CLICK, onToggle, false, 0, true);
 		}
 
 		public var state:Boolean;

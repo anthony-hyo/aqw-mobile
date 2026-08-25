@@ -30,8 +30,8 @@ package load.handlers {
 
 			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
 
-			urlLoader.addEventListener(Event.COMPLETE, this.onCompleted);
-			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, this.onError);
+			urlLoader.addEventListener(Event.COMPLETE, this.onCompleted, false, 0, true);
+			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, this.onError, false, 0, true);
 		}
 
 		override protected function onCompleted(event:Event):void {

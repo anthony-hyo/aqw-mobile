@@ -190,7 +190,7 @@ package game {
 						"subjectMask": listMask,
 						"reset": false
 					});
-				});
+				}, false, 0, true);
 			}
 
 			scr.fOpen({

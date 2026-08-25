@@ -12,7 +12,7 @@ package ui.option {
 			this.buttonTxt.text = buttonLabel;
 			this.buttonTxt.mouseEnabled = false;
 
-			this.button.addEventListener(MouseEvent.CLICK, onClick);
+			this.button.addEventListener(MouseEvent.CLICK, onClick, false, 0, true);
 		}
 
 		public var button:SimpleButton;

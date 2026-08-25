@@ -16,8 +16,8 @@ package ui.option {
 
 			syncState();
 
-			this.buttonLeft.addEventListener(MouseEvent.CLICK, onLeft);
-			this.buttonRight.addEventListener(MouseEvent.CLICK, onRight);
+			this.buttonLeft.addEventListener(MouseEvent.CLICK, onLeft, false, 0, true);
+			this.buttonRight.addEventListener(MouseEvent.CLICK, onRight, false, 0, true);
 		}
 
 		public var stateTxt:TextField;

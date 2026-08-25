@@ -12,14 +12,13 @@ package ui {
 	import ui.controller.walk.MouseWalkSimulatorController;
 	import ui.option.Button;
 	import ui.option.Check;
-	import ui.option.Divide;
+	import ui.option.Menu;
 	import ui.option.Option;
 	import ui.option.Toggle;
 	import ui.shortcut.ShortcutPicker;
 	import ui.util.Scroll;
 
 	import util.Helper;
-	import util.HelperScroll;
 	import util.HelperSetting;
 
 	public class Overlay extends MovieClip {
@@ -44,7 +43,9 @@ package ui {
 		public var updateBtn:SimpleButton;
 		public var discordBtn:SimpleButton;
 
-		public var content:Sprite;
+		public var contentMenu:Sprite;
+
+		public var contentOptions:Sprite;
 		public var contentMask:DisplayObject;
 		public var contentScroll:Scroll;
 
@@ -53,360 +54,364 @@ package ui {
 
 		private var pocket:Pocket;
 
-		public var options:Vector.<Option> = new <Option> [
-			new Check(
-				HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE,
-				true,
-				"Show Joystick",
-				"Display joystick on screen",
-				true,
-				function (option:Check):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					/*MovieClip(pocket.game.cDropsUI).scaleX = 1.5;
-					MovieClip(pocket.game.cDropsUI).scaleY = 1.5;
-					MovieClip(pocket.game.cDropsUI).x -= 65;*/
-
-					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-						return;
-					}
-
-					if (option.state) {
-						pocket.gameUI.showJoystickMouseSimulator();
-						return;
-					}
-
-					pocket.gameUI.hideJoystickMouseSimulator();
-				},
-				function (frame:String):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE)) {
-						return;
-					}
-
-					if (frame != "Game") {
-						pocket.gameUI.hideJoystickMouseSimulator();
-						return;
-					}
-
-					pocket.gameUI.showJoystickMouseSimulator();
-				}
-			),
-			new Check(
-				HelperSetting.OPTION_SHOW_JOYSTICK_KEYBOARD,
-				false,
-				"Show Arrow keys",
-				"Keyboard arrow key simulator",
-				true,
-				function (option:Check):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-						return;
-					}
-
-					if (option.state) {
-						pocket.gameUI.showJoystickKeyboardSimulator();
-						return;
-					}
-
-					pocket.gameUI.hideJoystickKeyboardSimulator();
-				},
-				function (frame:String):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK_KEYBOARD)) {
-						return;
-					}
-
-					if (frame != "Game") {
-						pocket.gameUI.hideJoystickKeyboardSimulator();
-						return;
-					}
-
-					pocket.gameUI.showJoystickKeyboardSimulator();
-				}
-			),
-			new Check(
-				HelperSetting.OPTION_SHOW_SKILL_BAR,
-				true,
-				"Show Skill Bar",
-				"Display skill bar on screen",
-				true,
-				function (option:Check):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-						return;
-					}
-
-					if (option.state) {
-						pocket.gameUI.showSkillBar();
-						return;
-					}
-
-					pocket.gameUI.hideSkillBar();
-				},
-				function (frame:String):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_SKILL_BAR)) {
-						return;
-					}
-
-					if (frame != "Game") {
-						pocket.gameUI.hideSkillBar();
-						return;
-					}
-
-					pocket.gameUI.showSkillBar();
-				}
-			),
-			new Check(
-				HelperSetting.OPTION_JOYSTICK_DASH,
-				false,
-				"Joystick Dash",
-				"Enable dashing using joystick",
-				true,
-				function (option:Check):void {
-					MouseWalkSimulatorController.IS_DASHING_ON = option.state;
-				},
-				function (frame:String):void {
-					MouseWalkSimulatorController.IS_DASHING_ON = HelperSetting.getBool(HelperSetting.OPTION_ANIMATION);
-				}
-			),
-			new Divide(),
-			new Button(
-				null,
-				"Add Shortcut",
-				"Place an action button on screen",
-				"Add",
-				function (option:Button):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-						if (pocket.game) {
-							pocket.game.MsgBox.notify("Only available in-game.");
-						}
-						return;
-					}
-
-					pocket.overlay.onHidePanel(null);
-
-					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker");
-
-					if (shortcutPicker) {
-						pocket.game.stage.removeChild(shortcutPicker);
-					}
-
-					pocket.game.stage.addChild(
-						new ShortcutPicker(pocket, function (actionName:String):void {
-							pocket.gameUI.addShortcutButton(actionName);
-						})
-					);
-				}
-			),
-			new Button(
-				null,
-				"Remove Shortcut",
-				"Remove a shortcut button from screen",
-				"Remove",
-				function (option:Button):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-						return;
-					}
-
-					pocket.overlay.onHidePanel(null);
-
-					const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker");
-
-					if (shortcutPicker) {
-						pocket.game.stage.removeChild(shortcutPicker);
-					}
-
-					pocket.game.stage.addChild(
-						new ShortcutPicker(pocket, function (actionName:String):void {
-							pocket.gameUI.removeShortcutButton(actionName);
-						})
-					);
-				}
-			),
-			new Divide(),
-			new Check(
-				HelperSetting.OPTION_SNAP_TO_GRID,
-				true,
-				"Snap To Grid",
-				"Show an alignment grid while editing layout",
-				true,
-				function (option:Check):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (pocket.gameUI) {
-						pocket.gameUI.layoutController.refreshGrid();
-					}
-				}
-			),
-			new Button(
-				null,
-				"Edit Layout",
-				"Drag to reposition UI elements",
-				"Edit",
-				function (option:Button):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
-						if (pocket.game) {
-							pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
-						}
-						return;
-					}
-
-					pocket.worldCore.setWorldFilters([
-						Helper.GRAYSCALE
-					]);
-
-					pocket.overlay.onHidePanel(null);
-
-					pocket.gameUI.showEditLayout();
-				},
-				function (frame:String):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					pocket.gameUI.hideEditLayout();
-
-					pocket.worldCore.setWorldFilters([]);
-				},
-				function (frame:String):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (frame !== "Panel") {
-						return;
-					}
-
-					pocket.worldCore.setWorldFilters([]);
-
-					pocket.gameUI.hideEditLayout();
-				}
-			),
-			new Button(
-				null,
-				"Reset Layout",
-				"Restore default positions",
-				"Reset",
-				function (option:Button):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (pocket.game) {
-						pocket.game.MsgBox.notify("Layout successfully restored.");
-					}
-
-					pocket.gameUI.resetLayout();
-				}
-			),
-			new Button(
-				null,
-				"Reset Shortcuts",
-				"Remove all shortcut buttons from screen",
-				"Reset",
-				function (option:Button):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					pocket.gameUI.resetShortcuts();
-
-					if (pocket.game) {
-						pocket.game.MsgBox.notify("Shortcuts cleared.");
-					}
-				}
-			),
-			new Divide(),
-			new Toggle(
-				HelperSetting.OPTION_LOCK_ORIENTATION,
-				0,
-				"Screen Orientation",
-				"Choose how the screen rotates",
-				POCKET::IS_MOBILE,
-				["Landscape", "Portrait", "Landscape Left", "Landscape Right", "Portrait Flipped"],
-				function (option:Toggle):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					if (option.getIndex() == 0) {
-						stage.autoOrients = true;
-						stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
-						return;
-					}
-
-					stage.autoOrients = false;
-					stage.setAspectRatio(StageAspectRatio.ANY);
-					stage.setOrientation(Helper.ORIENTATIONS[option.getIndex()]);
-				},
-				null,
-				function (frame:String):void {
-					const pocket:Pocket = Pocket.SINGLETON;
-
-					const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION);
-
-					if (savedIndex == 0) {
-						stage.autoOrients = true;
-						stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
-					} else {
-						stage.autoOrients = false;
-						stage.setAspectRatio(StageAspectRatio.ANY);
-						stage.setOrientation(Helper.ORIENTATIONS[savedIndex]);
-					}
-				}
-			),
-			new Check(
-				HelperSetting.OPTION_DISCORD_RPC,
-				true,
-				"Discord RPC",
-				"Enable Discord Rich Presence",
-				POCKET::IS_DESKTOP,
-				function (option:Check):void {
-					POCKET::IS_DESKTOP {
+		//noinspection JSUnresolvedReference
+		public var menus:Vector.<Menu> = new <Menu> [
+			new Menu("General", new <Option>[
+				new Toggle(
+					HelperSetting.OPTION_LOCK_ORIENTATION,
+					0,
+					"Screen Orientation",
+					"Choose how the screen rotates",
+					POCKET::IS_MOBILE,
+					["Landscape", "Portrait", "Landscape Left", "Landscape Right", "Portrait Flipped"],
+					function (option:Toggle):void {
 						const pocket:Pocket = Pocket.SINGLETON;
 
-						if (option.state) {
-							pocket.discordRichPresence.enable();
+						if (option.getIndex() == 0) {
+							stage.autoOrients = true;
+							stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
 							return;
 						}
 
-						pocket.discordRichPresence.disable();
-					}
-				}
-			),
-			new Divide(),
-			new Check(
-				null,
-				false,
-				"Show Debug",
-				"Display debug on screen",
-				true,
-				function (option:Check):void {
-					const pocket:Pocket = Pocket.SINGLETON;
+						stage.autoOrients = false;
+						stage.setAspectRatio(StageAspectRatio.ANY);
+						stage.setOrientation(Helper.ORIENTATIONS[option.getIndex()]);
+					},
+					null,
+					function (frame:String):void {
+						const pocket:Pocket = Pocket.SINGLETON;
 
-					if (option.state) {
-						if (pocket.overlay.debug.parent == null) {
-							pocket.overlay.addChild(pocket.overlay.debug);
+						const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_LOCK_ORIENTATION);
+
+						if (savedIndex == 0) {
+							stage.autoOrients = true;
+							stage.setAspectRatio(StageAspectRatio.LANDSCAPE);
+						} else {
+							stage.autoOrients = false;
+							stage.setAspectRatio(StageAspectRatio.ANY);
+							stage.setOrientation(Helper.ORIENTATIONS[savedIndex]);
 						}
-						return;
 					}
+				),
+				new Check(
+					HelperSetting.OPTION_DISCORD_RPC,
+					true,
+					"Discord RPC",
+					"Enable Discord Rich Presence",
+					POCKET::IS_DESKTOP,
+					function (option:Check):void {
+						//noinspection JSUnresolvedReference
+						POCKET::IS_DESKTOP {
+							const pocket:Pocket = Pocket.SINGLETON;
 
-					if (pocket.overlay.debug.parent && contains(pocket.overlay.debug)) {
-						pocket.overlay.removeChild(pocket.overlay.debug);
+							if (option.state) {
+								pocket.discordRichPresence.enable();
+								return;
+							}
+
+							pocket.discordRichPresence.disable();
+						}
 					}
-				}
-			)
+				),
+				new Check(
+					null,
+					false,
+					"Show Debug",
+					"Display debug on screen",
+					true,
+					function (option:Check):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (option.state) {
+							if (pocket.overlay.debug.parent == null) {
+								pocket.overlay.addChild(pocket.overlay.debug);
+							}
+							return;
+						}
+
+						if (pocket.overlay.debug.parent && contains(pocket.overlay.debug)) {
+							pocket.overlay.removeChild(pocket.overlay.debug);
+						}
+					}
+				)
+			]),
+			new Menu("Controls", new <Option>[
+				new Check(
+					HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE,
+					true,
+					"Show Joystick",
+					"Display joystick on screen",
+					true,
+					function (option:Check):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+							return;
+						}
+
+						if (option.state) {
+							pocket.gameUI.showJoystickMouseSimulator();
+							return;
+						}
+
+						pocket.gameUI.hideJoystickMouseSimulator();
+					},
+					function (frame:String):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE)) {
+							return;
+						}
+
+						if (frame != "Game") {
+							pocket.gameUI.hideJoystickMouseSimulator();
+							return;
+						}
+
+						pocket.gameUI.showJoystickMouseSimulator();
+					}
+				),
+				new Check(
+					HelperSetting.OPTION_SHOW_JOYSTICK_KEYBOARD,
+					false,
+					"Show Arrow keys",
+					"Keyboard arrow key simulator",
+					true,
+					function (option:Check):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+							return;
+						}
+
+						if (option.state) {
+							pocket.gameUI.showJoystickKeyboardSimulator();
+							return;
+						}
+
+						pocket.gameUI.hideJoystickKeyboardSimulator();
+					},
+					function (frame:String):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_JOYSTICK_KEYBOARD)) {
+							return;
+						}
+
+						if (frame != "Game") {
+							pocket.gameUI.hideJoystickKeyboardSimulator();
+							return;
+						}
+
+						pocket.gameUI.showJoystickKeyboardSimulator();
+					}
+				),
+				new Check(
+					HelperSetting.OPTION_SHOW_SKILL_BAR,
+					true,
+					"Show Skill Bar",
+					"Display skill bar on screen",
+					true,
+					function (option:Check):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+							return;
+						}
+
+						if (option.state) {
+							pocket.gameUI.showSkillBar();
+							return;
+						}
+
+						pocket.gameUI.hideSkillBar();
+					},
+					function (frame:String):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!HelperSetting.getBool(HelperSetting.OPTION_SHOW_SKILL_BAR)) {
+							return;
+						}
+
+						if (frame != "Game") {
+							pocket.gameUI.hideSkillBar();
+							return;
+						}
+
+						pocket.gameUI.showSkillBar();
+					}
+				),
+				new Check(
+					HelperSetting.OPTION_JOYSTICK_DASH,
+					false,
+					"Joystick Dash",
+					"Enable dashing using joystick",
+					true,
+					function (option:Check):void {
+						MouseWalkSimulatorController.IS_DASHING_ON = option.state;
+					},
+					function (frame:String):void {
+						MouseWalkSimulatorController.IS_DASHING_ON = HelperSetting.getBool(HelperSetting.OPTION_ANIMATION);
+					}
+				)
+			]),
+			new Menu("Shortcuts", new <Option>[
+				new Button(
+					null,
+					"Add Shortcut",
+					"Place an action button on screen",
+					"Add",
+					function (option:Button):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+							if (pocket.game) {
+								pocket.game.MsgBox.notify("Only available in-game.");
+							}
+							return;
+						}
+
+						pocket.overlay.onHidePanel(null);
+
+						const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker");
+
+						if (shortcutPicker) {
+							pocket.game.stage.removeChild(shortcutPicker);
+						}
+
+						pocket.game.stage.addChild(
+							new ShortcutPicker(pocket, function (actionName:String):void {
+								pocket.gameUI.addShortcutButton(actionName);
+							})
+						);
+					}
+				),
+				new Button(
+					null,
+					"Remove Shortcut",
+					"Remove a shortcut button from screen",
+					"Remove",
+					function (option:Button):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+							return;
+						}
+
+						pocket.overlay.onHidePanel(null);
+
+						const shortcutPicker:DisplayObject = pocket.game.stage.getChildByName("ShortcutPicker");
+
+						if (shortcutPicker) {
+							pocket.game.stage.removeChild(shortcutPicker);
+						}
+
+						pocket.game.stage.addChild(
+							new ShortcutPicker(pocket, function (actionName:String):void {
+								pocket.gameUI.removeShortcutButton(actionName);
+							})
+						);
+					}
+				),
+				new Button(
+					null,
+					"Reset Shortcuts",
+					"Remove all shortcut buttons from screen",
+					"Reset",
+					function (option:Button):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						pocket.gameUI.resetShortcuts();
+
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Shortcuts cleared.");
+						}
+					}
+				)
+			]),
+			new Menu("Layout", new <Option>[
+				new Check(
+					HelperSetting.OPTION_SNAP_TO_GRID,
+					true,
+					"Snap To Grid",
+					"Show an alignment grid while editing layout",
+					true,
+					function (option:Check):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (pocket.gameUI) {
+							pocket.gameUI.layoutController.refreshGrid();
+						}
+					}
+				),
+				new Button(
+					null,
+					"Edit Layout",
+					"Drag to reposition UI elements",
+					"Edit",
+					function (option:Button):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+							if (pocket.game) {
+								pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
+							}
+							return;
+						}
+
+						pocket.worldCore.setWorldFilters([
+							Helper.GRAYSCALE
+						]);
+
+						pocket.overlay.onHidePanel(null);
+
+						pocket.gameUI.showEditLayout();
+					},
+					function (frame:String):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						pocket.gameUI.hideEditLayout();
+
+						pocket.worldCore.setWorldFilters([]);
+					},
+					function (frame:String):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (frame !== "Panel") {
+							return;
+						}
+
+						pocket.worldCore.setWorldFilters([]);
+
+						pocket.gameUI.hideEditLayout();
+					}
+				),
+				new Button(
+					null,
+					"Reset Layout",
+					"Restore default positions",
+					"Reset",
+					function (option:Button):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Layout successfully restored.");
+						}
+
+						pocket.gameUI.resetLayout();
+					}
+				)
+			])
 		];
 
 		private function initFrame():void {
 			this.showPanelBtn.addEventListener(MouseEvent.CLICK, onShowPanel);
 
-			for each (var option:Option in options) {
-				if (option.onOverlayStateChange != null) {
-					option.onOverlayStateChange("Init");
+			for each (var menu:Menu in menus) {
+				for each (var option:Option in menu.options) {
+					if (option.onOverlayStateChange != null) {
+						option.onOverlayStateChange("Init");
+					}
 				}
 			}
 
@@ -420,32 +425,23 @@ package ui {
 		private function panelFrame():void {
 			this.visible = false;
 
+			//noinspection JSUnresolvedReference
+			this.contentMenu.removeAllChildren();
+
 			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
 
 			var heightTotal:uint = 0;
 
-			for each (var option:Option in options) {
-				if (!option.visible) {
-					continue;
-				}
-				
-				this.content.addChild(option);
+			for each (var menu:Menu in menus) {
+				this.contentMenu.addChild(menu);
 
-				option.x = 3.75;
-				option.y = heightTotal + 2;
+				menu.y = heightTotal;
 
-				heightTotal += option.height;
-
-				if (option.onOverlayStateChange != null) {
-					option.onOverlayStateChange("Panel");
-				}
+				heightTotal += menu.height + 10;
 			}
 
-			new HelperScroll(
-				this.contentScroll,
-				this.content,
-				this.contentMask
-			);
+
+			Pocket.SINGLETON.overlay.selectMenu(menus[0]);
 
 			this.reportBugBtn.addEventListener(MouseEvent.CLICK, onReportBug);
 			this.updateBtn.addEventListener(MouseEvent.CLICK, onUpdate);
@@ -454,6 +450,36 @@ package ui {
 			this.visible = true;
 
 			stop();
+		}
+
+		public function selectMenu(menu:Menu):void {
+			//noinspection JSUnresolvedReference
+			this.contentOptions.removeAllChildren();
+
+			var heightTotal:uint = 0;
+
+			for each (var option:Option in menu.options) {
+				if (!option.visible) {
+					continue;
+				}
+
+				this.contentOptions.addChild(option);
+
+				option.x = 17;
+				option.y = heightTotal + 17;
+
+				heightTotal += option.height + 5;
+
+				if (option.onOverlayStateChange != null) {
+					option.onOverlayStateChange("Panel");
+				}
+			}
+
+			/*new HelperScroll(
+				this.contentScroll,
+				this.contentOptions,
+				this.contentMask
+			);*/
 		}
 
 		private function onShowPanel(mouseEvent:MouseEvent):void {

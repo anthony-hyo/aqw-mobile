@@ -7,7 +7,10 @@ package ui.controller {
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
 
+	import ui.util.BasicButton;
 	import ui.util.Handle;
+
+	import util.Helper;
 
 	import util.HelperSetting;
 
@@ -39,7 +42,7 @@ package ui.controller {
 			for (var i:uint = 0; i < this.widgets.length; i++) {
 				if (this.widgets[i].id == id) {
 					hideHandles(this.widgets[i]);
-					
+
 					this.widgets.removeAt(i);
 					return;
 				}
@@ -63,6 +66,33 @@ package ui.controller {
 
 		public function toggleEdit(state:Boolean):void {
 			editMode = state;
+
+			if (editMode) {
+				if (Pocket.SINGLETON.gameUI.getChildByName("LayoutSaveButton") == null) {
+					Pocket.SINGLETON.worldCore.setWorldFilters([
+						Helper.GRAYSCALE
+					]);
+					
+					const saveButton:BasicButton = new BasicButton("Save");
+					saveButton.name = "LayoutSaveButton";
+					saveButton.x = 480 - (saveButton.width >> 1);
+					saveButton.y = 10;
+					
+					saveButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+						Pocket.SINGLETON.gameUI.hideEditLayout();
+					}, false, 0, true);
+					
+					Pocket.SINGLETON.gameUI.addChild(saveButton);
+				}
+			} else {
+				Pocket.SINGLETON.worldCore.setWorldFilters([]);
+				
+				const saveButton2:DisplayObject = Pocket.SINGLETON.gameUI.getChildByName("LayoutSaveButton");
+
+				if (saveButton2 != null && saveButton2.parent != null) {
+					saveButton2.parent.removeChild(saveButton2);
+				}
+			}
 
 			var widgetEntry:WidgetEntry;
 

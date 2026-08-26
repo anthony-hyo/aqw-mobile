@@ -371,19 +371,6 @@ package ui {
 						const pocket:Pocket = Pocket.SINGLETON;
 
 						pocket.gameUI.hideEditLayout();
-
-						pocket.worldCore.setWorldFilters([]);
-					},
-					function (frame:String):void {
-						const pocket:Pocket = Pocket.SINGLETON;
-
-						if (frame !== "Panel") {
-							return;
-						}
-
-						pocket.worldCore.setWorldFilters([]);
-
-						pocket.gameUI.hideEditLayout();
 					}
 				),
 				new Button(
@@ -436,8 +423,13 @@ package ui {
 				menu.y = heightTotal;
 
 				heightTotal += menu.height + 10;
-			}
 
+				for each (var option:Option in menu.options) {
+					if (option.onOverlayStateChange != null) {
+						option.onOverlayStateChange("Panel");
+					}
+				}
+			}
 
 			Pocket.SINGLETON.overlay.selectMenu(menus[0]);
 
@@ -467,10 +459,6 @@ package ui {
 				option.y = heightTotal + 17;
 
 				heightTotal += option.height + 5;
-
-				if (option.onOverlayStateChange != null) {
-					option.onOverlayStateChange("Panel");
-				}
 			}
 
 			/*new HelperScroll(

@@ -145,7 +145,7 @@ package ui {
 					function (option:Check):void {
 						const pocket:Pocket = Pocket.SINGLETON;
 
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 							return;
 						}
 
@@ -180,7 +180,7 @@ package ui {
 					function (option:Check):void {
 						const pocket:Pocket = Pocket.SINGLETON;
 
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 							return;
 						}
 
@@ -215,7 +215,7 @@ package ui {
 					function (option:Check):void {
 						const pocket:Pocket = Pocket.SINGLETON;
 
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 							return;
 						}
 
@@ -264,7 +264,7 @@ package ui {
 					function (option:Button):void {
 						const pocket:Pocket = Pocket.SINGLETON;
 
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 							if (pocket.game) {
 								pocket.game.MsgBox.notify("Only available in-game.");
 							}
@@ -294,7 +294,7 @@ package ui {
 					function (option:Button):void {
 						const pocket:Pocket = Pocket.SINGLETON;
 
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 							return;
 						}
 
@@ -352,7 +352,7 @@ package ui {
 					function (option:Button):void {
 						const pocket:Pocket = Pocket.SINGLETON;
 
-						if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+						if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 							if (pocket.game) {
 								pocket.game.MsgBox.notify("Cannot edit outside the game screen.");
 							}

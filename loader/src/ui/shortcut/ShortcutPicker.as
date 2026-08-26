@@ -208,7 +208,7 @@ package ui.shortcut {
 				pocket.game.world.map.visible = !pocket.game.world.map.visible;
 			}),
 			new Action("Toggle Joystick", function (pocket:Pocket):void {
-				if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+				if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 					return;
 				}
 
@@ -220,7 +220,7 @@ package ui.shortcut {
 				}
 			}),
 			new Action("Toggle Skills", function (pocket:Pocket):void {
-				if (!pocket.game || pocket.game.currentFrameLabel != "Game") {
+				if (!pocket.game || pocket.gameCore.currentFrame != "Game") {
 					return;
 				}
 

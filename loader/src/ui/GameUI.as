@@ -92,7 +92,7 @@ package ui {
 				return;
 			}
 
-			if (this.pocket.game.currentFrameLabel != "Game") {
+			if (this.pocket.gameCore.currentFrame != "Game") {
 				return;
 			}
 
@@ -104,7 +104,7 @@ package ui {
 				return;
 			}
 
-			if (this.pocket.game.currentFrameLabel != "Game") {
+			if (this.pocket.gameCore.currentFrame != "Game") {
 				return;
 			}
 

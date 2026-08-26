@@ -84,7 +84,7 @@ package discord {
 				return;
 			}
 
-			switch (this.pocket.game.currentFrameLabel) {
+			switch (this.pocket.gameCore.currentFrame) {
 				case "Game":
 					if (this.pocket.game.world.myAvatar) {
 						const className:String = " - " + (this.pocket.game.world.myAvatar.objData.strClassName ? this.pocket.game.world.myAvatar.objData.strClassName : "No Class");

@@ -104,6 +104,9 @@ pub fn replace_trait_method(content: &str, method_name: &str, replacement: &str)
     for (offset, line) in lines[start..].iter().enumerate() {
         let t = line.trim();
         if t.starts_with("trait ") {
+            if t.ends_with(" end") || t == "end" {
+                continue;
+            }
             depth += 1;
         } else if t.starts_with("end ; trait") {
             depth = depth.saturating_sub(1);

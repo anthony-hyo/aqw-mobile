@@ -1,13 +1,7 @@
 package game {
-	import flash.display.Loader;
-	import flash.display.MovieClip;
-	import flash.events.Event;
-	import flash.system.ApplicationDomain;
-	import flash.system.LoaderContext;
 
+	import ui.option.Menu;
 	import ui.option.Option;
-
-	import util.HelperLoader;
 
 	public class Game {
 
@@ -17,53 +11,35 @@ package game {
 
 		private var pocket:Pocket;
 
-		public function onTravelMapComplete(e:Event):void {
-			const jso:Object = JSON.parse(String(e.target.data));
-
-			this.pocket.game.travelMapData = jso;
-
-			pocket.game.WorldMapData = new (this.pocket.game.loaderInfo.applicationDomain.getDefinition('worldMap'))(pocket.game.travelMapData);
-			pocket.game.TRAVEL_DATA_READY = true;
-			pocket.game.ui.mcPopup.mcMap.removeChildAt(0);
-
-			HelperLoader.load(new Loader(), "app:/gamefiles/world-map.swf", new LoaderContext(false, ApplicationDomain.currentDomain), function (event:Event):void {
-				pocket.game.ui.mcPopup.mcMap.addChild(MovieClip(Loader(event.target.loader).content));
-			});
-		}
-
-		public function onBoLComplete(e:Event):void{
-			const jso:Object = JSON.parse(String(e.target.data));
-
-			pocket.game.world.bookData = jso;
-			pocket.game.BOOK_DATA_READY = jso;
-
-			pocket.game.ui.mcPopup.mcBook.removeChildAt(0);
-			
-			if (pocket.game.bolContent){
-				if (pocket.game.newInstance){
-					pocket.game.newInstance = false;
-					pocket.game.bolContent.gotoAndStop("NavMenu");
+		public function onFrameChange(frame:String):void {
+			for each (var menu:Menu in this.pocket.overlay.menus) {
+				for each (var option:Option in menu.options) {
+					if (option.onFrameChange != null) {
+						option.onFrameChange(frame);
+					}
 				}
+			}
 
-				pocket.game.ui.mcPopup.mcBook.addChild(pocket.game.bolContent);
+			if (!this.pocket.game) {
 				return;
 			}
 
-			HelperLoader.load(new Loader(), "app:/gamefiles/book-of-lore.swf", new LoaderContext(false, ApplicationDomain.currentDomain), function (event:Event):void {
-				pocket.game.bolContent = Loader(event.target.loader).content;
-				
-				pocket.game.ui.mcPopup.mcBook.addChild(MovieClip(pocket.game.bolContent));
-			});
-		}
-		
-		public function onFrameChange(frame:String):void {
-			for each (var option:Option in this.pocket.overlay.options) {
-				if (option.onFrameChange != null) {
-					option.onFrameChange(frame);
-				}
-			}
+			switch (frame) {
+				case "Game":
+					if (this.pocket.overlay.showPanelBtn) {
+						this.pocket.overlay.showPanelBtn.width = this.pocket.overlay.showPanelBtn.height = 24;
+						this.pocket.overlay.showPanelBtn.x = this.pocket.overlay.showPanelBtn.y = 2;
+					}
+					break;
+				default:
+					if (this.pocket.overlay.showPanelBtn) {
+						this.pocket.overlay.showPanelBtn.width = this.pocket.overlay.showPanelBtn.height = 37.3;
 
-			this.pocket.overlay.setOverlayButtonTransform();
+						this.pocket.overlay.showPanelBtn.x = 7.1;
+						this.pocket.overlay.showPanelBtn.y = 264.9;
+					}
+					break;
+			}
 		}
 
 	}

@@ -76,6 +76,13 @@ package ui.shortcut {
 					keys[this.actionName] = keyCodeValue;
 				}
 			}
+			
+			// Self-repair
+			for (var k:String in keys) {
+				if (keys[k] === 999) {
+					delete keys[k];
+				}
+			}
 		}
 
 	}

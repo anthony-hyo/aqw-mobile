@@ -25,6 +25,9 @@ package game {
 			}
 
 			this.pocket.overlay.setOverlayButtonTransform();
+
+			this.pocket.game.setChildIndex(this.pocket.overlay, this.pocket.game.numChildren - 1);
+			this.pocket.game.setChildIndex(this.pocket.gameUI, this.pocket.game.numChildren - 1);
 		}
 
 	}

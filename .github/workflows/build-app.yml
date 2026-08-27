@@ -158,7 +158,8 @@ jobs:
                         icons/icon-192x192.png \
                         gamefiles/game.swf \
                         gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
+                        gamefiles/book-of-lore.swf \
+                        gamefiles/character-select.swf
             
             -   name: Upload
                 uses: actions/upload-artifact@v7
@@ -225,7 +226,8 @@ jobs:
                         icons/icon-192x192.png `
                         gamefiles/game.swf `
                         gamefiles/world-map.swf `
-                        gamefiles/book-of-lore.swf
+                        gamefiles/book-of-lore.swf `
+                        gamefiles/character-select.swf
 
             -   name: Zip
                 run: Compress-Archive -Path "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}" -DestinationPath "AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip"
@@ -288,7 +290,8 @@ jobs:
                         icons/icon-192x192.png \
                         gamefiles/game.swf \
                         gamefiles/world-map.swf \
-                        gamefiles/book-of-lore.swf
+                        gamefiles/book-of-lore.swf \
+                        gamefiles/character-select.swf
 
             -   name: Zip
                 run: zip -r AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}.zip AQWPocket-${{ needs.patch.outputs.VERSION }}${{ matrix.suffix }}/

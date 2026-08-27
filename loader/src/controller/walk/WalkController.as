@@ -1,4 +1,4 @@
-package ui.controller.walk {
+package controller.walk {
 
     import flash.errors.IllegalOperationError;
 

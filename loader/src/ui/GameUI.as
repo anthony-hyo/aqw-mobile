@@ -3,9 +3,9 @@ package ui {
 	import flash.display.*;
 	import flash.events.MouseEvent;
 
-	import ui.controller.LayoutController;
-	import ui.controller.walk.KeyboardWalkSimulatorController;
-	import ui.controller.walk.MouseWalkSimulatorController;
+	import controller.LayoutController;
+	import controller.walk.KeyboardWalkSimulatorController;
+	import controller.walk.MouseWalkSimulatorController;
 	import ui.input.Joystick;
 	import ui.shortcut.ShortcutButton;
 

@@ -1,17 +1,15 @@
-package ui.controller {
+package controller {
 
 	import data.WidgetEntry;
 
 	import flash.display.*;
 	import flash.events.*;
 	import flash.geom.Point;
-	import flash.utils.Dictionary;
 
 	import ui.util.BasicButton;
 	import ui.util.Handle;
 
 	import util.Helper;
-
 	import util.HelperSetting;
 
 	public class LayoutController {
@@ -20,17 +18,12 @@ package ui.controller {
 		private static const SCALE_MIN:Number = 0.1;
 		private static const SCALE_MAX:Number = 5.0;
 		private static const GRID_SIZE:Number = 22;
-		private static const GRID_MAJOR_INTERVAL:int = 3;
-		private static const GRID_COLOR:uint = 0xFFFFFF;
-		private static const GRID_MINOR_ALPHA:Number = 0.05;
-		private static const GRID_MAJOR_ALPHA:Number = 0.18;
 
 		public static var editMode:Boolean = false;
 
 		private static var current:WidgetEntry;
 
 		private var widgets:Vector.<WidgetEntry> = new Vector.<WidgetEntry>();
-		private var gridLayers:Dictionary = new Dictionary(true);
 		private var dragOffsetX:Number = 0;
 		private var dragOffsetY:Number = 0;
 
@@ -72,19 +65,19 @@ package ui.controller {
 					Pocket.SINGLETON.worldCore.setWorldFilters([
 						Helper.GRAYSCALE
 					]);
-					
+
 					const saveButton:BasicButton = new BasicButton("Save");
 					saveButton.name = "LayoutSaveButton";
 					saveButton.x = 480 - (saveButton.width >> 1);
 					saveButton.y = 10;
-					
+
 					saveButton.addEventListener(MouseEvent.CLICK, Pocket.SINGLETON.gameUI.hideEditLayout, false, 0, true);
-					
+
 					Pocket.SINGLETON.gameUI.addChild(saveButton);
 				}
 			} else {
 				Pocket.SINGLETON.worldCore.setWorldFilters([]);
-				
+
 				const saveButton2:DisplayObject = Pocket.SINGLETON.gameUI.getChildByName("LayoutSaveButton");
 
 				if (saveButton2 != null && saveButton2.parent != null) {

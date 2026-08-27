@@ -5,8 +5,8 @@ package ui.input {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
-	import ui.controller.LayoutController;
-	import ui.controller.walk.WalkController;
+	import controller.LayoutController;
+	import controller.walk.WalkController;
 
 	public class Joystick extends Sprite {
 

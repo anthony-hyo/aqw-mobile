@@ -9,7 +9,7 @@ package ui {
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 
-	import ui.controller.walk.MouseWalkSimulatorController;
+	import controller.walk.MouseWalkSimulatorController;
 	import ui.option.Button;
 	import ui.option.Check;
 	import ui.option.Menu;

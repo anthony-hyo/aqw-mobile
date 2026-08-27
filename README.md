@@ -32,7 +32,6 @@ Pick **armv8** for most modern devices or **armv7** for older 32-bit devices.
 Desktop builds may be available for:
 
 * Windows
-* Linux
 * macOS
 
 Use the build matching your operating system and architecture.

@@ -21,6 +21,9 @@ async fn main() {
     
     util::merge_patches("book-of-lore")
         .expect("book-of-lore merge failed");
+    
+    util::merge_patches("character-select")
+        .expect("character-select merge failed");
 
     Patcher::new("game", DownloadFile::Game).build().await;
 
@@ -34,6 +37,13 @@ async fn main() {
     Patcher::new(
         "book-of-lore",
         DownloadFile::Direct("https://game.aq.com/game/gamefiles/news/spiderbook3.swf".into()),
+    )
+    .build()
+    .await;
+
+    Patcher::new(
+        "character-select",
+        DownloadFile::Direct("https://game.aq.com/game/gamefiles/interface/CharSelect/charselect.swf".into()),
     )
     .build()
     .await;

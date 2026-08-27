@@ -34,7 +34,11 @@ package load.handlers {
 			this.pocket.removeChild(this.pocket.overlay);
 			this.pocket.removeChild(this.pocket.gameUI);
 
-			this.pocket.game = MovieClip(this.pocket.stage.addChild(MovieClip(Loader(event.target.loader).content)));
+			var gameMC:MovieClip = MovieClip(Loader(event.target.loader).content);
+
+			gameMC.pocket = this.pocket;
+
+			this.pocket.game = MovieClip(this.pocket.stage.addChild(gameMC));
 
 			this.pocket.game.addChild(this.pocket.overlay);
 			this.pocket.game.addChild(this.pocket.gameUI);
@@ -52,7 +56,6 @@ package load.handlers {
 
 			this.pocket.stage.removeChild(this.pocket);
 
-			this.pocket.game.pocket = this.pocket;
 			this.pocket.networkCore = new Network(this.pocket);
 
 			this.pocket.game.chatF.chn.global = {};

@@ -39,6 +39,9 @@
 
 		public static var IS_ANIMATION_OFF:Boolean = false;
 
+		public static var IS_GRAPHIC_ANIMATION_OFF:Boolean = false;
+		public static var IS_GRAPHIC_FILTER_OFF:Boolean = false;
+
 		private static var _SINGLETON:Pocket;
 
 		public static function get SINGLETON():Pocket {

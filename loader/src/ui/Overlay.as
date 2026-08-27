@@ -136,6 +136,46 @@ package ui {
 					}
 				)
 			]),
+			new Menu("Graphics", new <Option>[
+				new Check(
+					HelperSetting.OPTION_ANIMATION,
+					false,
+					"Disable Animations",
+					"Freeze SWF timelines to improve FPS. (May slow down loading)",
+					true,
+					function (option:Check):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						Pocket.IS_GRAPHIC_ANIMATION_OFF = option.state;
+
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Animation setting saved. Join a new map/Relog to take effect.");
+						}
+					},
+					function (frame:String):void {
+						Pocket.IS_GRAPHIC_ANIMATION_OFF = HelperSetting.getBool(HelperSetting.OPTION_ANIMATION);
+					}
+				),
+				new Check(
+					HelperSetting.OPTION_FILTER,
+					false,
+					"Disable Filters",
+					"Remove heavy glows and drop-shadows. (May slow down loading)",
+					true,
+					function (option:Check):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						Pocket.IS_GRAPHIC_FILTER_OFF = option.state;
+
+						if (pocket.game) {
+							pocket.game.MsgBox.notify("Filter setting saved. Join a new map/Relog to take effect.");
+						}
+					},
+					function (frame:String):void {
+						Pocket.IS_GRAPHIC_FILTER_OFF = HelperSetting.getBool(HelperSetting.OPTION_FILTER);
+					}
+				)
+			]),
 			new Menu("Controls", new <Option>[
 				new Check(
 					HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE,

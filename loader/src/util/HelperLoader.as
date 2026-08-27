@@ -1,5 +1,12 @@
 package util {
 
+	import com.codeazur.as3swf.SWF;
+	import com.codeazur.as3swf.tags.ITag;
+	import com.codeazur.as3swf.tags.TagDefineSprite;
+	import com.codeazur.as3swf.tags.TagEnd;
+	import com.codeazur.as3swf.tags.TagPlaceObject;
+	import com.codeazur.as3swf.tags.TagShowFrame;
+
 	import flash.display.Loader;
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
@@ -22,6 +29,14 @@ package util {
 
 			loadBinary(url,
 				function (bytes:ByteArray):void {
+					var finalBytes:ByteArray = bytes;
+
+					const lowerUrl:String = url.toLowerCase();
+
+					if ((Pocket.IS_GRAPHIC_ANIMATION_OFF || Pocket.IS_GRAPHIC_FILTER_OFF) && (lowerUrl.indexOf("items") > -1 || lowerUrl.indexOf("classes") > -1 || lowerUrl.indexOf("hairs") > -1)) {
+						finalBytes = processSWFBytes(bytes);
+					}
+
 					if (onComplete != null) {
 						ldr.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
 					}
@@ -30,7 +45,7 @@ package util {
 						ldr.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHTTPError);
 					}
 
-					ldr.loadBytes(bytes, context);
+					ldr.loadBytes(finalBytes, context);
 				},
 				onProgress,
 				function (e:IOErrorEvent):void {
@@ -73,6 +88,57 @@ package util {
 			return int((e.currentTarget.bytesLoaded / e.currentTarget.bytesTotal) * 100);
 		}
 
-	}
+		private static function processSWFBytes(originalBytes:ByteArray):ByteArray {
+			originalBytes.position = 0;
 
+			const swf:SWF = new SWF(originalBytes);
+
+			stripTags(swf.tags);
+
+			if (swf.tagsRaw && swf.tagsRaw.length > swf.tags.length) {
+				swf.tagsRaw.length = swf.tags.length;
+			}
+
+			const newBytes:ByteArray = new ByteArray();
+			swf.publish(newBytes);
+			newBytes.position = 0;
+
+			return newBytes;
+		}
+
+		private static function stripTags(tags:Vector.<ITag>):void {
+			var tag:ITag;
+
+			const isGraphicAnimationOff:Boolean = Pocket.IS_GRAPHIC_ANIMATION_OFF;
+			const isGraphicFilterOff:Boolean = Pocket.IS_GRAPHIC_FILTER_OFF;
+
+			for (var i:int = 0; i < tags.length; i++) {
+				tag = tags[i];
+
+				if (isGraphicAnimationOff && tag is TagShowFrame) {
+					tags.length = i + 1;
+					tags.push(new TagEnd());
+					break;
+				}
+
+				if (tag is TagDefineSprite) {
+					var sprite:TagDefineSprite = tag as TagDefineSprite;
+
+					stripTags(sprite.tags);
+
+					if (sprite.tagsRaw && sprite.tagsRaw.length > sprite.tags.length) {
+						sprite.tagsRaw.length = sprite.tags.length;
+					}
+				} else if (isGraphicFilterOff && tag is TagPlaceObject) {
+					var po:TagPlaceObject = tag as TagPlaceObject;
+
+					if (po.hasFilterList && po.surfaceFilterList != null && po.surfaceFilterList.length > 0) {
+						po.surfaceFilterList.length = 0;
+						po.hasFilterList = false;
+					}
+				}
+			}
+		}
+
+	}
 }

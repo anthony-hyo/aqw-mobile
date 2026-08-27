@@ -22,6 +22,7 @@ package util {
 		public static const OPTION_RASTERIZER_LEVELS:String = "option_rasterizer_levels";
 
 		public static const OPTION_ANIMATION:String = "option_animation";
+		public static const OPTION_FILTER:String = "option_filter";
 
 		public static const LAYOUT_JOYSTICK_MOUSE:String = "layout_joystick";
 		public static const LAYOUT_JOYSTICK_KEYBOARD:String = "layout_joystick_keyboard";

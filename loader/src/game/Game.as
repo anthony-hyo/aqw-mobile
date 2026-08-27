@@ -13,6 +13,10 @@ package game {
 
 		private var pocket:Pocket;
 
+		/**
+		 * Called by Game & Pocket
+		 * @param frame
+		 */
 		public function onFrameChange(frame:String):void {
 			this.currentFrame = frame;
 

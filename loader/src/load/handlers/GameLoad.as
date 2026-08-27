@@ -66,6 +66,8 @@ package load.handlers {
 			this.pocket.game.chatF.chn.global.rid = 0;
 			this.pocket.game.chatF.chn.global.act = 1;
 
+			this.pocket.gameCore.onFrameChange("Init");
+
 			this.pocket.advance();
 		}
 

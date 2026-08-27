@@ -4,7 +4,10 @@ package util {
 	import com.codeazur.as3swf.tags.ITag;
 	import com.codeazur.as3swf.tags.TagDefineSprite;
 	import com.codeazur.as3swf.tags.TagEnd;
+	import com.codeazur.as3swf.tags.TagFrameLabel;
 	import com.codeazur.as3swf.tags.TagPlaceObject;
+	import com.codeazur.as3swf.tags.TagRemoveObject;
+	import com.codeazur.as3swf.tags.TagRemoveObject2;
 	import com.codeazur.as3swf.tags.TagShowFrame;
 
 	import flash.display.Loader;
@@ -33,7 +36,7 @@ package util {
 
 					const lowerUrl:String = url.toLowerCase();
 
-					if ((Pocket.IS_GRAPHIC_ANIMATION_OFF || Pocket.IS_GRAPHIC_FILTER_OFF) && (lowerUrl.indexOf("items") > -1 || lowerUrl.indexOf("classes") > -1 || lowerUrl.indexOf("hairs") > -1)) {
+					if ((Pocket.IS_GRAPHIC_ANIMATION_OFF || Pocket.IS_GRAPHIC_FILTER_OFF) && (lowerUrl.indexOf("items") > -1 || lowerUrl.indexOf("classes") > -1 || lowerUrl.indexOf("hairs") > -1 || lowerUrl.indexOf("mon/") > -1)) {
 						finalBytes = processSWFBytes(bytes);
 					}
 
@@ -112,10 +115,24 @@ package util {
 			const isGraphicAnimationOff:Boolean = Pocket.IS_GRAPHIC_ANIMATION_OFF;
 			const isGraphicFilterOff:Boolean = Pocket.IS_GRAPHIC_FILTER_OFF;
 
+			var hasFrameLabels:Boolean = false;
+			
+			if (isGraphicAnimationOff) {
+				for each (tag in tags) {
+					if (tag is TagFrameLabel) {
+						hasFrameLabels = true;
+						break;
+					}
+				}
+			}
+
+			var shownFirstFrame:Boolean = false;
+			const newTags:Vector.<ITag> = hasFrameLabels ? new Vector.<ITag>() : null;
+
 			for (var i:int = 0; i < tags.length; i++) {
 				tag = tags[i];
 
-				if (isGraphicAnimationOff && tag is TagShowFrame) {
+				if (isGraphicAnimationOff && !hasFrameLabels && tag is TagShowFrame) {
 					tags.length = i + 1;
 					tags.push(new TagEnd());
 					break;
@@ -136,6 +153,27 @@ package util {
 						po.surfaceFilterList.length = 0;
 						po.hasFilterList = false;
 					}
+				}
+
+				if (hasFrameLabels) {
+					var isFrameContent:Boolean = (tag is TagPlaceObject) || (tag is TagRemoveObject) || (tag is TagRemoveObject2);
+
+					if (isGraphicAnimationOff && shownFirstFrame && isFrameContent) {
+						// stripped
+					} else {
+						newTags.push(tag);
+					}
+
+					if (tag is TagShowFrame) {
+						shownFirstFrame = true;
+					}
+				}
+			}
+
+			if (hasFrameLabels) {
+				tags.length = 0;
+				for each (tag in newTags) {
+					tags.push(tag);
 				}
 			}
 		}

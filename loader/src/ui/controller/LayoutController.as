@@ -112,24 +112,6 @@ package ui.controller {
 					scaleY: widgetEntry.target.scaleY
 				});
 			}
-
-			if (!editMode) {
-				hideGrids();
-			}
-		}
-
-		public function refreshGrid():void {
-			hideGrids();
-
-			if (!editMode || !isSnapToGridEnabled()) {
-				return;
-			}
-
-			for each (var widgetEntry:WidgetEntry in this.widgets) {
-				if (widgetEntry.target.parent) {
-					showGrid(widgetEntry.target.parent);
-				}
-			}
 		}
 
 		public function resetToDefaults():void {
@@ -139,7 +121,6 @@ package ui.controller {
 				}
 
 				editMode = false;
-				hideGrids();
 			}
 
 			var widgetEntry:WidgetEntry;
@@ -161,10 +142,6 @@ package ui.controller {
 			}
 
 			const parent:DisplayObjectContainer = widgetEntry.target.parent;
-
-			if (isSnapToGridEnabled()) {
-				showGrid(parent);
-			}
 
 			const handle:Handle = new Handle();
 
@@ -305,71 +282,6 @@ package ui.controller {
 			entry.target.scaleY = scale;
 
 			repositionHandles(entry);
-		}
-
-		private function showGrid(parent:DisplayObjectContainer):void {
-			if (parent == null || parent.stage == null || gridLayers[parent] != null) {
-				return;
-			}
-
-			const grid:Sprite = new Sprite();
-			grid.name = "LayoutGrid";
-			grid.mouseEnabled = false;
-			grid.mouseChildren = false;
-
-			drawGrid(grid, parent);
-
-			parent.addChildAt(grid, 0);
-			gridLayers[parent] = grid;
-		}
-
-		private function drawGrid(grid:Sprite, parent:DisplayObjectContainer):void {
-			const topLeft:Point = parent.globalToLocal(new Point(0, 0));
-			const bottomRight:Point = parent.globalToLocal(new Point(parent.stage.stageWidth, parent.stage.stageHeight));
-
-			const left:Number = Math.min(topLeft.x, bottomRight.x);
-			const right:Number = Math.max(topLeft.x, bottomRight.x);
-			const top:Number = Math.min(topLeft.y, bottomRight.y);
-			const bottom:Number = Math.max(topLeft.y, bottomRight.y);
-
-			const graphics:Graphics = grid.graphics;
-			graphics.clear();
-
-			var x:Number;
-			var y:Number;
-			var index:int;
-			var major:Boolean;
-
-			for (x = Math.floor(left / GRID_SIZE) * GRID_SIZE; x <= right; x += GRID_SIZE) {
-				index = Math.round(x / GRID_SIZE);
-				major = index % GRID_MAJOR_INTERVAL == 0;
-				graphics.lineStyle(1, GRID_COLOR, major ? GRID_MAJOR_ALPHA : GRID_MINOR_ALPHA);
-				graphics.moveTo(x, top);
-				graphics.lineTo(x, bottom);
-			}
-
-			for (y = Math.floor(top / GRID_SIZE) * GRID_SIZE; y <= bottom; y += GRID_SIZE) {
-				index = Math.round(y / GRID_SIZE);
-				major = index % GRID_MAJOR_INTERVAL == 0;
-				graphics.lineStyle(1, GRID_COLOR, major ? GRID_MAJOR_ALPHA : GRID_MINOR_ALPHA);
-				graphics.moveTo(left, y);
-				graphics.lineTo(right, y);
-			}
-		}
-
-		private function hideGrids():void {
-			var key:Object;
-			var grid:Sprite;
-
-			for (key in gridLayers) {
-				grid = Sprite(gridLayers[key]);
-
-				if (grid != null && grid.parent != null) {
-					grid.parent.removeChild(grid);
-				}
-
-				delete gridLayers[key];
-			}
 		}
 
 		private function isSnapToGridEnabled():Boolean {

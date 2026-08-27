@@ -44,7 +44,6 @@ package game {
 				}
 
 				this.pocket.gameUI.layoutController.register(HelperSetting.LAYOUT_SKILL_BAR + "_i" + (i + 1), icon, icon.x, icon.y, icon.scaleX, icon.scaleY);
-
 			}
 
 			this.pocket.gameUI.layoutController.load();

@@ -78,9 +78,7 @@ package ui.controller {
 					saveButton.x = 480 - (saveButton.width >> 1);
 					saveButton.y = 10;
 					
-					saveButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
-						Pocket.SINGLETON.gameUI.hideEditLayout();
-					}, false, 0, true);
+					saveButton.addEventListener(MouseEvent.CLICK, Pocket.SINGLETON.gameUI.hideEditLayout, false, 0, true);
 					
 					Pocket.SINGLETON.gameUI.addChild(saveButton);
 				}
@@ -90,6 +88,7 @@ package ui.controller {
 				const saveButton2:DisplayObject = Pocket.SINGLETON.gameUI.getChildByName("LayoutSaveButton");
 
 				if (saveButton2 != null && saveButton2.parent != null) {
+					saveButton2.removeEventListener(MouseEvent.CLICK, Pocket.SINGLETON.gameUI.hideEditLayout);
 					saveButton2.parent.removeChild(saveButton2);
 				}
 			}

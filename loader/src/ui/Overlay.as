@@ -335,14 +335,7 @@ package ui {
 					true,
 					"Snap To Grid",
 					"Show an alignment grid while editing layout",
-					true,
-					function (option:Check):void {
-						const pocket:Pocket = Pocket.SINGLETON;
-
-						if (pocket.gameUI) {
-							pocket.gameUI.layoutController.refreshGrid();
-						}
-					}
+					true
 				),
 				new Button(
 					null,

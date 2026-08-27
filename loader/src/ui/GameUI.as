@@ -1,6 +1,7 @@
 package ui {
 
 	import flash.display.*;
+	import flash.events.MouseEvent;
 
 	import ui.controller.LayoutController;
 	import ui.controller.walk.KeyboardWalkSimulatorController;
@@ -208,7 +209,7 @@ package ui {
 			this.layoutController.toggleEdit(true);
 		}
 
-		public function hideEditLayout():void {
+		public function hideEditLayout(event:MouseEvent = null):void {
 			this.layoutController.toggleEdit(false);
 		}
 

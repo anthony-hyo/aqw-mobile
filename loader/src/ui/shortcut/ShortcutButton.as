@@ -63,13 +63,19 @@ package ui.shortcut {
 
 			const prevFocus:* = this.pocket.game.stage.focus;
 			this.pocket.game.stage.focus = null;
+			
+			try {
+				this.pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, keyCodeValueTemporary, keyCodeValueTemporary));
+				this.pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_UP, true, false, keyCodeValueTemporary, keyCodeValueTemporary));
+			} finally {
+				this.pocket.game.stage.focus = prevFocus;
 
-			this.pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, keyCodeValueTemporary, keyCodeValueTemporary));
-			this.pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_UP, true, false, keyCodeValueTemporary, keyCodeValueTemporary));
-
-			this.pocket.game.stage.focus = prevFocus;
-
-			keys[this.actionName] = keyCodeValue;
+				if (keyCodeValue == null) {
+					delete keys[this.actionName];
+				} else {
+					keys[this.actionName] = keyCodeValue;
+				}
+			}
 		}
 
 	}

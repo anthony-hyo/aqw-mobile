@@ -11,6 +11,7 @@ package ui.shortcut {
 	import flash.ui.Keyboard;
 
 	import ui.option.Check;
+	import ui.option.Menu;
 	import ui.option.Option;
 	import ui.util.Scroll;
 
@@ -212,10 +213,12 @@ package ui.shortcut {
 					return;
 				}
 
-				for each (var option:Option in pocket.overlay.options) {
-					if (option.key == HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE) {
-						Check(option).onToggle();
-						return;
+				for each (var menu:Menu in pocket.overlay.menus) {
+					for each (var option:Option in menu.options) {
+						if (option.key == HelperSetting.OPTION_SHOW_JOYSTICK_MOUSE) {
+							Check(option).onToggle();
+							return;
+						}
 					}
 				}
 			}),
@@ -224,10 +227,12 @@ package ui.shortcut {
 					return;
 				}
 
-				for each (var option:Option in pocket.overlay.options) {
-					if (option.key == HelperSetting.OPTION_SHOW_SKILL_BAR) {
-						Check(option).onToggle();
-						return;
+				for each (var menu:Menu in pocket.overlay.menus) {
+					for each (var option:Option in menu.options) {
+						if (option.key == HelperSetting.OPTION_SHOW_SKILL_BAR) {
+							Check(option).onToggle();
+							return;
+						}
 					}
 				}
 			}),

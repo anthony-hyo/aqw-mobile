@@ -10,6 +10,7 @@ package ui {
 	import flash.net.navigateToURL;
 
 	import controller.walk.MouseWalkSimulatorController;
+
 	import ui.option.Button;
 	import ui.option.Check;
 	import ui.option.Menu;
@@ -395,6 +396,8 @@ package ui {
 				}
 			}
 
+			this.pocket.overlay.setOverlayButtonTransform();
+
 			this.pocket.gameUI.loadPersistedShortcuts();
 
 			stop();
@@ -491,6 +494,29 @@ package ui {
 			}
 
 			notification.y = index * (notification.height + 10);
+		}
+
+		public function setOverlayButtonTransform():void {
+			if (!this.pocket.game) {
+				return;
+			}
+			
+			switch (this.pocket.gameCore.currentFrame) {
+				case "Game":
+					if (this.pocket.overlay.showPanelBtn) {
+						this.pocket.overlay.showPanelBtn.width = this.pocket.overlay.showPanelBtn.height = 24;
+						this.pocket.overlay.showPanelBtn.x = this.pocket.overlay.showPanelBtn.y = 2;
+					}
+					break;
+				default:
+					if (this.pocket.overlay.showPanelBtn) {
+						this.pocket.overlay.showPanelBtn.width = this.pocket.overlay.showPanelBtn.height = 37.3;
+
+						this.pocket.overlay.showPanelBtn.x = 7.1;
+						this.pocket.overlay.showPanelBtn.y = 264.9;
+					}
+					break;
+			}
 		}
 
 	}

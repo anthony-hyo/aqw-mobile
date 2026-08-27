@@ -73,7 +73,7 @@ package controller.walk {
                 moveSpeed = Math.max(baseSpeed * 0.3, baseSpeed * (directionMagnitude / WALK_MAX_THRESHOLD));
             } else if (directionMagnitude >= WALK_MAX_THRESHOLD && directionMagnitude < DASH_THRESHOLD) {
                 moveSpeed = baseSpeed;
-            } else if (IS_DASHING_ON && !this.pocket.game.world.justRan) {
+            } else if (IS_DASHING_ON && !this.pocket.game.world.justRan2) {
                 const currentTime:int = getTimer();
 
                 if (currentTime - this.lastDashTime >= DASH_COOLDOWN_MS) {
@@ -89,16 +89,16 @@ package controller.walk {
                 }
             }
 
-            if (this.pocket.game.pDash && !this.pocket.game.world.justRan) {
-                this.pocket.game.world.justRan = true;
+            if (this.pocket.game.pDash && !this.pocket.game.world.justRan2) {
+                this.pocket.game.world.justRan2 = true;
                 this.pocket.game.pDash = false;
             }
 
-            if (this.pocket.game.world.justRan) {
+            if (this.pocket.game.world.justRan2) {
                 moveSpeed = baseSpeed * 3;
             }
 
-            this.pocket.game.world.speed = moveSpeed;
+            this.pocket.game.world.speed2 = moveSpeed;
 
             const localX:Number = pMC.x + Math.cos(angle) * MOVE_SPEED_MULTIPLIER * 10;
             const localY:Number = pMC.y + Math.sin(angle) * MOVE_SPEED_MULTIPLIER * 10;

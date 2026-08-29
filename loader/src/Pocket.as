@@ -3,9 +3,6 @@
 	import data.Release;
 	import data.Version;
 
-	import engine.AvatarRasterizer;
-	import engine.EntityRasterizer;
-
 	import flash.desktop.NativeApplication;
 	import flash.desktop.SystemIdleMode;
 	import flash.display.MovieClip;
@@ -27,17 +24,13 @@
 
 	import util.HelperLoader;
 
+	//noinspection JSUnresolvedReference
 	POCKET::IS_DESKTOP
 	{
 		import discord.DiscordRichPresence;
 	}
 
 	public class Pocket extends Sprite {
-
-		public static var IS_RASTERIZER_ON:Boolean = true;
-		public static var RASTERIZER_QUALITY_LEVEL:Number = 1;
-
-		public static var IS_ANIMATION_OFF:Boolean = false;
 
 		public static var IS_GRAPHIC_ANIMATION_OFF:Boolean = false;
 		public static var IS_GRAPHIC_FILTER_OFF:Boolean = false;
@@ -88,6 +81,7 @@
 
 		public const lpfFrameListViewTabbedCore:LPFFrameListViewTabbed = new LPFFrameListViewTabbed(this);
 
+		//noinspection JSUnresolvedReference
 		POCKET::IS_DESKTOP
 		{
 			public const discordRichPresence:DiscordRichPresence = new DiscordRichPresence(this);
@@ -104,9 +98,6 @@
 		public var release:Release;
 
 		public const load:Function = HelperLoader.load;
-
-		public const avatarRasterizer:Class = AvatarRasterizer;
-		public const entityRasterizer:Class = EntityRasterizer;
 
 		public function check():void {
 			switch (HelperLoader.COUNT) {

@@ -55,7 +55,6 @@ package ui {
 
 		private var pocket:Pocket;
 
-		//noinspection JSUnresolvedReference
 		public var menus:Vector.<Menu> = new <Menu> [
 			new Menu("General", new <Option>[
 				new Toggle(

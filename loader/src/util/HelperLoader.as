@@ -62,11 +62,6 @@ package util {
 				}
 			},
 			{
-				pattern: "map", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_MAP_OFF;
-				}
-			},
-			{
 				pattern: "items", check: function ():Boolean {
 					return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
 				}

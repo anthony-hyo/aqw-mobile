@@ -58,14 +58,6 @@ package load.handlers {
 
 			this.pocket.networkCore = new Network(this.pocket);
 
-			this.pocket.game.chatF.chn.global = {};
-			this.pocket.game.chatF.chn.global.col = "ff0000";
-			this.pocket.game.chatF.chn.global.str = "global";
-			this.pocket.game.chatF.chn.global.typ = "message";
-			this.pocket.game.chatF.chn.global.tag = "Global";
-			this.pocket.game.chatF.chn.global.rid = 0;
-			this.pocket.game.chatF.chn.global.act = 1;
-
 			this.pocket.gameCore.onFrameChange("Init");
 
 			this.pocket.advance();

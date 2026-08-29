@@ -40,7 +40,6 @@
 		public static var IS_GRAPHIC_ANIMATION_MISC_OFF:Boolean = false;
 		public static var IS_GRAPHIC_ANIMATION_PET_OFF:Boolean = false;
 		public static var IS_GRAPHIC_ANIMATION_WEAPON_OFF:Boolean = false;
-		public static var IS_GRAPHIC_ANIMATION_MAP_OFF:Boolean = false;
 
 		public static var IS_GRAPHIC_FILTER_OFF:Boolean = false;
 
@@ -60,8 +59,6 @@
 		};
 
 		public function Pocket() {
-			//new ChatGlobal()
-
 			NativeApplication.nativeApplication.systemIdleMode = SystemIdleMode.KEEP_AWAKE;
 
 			stage.color = 0x000000;

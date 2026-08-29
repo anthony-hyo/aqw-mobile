@@ -229,19 +229,6 @@ package ui {
 					}
 				),
 				new Check(
-					HelperSetting.OPTION_ANIMATION_MAP,
-					false,
-					"Disable Map Animations",
-					"Freeze animations. (May slow down loading)",
-					true,
-					function (option:Check):void {
-						Pocket.IS_GRAPHIC_ANIMATION_MAP_OFF = option.state;
-					},
-					function (frame:String):void {
-						Pocket.IS_GRAPHIC_ANIMATION_MAP_OFF = HelperSetting.getBool(HelperSetting.OPTION_ANIMATION_MAP);
-					}
-				),
-				new Check(
 					HelperSetting.OPTION_ANIMATION_MISC,
 					false,
 					"Disable Grounds Animations",

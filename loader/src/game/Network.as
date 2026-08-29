@@ -15,12 +15,12 @@ package game {
 
 		private function onExtensionResponseHandler(event:*):void {
 			switch (event.params.type) {
-				case "str":
+				/*case "str":
 					switch (event.params.dataObj[0]) {
 						case "whisper":
 							break;
 					}
-					break;
+					break;*/
 				case "json":
 					switch (event.params.dataObj.cmd) {
 						case "sAct":

@@ -21,7 +21,16 @@ package util {
 		public static const OPTION_RASTERIZER:String = "option_rasterizer";
 		public static const OPTION_RASTERIZER_LEVELS:String = "option_rasterizer_levels";
 
-		public static const OPTION_ANIMATION:String = "option_animation";
+		public static const OPTION_ANIMATION_MONSTER:String = "option_animation_monster";
+		public static const OPTION_ANIMATION_HELM:String = "option_animation_helm";
+		public static const OPTION_ANIMATION_ARMOR:String = "option_animation_armor";
+		public static const OPTION_ANIMATION_CAPE:String = "option_animation_cape";
+		public static const OPTION_ANIMATION_HAIR:String = "option_animation_hair";
+		public static const OPTION_ANIMATION_PET:String = "option_animation_pet";
+		public static const OPTION_ANIMATION_MISC:String = "option_animation_misc";
+		public static const OPTION_ANIMATION_WEAPON:String = "option_animation_weapon";
+		public static const OPTION_ANIMATION_MAP:String = "option_animation_map";
+
 		public static const OPTION_FILTER:String = "option_filter";
 
 		public static const LAYOUT_JOYSTICK_MOUSE:String = "layout_joystick";

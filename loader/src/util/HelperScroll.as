@@ -11,6 +11,7 @@
 		private static const WHEEL_SPEED:int = 20;
 		private static const FRICTION:Number = 0.92;
 		private static const MIN_VELOCITY:Number = 0.5;
+		private static const BOTTOM_PADDING:int = 50;
 
 		public function HelperScroll(scroll:Scroll, list:DisplayObject, mask:DisplayObject, isResize:Boolean = true) {
 			this.scroll = scroll;
@@ -23,6 +24,8 @@
 			this.scroll.hit.alpha = 0;
 			this.scroll.h.y = 0;
 
+			this.oy = (this.list.y = this.listMask.y);
+
 			const maskHeight:Number = this.listMask.height;
 
 			if (this.list.height > maskHeight) {
@@ -31,8 +34,7 @@
 				}
 
 				this.hRun = this.scroll.b.height - this.scroll.h.height;
-				this.dRun = (this.list.height - maskHeight) + 10;
-				this.oy = (this.list.y = this.listMask.y);
+				this.dRun = (this.list.height - maskHeight) + BOTTOM_PADDING;
 
 				this.scroll.visible = true;
 
@@ -60,6 +62,24 @@
 		private var dragLastY:Number = 0;
 		private var dragPrevY:Number = 0;
 		private var velocity:Number = 0;
+
+		public function dispose():void {
+			this.scroll.hit.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDownScrollHit);
+			this.list.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDownList);
+			this.list.removeEventListener(MouseEvent.MOUSE_WHEEL, onMouseWheel);
+			this.list.removeEventListener(Event.ENTER_FRAME, onMomentum);
+
+			if (this.list.stage) {
+				this.list.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMoveList);
+				this.list.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUpList);
+				this.list.stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUpScrollBar);
+				this.list.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMoveScrollBar);
+			}
+
+			listDragging = false;
+			scrollBarDragging = false;
+			velocity = 0;
+		}
 
 		private function clampScrollHandle():void {
 			if (this.scroll.h.y + this.scroll.h.height > this.scroll.b.height) {

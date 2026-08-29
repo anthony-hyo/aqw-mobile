@@ -25,6 +25,54 @@ package util {
 
 		public static var COUNT:uint = 0;
 
+		private static const CATEGORY_MAP:Array = [
+			{
+				pattern: "mon/", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_MONSTER_OFF;
+				}
+			},
+			{
+				pattern: "hairs", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_HAIR_OFF;
+				}
+			},
+			{
+				pattern: "classes", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_ARMOR_OFF;
+				}
+			},
+			{
+				pattern: "helms", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_HELM_OFF;
+				}
+			},
+			{
+				pattern: "capes", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_CAPE_OFF;
+				}
+			},
+			{
+				pattern: "grounds", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_MISC_OFF;
+				}
+			},
+			{
+				pattern: "pets", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_PET_OFF;
+				}
+			},
+			{
+				pattern: "map", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_MAP_OFF;
+				}
+			},
+			{
+				pattern: "items", check: function ():Boolean {
+					return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+				}
+			}
+		];
+
 		public static function load(ldr:Loader, url:String, context:LoaderContext, onComplete:Function = null, onProgress:Function = null, onError:Function = null, onHTTPError:Function = null):void {
 			prepareContext(context);
 
@@ -34,10 +82,13 @@ package util {
 				function (bytes:ByteArray):void {
 					var finalBytes:ByteArray = bytes;
 
-					const lowerUrl:String = url.toLowerCase();
+					const categoryCheck:Function = resolveCategoryCheck(url);
 
-					if ((Pocket.IS_GRAPHIC_ANIMATION_OFF || Pocket.IS_GRAPHIC_FILTER_OFF) && (lowerUrl.indexOf("items") > -1 || lowerUrl.indexOf("classes") > -1 || lowerUrl.indexOf("hairs") > -1 || lowerUrl.indexOf("mon/") > -1)) {
-						finalBytes = processSWFBytes(bytes);
+					const animationOn:Boolean = categoryCheck != null && categoryCheck();
+					const filterOn:Boolean = categoryCheck != null && Pocket.IS_GRAPHIC_FILTER_OFF;
+
+					if (animationOn || filterOn) {
+						finalBytes = processSWFBytes(bytes, animationOn, filterOn);
 					}
 
 					if (onComplete != null) {
@@ -60,6 +111,20 @@ package util {
 					ldr.dispatchEvent(e);
 				}
 			);
+		}
+
+		private static function resolveCategoryCheck(url:String):Function {
+			const lowerUrl:String = url.toLowerCase();
+
+			var entry:Object;
+
+			for each (entry in CATEGORY_MAP) {
+				if (lowerUrl.indexOf(entry.pattern) > -1) {
+					return entry.check as Function;
+				}
+			}
+
+			return null;
 		}
 
 		private static function loadBinary(url:String, onBytes:Function, onProgress:Function = null, onError:Function = null):void {
@@ -91,12 +156,12 @@ package util {
 			return int((e.currentTarget.bytesLoaded / e.currentTarget.bytesTotal) * 100);
 		}
 
-		private static function processSWFBytes(originalBytes:ByteArray):ByteArray {
+		private static function processSWFBytes(originalBytes:ByteArray, stripAnimation:Boolean, stripFilters:Boolean):ByteArray {
 			originalBytes.position = 0;
 
 			const swf:SWF = new SWF(originalBytes);
 
-			stripTags(swf.tags);
+			stripTags(swf.tags, stripAnimation, stripFilters);
 
 			if (swf.tagsRaw && swf.tagsRaw.length > swf.tags.length) {
 				swf.tagsRaw.length = swf.tags.length;
@@ -109,15 +174,12 @@ package util {
 			return newBytes;
 		}
 
-		private static function stripTags(tags:Vector.<ITag>):void {
+		private static function stripTags(tags:Vector.<ITag>, stripAnimation:Boolean, stripFilters:Boolean):void {
 			var tag:ITag;
 
-			const isGraphicAnimationOff:Boolean = Pocket.IS_GRAPHIC_ANIMATION_OFF;
-			const isGraphicFilterOff:Boolean = Pocket.IS_GRAPHIC_FILTER_OFF;
-
 			var hasFrameLabels:Boolean = false;
-			
-			if (isGraphicAnimationOff) {
+
+			if (stripAnimation) {
 				for each (tag in tags) {
 					if (tag is TagFrameLabel) {
 						hasFrameLabels = true;
@@ -132,7 +194,7 @@ package util {
 			for (var i:int = 0; i < tags.length; i++) {
 				tag = tags[i];
 
-				if (isGraphicAnimationOff && !hasFrameLabels && tag is TagShowFrame) {
+				if (stripAnimation && !hasFrameLabels && tag is TagShowFrame) {
 					tags.length = i + 1;
 					tags.push(new TagEnd());
 					break;
@@ -141,12 +203,12 @@ package util {
 				if (tag is TagDefineSprite) {
 					var sprite:TagDefineSprite = tag as TagDefineSprite;
 
-					stripTags(sprite.tags);
+					stripTags(sprite.tags, stripAnimation, stripFilters);
 
 					if (sprite.tagsRaw && sprite.tagsRaw.length > sprite.tags.length) {
 						sprite.tagsRaw.length = sprite.tags.length;
 					}
-				} else if (isGraphicFilterOff && tag is TagPlaceObject) {
+				} else if (stripFilters && tag is TagPlaceObject) {
 					var po:TagPlaceObject = tag as TagPlaceObject;
 
 					if (po.hasFilterList && po.surfaceFilterList != null && po.surfaceFilterList.length > 0) {
@@ -158,7 +220,7 @@ package util {
 				if (hasFrameLabels) {
 					var isFrameContent:Boolean = (tag is TagPlaceObject) || (tag is TagRemoveObject) || (tag is TagRemoveObject2);
 
-					if (isGraphicAnimationOff && shownFirstFrame && isFrameContent) {
+					if (stripAnimation && shownFirstFrame && isFrameContent) {
 						// stripped
 					} else {
 						newTags.push(tag);

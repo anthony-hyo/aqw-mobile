@@ -11,6 +11,15 @@ AdventureQuest Worlds Mobile, AQW Pocket is a free, community-built alternative 
 
 > **Disclaimer:** This is an unofficial community project, not affiliated with or endorsed by Artix Entertainment. AdventureQuest Worlds and all related assets are the property of Artix Entertainment. Use at your own risk.
 
+This project is no longer maintained.
+
+## Security & Account Safety
+- Login occurs directly with Artix Entertainment servers, passwords are not stored by the client.
+- The client does not include cheats or automation.
+- Use a secondary account first if you are concerned about safety.
+- Only download APKs from this repository or build from source.
+- Avoid reusing passwords from other accounts.
+
 ---
 
 ## Download
@@ -67,13 +76,6 @@ Use the build matching your operating system and architecture.
 - - - Ensure no malicious code is present
 
 **⚠️ While the SWF is readable, we still recommend using a secondary account if you are cautious. Only download APKs from official GitHub releases or build from source.**
-
-## Security & Account Safety
-- Login occurs directly with Artix Entertainment servers, passwords are not stored by the client.
-- The client does not include cheats or automation.
-- Use a secondary account first if you are concerned about safety.
-- Only download APKs from this repository or build from source.
-- Avoid reusing passwords from other accounts.
 
 ## Notes
 - **GrapheneOS:** Keep "Disable DCL via memory" off; Adobe AIR's JIT requires it, same as browsers/JS engines. Not a bug.

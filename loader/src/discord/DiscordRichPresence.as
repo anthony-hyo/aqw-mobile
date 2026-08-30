@@ -59,12 +59,16 @@ package discord {
 		}
 
 		public function refreshPresence():void {
+			if (this.discordRpc == null) {
+				return;
+			}
+			
 			var state:String = null;
 			var details:String = null;
 			var smallImage:String = null;
 			var smallImageDescription:String = null;
 
-			if (!this.pocket.game) {
+			if (!this.pocket.game || !this.pocket.game.world) {
 				this.discordRpc.updatePresence(
 					state,
 					details,

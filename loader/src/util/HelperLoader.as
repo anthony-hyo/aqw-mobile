@@ -18,6 +18,7 @@ package util {
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
+	import flash.net.URLRequestHeader;
 	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
 
@@ -139,7 +140,18 @@ package util {
 				urlLoader.addEventListener(IOErrorEvent.IO_ERROR, onError);
 			}
 
-			urlLoader.load(new URLRequest(url));
+			const request:URLRequest = new URLRequest(url);
+
+			request.requestHeaders.push(new URLRequestHeader("Accept", "*/*"));
+			request.requestHeaders.push(new URLRequestHeader("Accept-Language", "pt-BR"));
+			request.requestHeaders.push(new URLRequestHeader("artixmode", "launcher"));
+			request.requestHeaders.push(new URLRequestHeader("Content-Type", "application/x-www-form-urlencoded"));
+			request.requestHeaders.push(new URLRequestHeader("Origin", "https://game.aq.com"));
+			request.requestHeaders.push(new URLRequestHeader("Referer", "https://game.aq.com/game/gamefiles/Game3098r25.swf?ver=R0047"));
+			request.requestHeaders.push(new URLRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36"));
+			request.requestHeaders.push(new URLRequestHeader("X-Requested-With", "ShockwaveFlash/32.0.0.371"));
+
+			urlLoader.load(request);
 		}
 
 		private static function prepareContext(ctx:LoaderContext):void {

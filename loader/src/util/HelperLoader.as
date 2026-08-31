@@ -1,5 +1,7 @@
 package util {
 
+	import data.CategoryMap;
+
 	import flash.display.Loader;
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
@@ -16,47 +18,61 @@ package util {
 
 		public static var COUNT:uint = 0;
 
-		private static const CATEGORY_MAP:Array = [
-			{
-				pattern: "mon/", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_MONSTER_OFF;
-				}
-			},
-			{
-				pattern: "hairs", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_HAIR_OFF;
-				}
-			},
-			{
-				pattern: "classes", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_ARMOR_OFF;
-				}
-			},
-			{
-				pattern: "helms", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_HELM_OFF;
-				}
-			},
-			{
-				pattern: "capes", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_CAPE_OFF;
-				}
-			},
-			{
-				pattern: "grounds", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_MISC_OFF;
-				}
-			},
-			{
-				pattern: "pets", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_PET_OFF;
-				}
-			},
-			{
-				pattern: "items", check: function ():Boolean {
-					return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
-				}
-			}
+		private static const CATEGORY_MAP:Vector.<CategoryMap> = new <CategoryMap> [
+			new CategoryMap("gamefiles/mon/", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_MONSTER_OFF;
+			}),
+			new CategoryMap("gamefiles/hairs", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_HAIR_OFF;
+			}),
+			new CategoryMap("gamefiles/classes", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_ARMOR_OFF;
+			}),
+			new CategoryMap("gamefiles/items/helms", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_HELM_OFF;
+			}),
+			new CategoryMap("gamefiles/items/capes", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_CAPE_OFF;
+			}),
+			new CategoryMap("gamefiles/items/grounds", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_MISC_OFF;
+			}),
+			new CategoryMap("gamefiles/items/pets", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_PET_OFF;
+			}),
+			new CategoryMap("gamefiles/items/swords", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/maces", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/gauntlets", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/daggers", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/polearms", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/guns", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/staves", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/scythes", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/axes", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/bows", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			}),
+			new CategoryMap("gamefiles/items/whips", function ():Boolean {
+				return Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF;
+			})
 		];
 
 		public static function load(ldr:Loader, url:String, context:LoaderContext, onComplete:Function = null, onProgress:Function = null, onError:Function = null, onHTTPError:Function = null):void {

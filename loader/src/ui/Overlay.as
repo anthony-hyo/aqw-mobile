@@ -154,7 +154,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_MONSTER,
 					false,
 					"Disable Monster Animations",
-					"Freeze monster animations to improve FPS in battle. (May slow down loading)",
+					"Freeze monster animations to improve FPS in battle.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_MONSTER_OFF = option.state;
@@ -167,7 +167,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_HELM,
 					false,
 					"Disable Helm Animations",
-					"Freeze animations. (May slow down loading)",
+					"Freeze animations.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_HELM_OFF = option.state;
@@ -180,7 +180,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_ARMOR,
 					false,
 					"Disable Armor Animations",
-					"Freeze animations. (May slow down loading)",
+					"Freeze animations.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_ARMOR_OFF = option.state;
@@ -193,7 +193,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_CAPE,
 					false,
 					"Disable Cape Animations",
-					"Freeze animations. (May slow down loading)",
+					"Freeze animations.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_CAPE_OFF = option.state;
@@ -206,7 +206,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_HAIR,
 					false,
 					"Disable Hair Animations",
-					"Freeze animations. (May slow down loading)",
+					"Freeze animations.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_HAIR_OFF = option.state;
@@ -219,7 +219,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_WEAPON,
 					false,
 					"Disable Weapon Animations",
-					"Freeze animations. (May slow down loading)",
+					"Freeze animations.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_WEAPON_OFF = option.state;
@@ -232,7 +232,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_MISC,
 					false,
 					"Disable Grounds Animations",
-					"Freeze animations. (May slow down loading)",
+					"Freeze animations.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_MISC_OFF = option.state;
@@ -245,7 +245,7 @@ package ui {
 					HelperSetting.OPTION_ANIMATION_PET,
 					false,
 					"Disable Pet Animations",
-					"Freeze animations. (May slow down loading)",
+					"Freeze animations.",
 					true,
 					function (option:Check):void {
 						Pocket.IS_GRAPHIC_ANIMATION_PET_OFF = option.state;
@@ -258,7 +258,7 @@ package ui {
 					HelperSetting.OPTION_FILTER,
 					false,
 					"Disable Filters",
-					"Remove heavy glows and drop-shadows. (May slow down loading)",
+					"Remove glows, drop-shadows and other visual effects.",
 					true,
 					function (option:Check):void {
 						const pocket:Pocket = Pocket.SINGLETON;
@@ -266,7 +266,7 @@ package ui {
 						Pocket.IS_GRAPHIC_FILTER_OFF = option.state;
 
 						if (pocket.game) {
-							pocket.game.MsgBox.notify("Filter setting saved. Join a new map/Relog to take effect.");
+							pocket.game.MsgBox.notify("Filter setting saved. Join a new map/relog to take effect.");
 						}
 					},
 					function (frame:String):void {

@@ -3,9 +3,7 @@ package ui.shortcut {
 	import data.Action;
 
 	import flash.display.SimpleButton;
-
 	import flash.display.Sprite;
-	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 
@@ -18,7 +16,7 @@ package ui.shortcut {
 			this.shortcutTxt.text = actionName;
 			this.shortcutTxt.wordWrap = true;
 			this.shortcutTxt.selectable = false;
-			
+
 			this.shortcutTxt.mouseEnabled = false;
 			this.shortcutTxt.tabEnabled = false;
 
@@ -40,42 +38,16 @@ package ui.shortcut {
 			}
 
 			for each (var action:Action in ShortcutPicker.ACTIONS) {
-				if (action.name == this.actionName && action.onClick != null) {
-					action.onClick(this.pocket);
-					return;
+				if (action.name == this.actionName) {
+					if (action.onClick != null) {
+						action.onClick(this.pocket);
+						return;
+					}
+					break;
 				}
 			}
 
-			if (!this.pocket.game.litePreference) {
-				return;
-			}
-
-			const keys:Object = this.pocket.game.litePreference.data.keys;
-
-			if (!keys || !(this.actionName in keys)) {
-				return;
-			}
-			
-			const keyCodeValue: Object = keys[this.actionName]; //This can be null
-			const keyCodeValueTemporary: Number = 999;
-
-			keys[this.actionName] = keyCodeValueTemporary;
-
-			const prevFocus:* = this.pocket.game.stage.focus;
-			this.pocket.game.stage.focus = null;
-			
-			try {
-				this.pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, keyCodeValueTemporary, keyCodeValueTemporary));
-				this.pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_UP, true, false, keyCodeValueTemporary, keyCodeValueTemporary));
-			} finally {
-				this.pocket.game.stage.focus = prevFocus;
-
-				if (keyCodeValue == null) {
-					delete keys[this.actionName];
-				} else {
-					keys[this.actionName] = keyCodeValue;
-				}
-			}
+			this.pocket.game.triggerGameAction(this.actionName);
 		}
 
 	}

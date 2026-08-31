@@ -134,7 +134,7 @@ package util {
 			const request:URLRequest = new URLRequest(url);
 
 			request.requestHeaders.push(new URLRequestHeader("Accept", "*/*"));
-			request.requestHeaders.push(new URLRequestHeader("Accept-Language", "pt-BR"));
+			request.requestHeaders.push(new URLRequestHeader("Accept-Language", "en-US,en;q=0.9"));
 			request.requestHeaders.push(new URLRequestHeader("artixmode", "launcher"));
 			request.requestHeaders.push(new URLRequestHeader("Content-Type", "application/x-www-form-urlencoded"));
 			request.requestHeaders.push(new URLRequestHeader("Origin", "https://game.aq.com"));

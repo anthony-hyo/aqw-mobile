@@ -120,47 +120,11 @@ package ui.shortcut {
 				}
 			}),
 
-			new Action("Target Random Monster", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				const mons:Array = pocket.game.world.getMonstersByCell(pocket.game.world.strFrame);
-
-				if (mons.length > 0) {
-					var rnd:uint = uint(Math.round(Math.random() * (mons.length - 1)));
-
-					while (mons.length > 1 && !mons[rnd] && !mons[rnd].pMC && mons[rnd].dataLeaf.intState == 0 && pocket.game.world.myAvatar.target == mons[rnd]) {
-						if (pocket.game.world.strFrame != pocket.game.world.strFrame) {
-							break;
-						}
-
-						rnd = uint(Math.round(Math.random() * (mons.length - 1)));
-					}
-
-					if (pocket.game.world.strFrame == pocket.game.world.strFrame && mons[rnd] && mons[rnd].pMC && mons[rnd].dataLeaf.strFrame == pocket.game.world.strFrame && mons[rnd].dataLeaf.intState != 0) {
-						pocket.game.world.setTarget(mons[rnd]);
-					}
-				}
-			}),
+			new Action("Target Random Monster"),
 			new Action("Cancel Target"),
 
 			new Action("Rest"),
-			new Action("Dash", function (pocket:Pocket):void {
-				if (!pocket.game || !pocket.game.world) {
-					return;
-				}
-
-				const pnm:String = pocket.game.world.myAvatar.pnm;
-
-				if (!pocket.game.world.uoTree[pnm].sta.$dsh) {
-					pocket.game.world.uoTree[pnm].sta.$dsh = 100;
-				}
-
-				if (pocket.game.world.myAvatar.dataLeaf.intSP >= pocket.game.world.uoTree[pnm].sta.$dsh) {
-					pocket.game.pDash = true;
-				}
-			}),
+			new Action("Dash"),
 			new Action("Jump"),
 			new Action("Player HP Bar"),
 
@@ -189,14 +153,6 @@ package ui.shortcut {
 			new Action("Area List"),
 
 			new Action("Options"),
-
-			/*new Action("Keyboard: Shift", function (pocket:Pocket):void {
-				if (!pocket.game) {
-					return;
-				}
-
-				pocket.game.dispatchEvent(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, false, Keyboard.SHIFT, Keyboard.SHIFT));
-			}),*/
 
 			new Action("Custom Drops UI"),
 			new Action("Decline All Drops"),
@@ -243,7 +199,7 @@ package ui.shortcut {
 
 				var btn:ShortcutButton;
 
-				var is_visible:Boolean = null;
+				var is_visible:Object = null;
 
 				for (var actionName:String in pocket.gameUI.shortcutButtons) {
 					switch (actionName) {
@@ -307,7 +263,7 @@ package ui.shortcut {
 		private var onPick:Function;
 
 		private function buildPanel():void {
-			closeBtn.addEventListener(MouseEvent.CLICK, onDismiss);
+			closeBtn.addEventListener(MouseEvent.CLICK, onDismiss, false, 0, true);
 
 			var i:int = 0;
 
@@ -325,7 +281,7 @@ package ui.shortcut {
 				shortcutRow.buttonMode = true;
 				shortcutRow.useHandCursor = true;
 
-				shortcutRow.addEventListener(MouseEvent.CLICK, onRowClick);
+				shortcutRow.addEventListener(MouseEvent.CLICK, onRowClick, false, 0, true);
 
 				content.addChild(shortcutRow);
 

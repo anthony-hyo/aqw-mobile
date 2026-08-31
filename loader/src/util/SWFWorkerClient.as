@@ -5,6 +5,8 @@ package util {
 	import flash.system.WorkerDomain;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
+	import flash.utils.clearTimeout;
+	import flash.utils.setTimeout;
 
 	public class SWFWorkerClient {
 
@@ -27,6 +29,7 @@ package util {
 
 		private var nextId:uint = 0;
 		private var pending:Dictionary = new Dictionary();
+		private const TIMEOUT_MS:uint = 10000;
 		private var supported:Boolean;
 
 		public function SWFWorkerClient() {
@@ -36,19 +39,23 @@ package util {
 				return;
 			}
 
-			const swfBytes:ByteArray = new WorkerSWF() as ByteArray;
+			try {
+				const swfBytes:ByteArray = new WorkerSWF() as ByteArray;
 
-			bgWorker = WorkerDomain.current.createWorker(swfBytes);
+				bgWorker = WorkerDomain.current.createWorker(swfBytes);
 
-			toWorker = Worker.current.createMessageChannel(bgWorker);
-			fromWorker = bgWorker.createMessageChannel(Worker.current);
+				toWorker = Worker.current.createMessageChannel(bgWorker);
+				fromWorker = bgWorker.createMessageChannel(Worker.current);
 
-			bgWorker.setSharedProperty("toWorker", toWorker);
-			bgWorker.setSharedProperty("fromWorker", fromWorker);
+				bgWorker.setSharedProperty("toWorker", toWorker);
+				bgWorker.setSharedProperty("fromWorker", fromWorker);
 
-			fromWorker.addEventListener(Event.CHANNEL_MESSAGE, onWorkerMessage);
+				fromWorker.addEventListener(Event.CHANNEL_MESSAGE, onWorkerMessage);
 
-			bgWorker.start();
+				bgWorker.start();
+			} catch (e:Error) {
+				supported = false;
+			}
 		}
 
 		public function process(bytes:ByteArray, stripAnimation:Boolean, stripFilters:Boolean, onDone:Function):void {
@@ -58,7 +65,19 @@ package util {
 			}
 
 			const id:uint = nextId++;
-			pending[id] = onDone;
+			const job:Object = {callback: onDone, originalBytes: bytes, timeoutId: 0};
+
+			job.timeoutId = setTimeout(function ():void {
+				if (pending[id] == null) {
+					return;
+				}
+
+				delete pending[id];
+
+				onDone(bytes);
+			}, TIMEOUT_MS);
+
+			pending[id] = job;
 
 			toWorker.send({id: id, bytes: bytes, stripAnimation: stripAnimation, stripFilters: stripFilters});
 		}
@@ -66,20 +85,17 @@ package util {
 		private function onWorkerMessage(e:Event):void {
 			while (fromWorker.messageAvailable) {
 				const result:Object = fromWorker.receive();
-				const callback:Function = pending[result.id];
+				const job:Object = pending[result.id];
 
-				if (callback == null) {
+				if (job == null) {
 					continue;
 				}
-				
+
 				delete pending[result.id];
 
-				if (result.error) {
-					// Fall back to original bytes rather than dropping the load entirely.
-					callback(result.bytes as ByteArray);
-				} else {
-					callback(result.bytes as ByteArray);
-				}
+				clearTimeout(job.timeoutId);
+
+				job.callback(result.error ? job.originalBytes as ByteArray : result.bytes as ByteArray);
 			}
 		}
 	}

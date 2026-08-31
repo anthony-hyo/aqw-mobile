@@ -33,7 +33,7 @@ package load.handlers {
 				titleScreen.x = 0;
 				titleScreen.y = 0;
 
-				this.pocket.background.removeAllChildren();
+				this.pocket.background.removeChildren();
 
 				this.pocket.background.addChild(titleScreen);
 			} catch (error:Error) {

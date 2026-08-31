@@ -49,7 +49,7 @@
 			return _SINGLETON;
 		}
 
-		Sprite.prototype.removeAllChildren = function ():void {
+		MovieClip.prototype.removeAllChildren = function ():void {
 			var i:int = this.numChildren - 1;
 
 			while (i >= 0) {

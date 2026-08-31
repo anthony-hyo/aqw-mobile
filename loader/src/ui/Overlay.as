@@ -544,8 +544,7 @@ package ui {
 		private function panelFrame():void {
 			this.visible = false;
 
-			//noinspection JSUnresolvedReference
-			this.contentMenu.removeAllChildren();
+			this.contentMenu.removeChildren();
 
 			this.hidePanelBtn.addEventListener(MouseEvent.CLICK, onHidePanel);
 
@@ -577,8 +576,7 @@ package ui {
 		}
 
 		public function selectMenu(menu:Menu):void {
-			//noinspection JSUnresolvedReference
-			this.contentOptions.removeAllChildren();
+			this.contentOptions.removeChildren();
 
 			var heightTotal:uint = 0;
 

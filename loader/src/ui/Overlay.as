@@ -60,6 +60,24 @@ package ui {
 		public var menus:Vector.<Menu> = new <Menu> [
 			new Menu("General", new <Option>[
 				new Toggle(
+					HelperSetting.OPTION_FPS,
+					0,
+					"Frame Rate",
+					"Choose the target FPS",
+					true,
+					["24", "30", "60", "75", "120"],
+					function (option:Toggle):void {
+						const fpsValues:Array = [24, 30, 60, 75, 120];
+						stage.frameRate = fpsValues[option.getIndex()];
+					},
+					null,
+					function (frame:String):void {
+						const fpsValues:Array = [24, 30, 60, 75, 120];
+						const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_FPS);
+						stage.frameRate = fpsValues[savedIndex];
+					}
+				),
+				new Toggle(
 					HelperSetting.OPTION_LOCK_ORIENTATION,
 					0,
 					"Screen Orientation",

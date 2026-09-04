@@ -5,9 +5,9 @@ package game {
 
 	import ui.util.Pagination;
 
-	public class LPFFrameListViewTabbed {
+	public class ItemPagination {
 
-		public function LPFFrameListViewTabbed(pocket:Pocket) {
+		public function ItemPagination(pocket:Pocket) {
 			this.pocket = pocket;
 		}
 

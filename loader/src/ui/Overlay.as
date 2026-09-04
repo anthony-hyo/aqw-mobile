@@ -509,7 +509,7 @@ package ui {
 							return;
 						}
 
-						pocket.worldCore.setWorldFilters([
+						pocket.gameCore.setWorldFilters([
 							Helper.GRAYSCALE
 						]);
 

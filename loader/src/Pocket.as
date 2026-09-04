@@ -9,10 +9,8 @@
 	import flash.display.Sprite;
 	import flash.text.TextField;
 
-	import game.Game;
-	import game.LPFFrameListViewTabbed;
+	import game.Core;
 	import game.Network;
-	import game.World;
 
 	import load.handlers.BackgroundLoad;
 	import load.handlers.GameLoad;
@@ -82,10 +80,7 @@
 
 		public var game:MovieClip;
 
-		public const gameCore:Game = new Game(this);
-		public const worldCore:World = new World(this);
-
-		public const lpfFrameListViewTabbedCore:LPFFrameListViewTabbed = new LPFFrameListViewTabbed(this);
+		public const gameCore:Core = new Core(this);
 
 		//noinspection JSUnresolvedReference
 		POCKET::IS_DESKTOP

@@ -62,7 +62,7 @@ package controller {
 
 			if (editMode) {
 				if (Pocket.SINGLETON.gameUI.getChildByName("LayoutSaveButton") == null) {
-					Pocket.SINGLETON.worldCore.setWorldFilters([
+					Pocket.SINGLETON.gameCore.setWorldFilters([
 						Helper.GRAYSCALE
 					]);
 
@@ -76,7 +76,7 @@ package controller {
 					Pocket.SINGLETON.gameUI.addChild(saveButton);
 				}
 			} else {
-				Pocket.SINGLETON.worldCore.setWorldFilters([]);
+				Pocket.SINGLETON.gameCore.setWorldFilters([]);
 
 				const saveButton2:DisplayObject = Pocket.SINGLETON.gameUI.getChildByName("LayoutSaveButton");
 

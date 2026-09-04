@@ -53,7 +53,7 @@ package load.handlers {
 					this.pocket.overlay.debug.log("App is up to date.");
 				}
 			} catch (error:Error) {
-				this.pocket.overlay.debug.logError("Failed to parse release response: " + error.message);
+				this.pocket.overlay.debug.logError("Failed to parse release response: " + error.getStackTrace());
 			}
 
 			this.pocket.advance();

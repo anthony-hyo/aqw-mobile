@@ -29,7 +29,7 @@ package load {
 		}
 
 		protected function load():void {
-			HelperLoader.load(new Loader(), this.url, this.context, this.onCompleted, this.onProgress, this.onError);
+			LoadManager.load(new Loader(), this.url, this.context, this.onCompleted, this.onProgress, this.onError);
 		}
 
 		protected function onCompleted(event:Event):void {

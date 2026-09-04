@@ -12,6 +12,8 @@
 	import game.Core;
 	import game.Network;
 
+	import load.LoadManager;
+
 	import load.handlers.BackgroundLoad;
 	import load.handlers.GameLoad;
 	import load.handlers.UpdateLoad;
@@ -98,7 +100,8 @@
 		public var version:Version;
 		public var release:Release;
 
-		public const load:Function = HelperLoader.load;
+		public const load:Function = LoadManager.load;
+		public const loadManager:LoadManager = new LoadManager();
 
 		public function check():void {
 			switch (HelperLoader.COUNT) {

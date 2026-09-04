@@ -99,6 +99,8 @@
 
 		public var version:Version;
 		public var release:Release;
+		
+		public var language:String = "en";
 
 		public const load:Function = LoadManager.load;
 		public const loadManager:LoadManager = new LoadManager();

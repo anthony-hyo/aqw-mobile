@@ -78,6 +78,26 @@ package ui {
 					}
 				),
 				new Toggle(
+					HelperSetting.OPTION_LANGUAGE,
+					0,
+					"Language",
+					"Translate quest text only",
+					true,
+					["English", "Português", "Tagalog", "Español", "Bahasa Indonesia", "Cebuano"],
+					function (option:Toggle):void {
+						const languages:Vector.<String> = new <String> ['en', 'pt', 'tl', 'es', 'id', 'ceb'];
+
+						Pocket.SINGLETON.language = languages[option.getIndex()];
+					},
+					null,
+					function (frame:String):void {
+						const languages:Vector.<String> = new <String> ['en', 'pt', 'tl', 'es', 'id', 'ceb'];
+						const savedIndex:int = HelperSetting.getInt(HelperSetting.OPTION_LANGUAGE);
+
+						Pocket.SINGLETON.language = languages[savedIndex];
+					}
+				),
+				new Toggle(
 					HelperSetting.OPTION_LOCK_ORIENTATION,
 					0,
 					"Screen Orientation",

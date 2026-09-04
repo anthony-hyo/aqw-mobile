@@ -21,7 +21,7 @@ package load {
 	/**
 	 * <h4>Manages the loading of SWFs and memory management.</h4><br>
 	 * Replaces the game internal loading system.
-	 * 
+	 *
 	 * <b>This should help with the game lagging if you play
 	 * for a long time and load a lot of SWFs which causes memory leaks and crashes.<b>
 	 */
@@ -29,7 +29,7 @@ package load {
 
 		private static const MAX_CONCURRENT:int = 15;
 
-		private static const KIND_GLOBAL:String = "global";
+		private static const KIND_NO_QUEUE:String = "no_queue";
 
 		private static const KIND_STATIC:String = "static";
 		private static const KIND_MAP:String = "map";
@@ -110,14 +110,10 @@ package load {
 		private var concurrentCount:int = 0;
 		private var loaderStack:Dictionary = new Dictionary();
 
-		public static function load(loader:Loader, url:String, context:LoaderContext, onComplete:Function = null, onProgress:Function = null, onError:Function = null, onHTTPError:Function = null):void {
-			Pocket.SINGLETON.loadManager.load(loader, url, context, onComplete, onProgress, onError, onHTTPError);
-		}
-
 		/**
 		 * Used to load any SWF, this is deprecated and should be avoided if possible.
 		 * <b>I don't know what to do with this, still used in some places.</b>
-		 * 
+		 *
 		 * @param loader
 		 * @param url
 		 * @param context
@@ -126,18 +122,20 @@ package load {
 		 * @param onError
 		 * @param onHTTPError
 		 */
+		public static function load(loader:Loader, url:String, context:LoaderContext, onComplete:Function = null, onProgress:Function = null, onError:Function = null, onHTTPError:Function = null):void {
+			Pocket.SINGLETON.loadManager.load(loader, url, context, onComplete, onProgress, onError, onHTTPError);
+		}
+
 		public function load(loader:Loader, url:String, context:LoaderContext, onComplete:Function = null, onProgress:Function = null, onError:Function = null, onHTTPError:Function = null):void {
 			HelperLoader.prepareContext(context);
 
-			this.queue.push(new LoadData(KIND_GLOBAL, null, loader, context, url, onComplete, onProgress, onError, onHTTPError));
-
-			loadNext();
+			onLoad(new LoadData(KIND_NO_QUEUE, null, loader, context, url, onComplete, onProgress, onError, onHTTPError));
 		}
 
 		/**
 		 * Used to load static SWFs such as assets, UI, and other resources.
 		 * <b>This is separate from others because we don't need clear loaders, those can stay loaded.</b>
-		 * 
+		 *
 		 * @param url
 		 * @param key
 		 * @param onComplete
@@ -152,7 +150,7 @@ package load {
 		/**
 		 * Used to load map SWF, Monster SWF and other SWFs that are loaded by the map or any entity related to map.
 		 * <b>This is separate from others because we need to clear map loaders when changing maps.</b>
-		 * 
+		 *
 		 * @param url
 		 * @param key
 		 * @param onComplete
@@ -165,9 +163,9 @@ package load {
 		}
 
 		/**
-		 * Used by AvatarMC to load avatar SWFs. 
+		 * Used by AvatarMC to load avatar SWFs.
 		 * <b>This is separate from other loaders because we want to use a different ApplicationDomain for avatars.</b>
-		 * 
+		 *
 		 * @param url
 		 * @param key
 		 * @param onComplete
@@ -212,10 +210,12 @@ package load {
 
 		/**
 		 * Hell.
-		 * 
+		 *
 		 * @param loadData
 		 */
 		private function onLoad(loadData:LoadData):void {
+			const isQueued:Boolean = loadData.kind != KIND_NO_QUEUE;
+
 			const urlLoader:URLLoader = new URLLoader();
 
 			urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
@@ -228,52 +228,66 @@ package load {
 				const filterOn:Boolean = categoryCheck != null && Pocket.IS_GRAPHIC_FILTER_OFF;
 
 				const finishLoad:Function = function (finalBytes:ByteArray):void {
-					/**
-					 * loadData.loader certain will because the game reuses the loader.
-					 * need stop using the function load() and use loadStatic(), loadMap() or loadAvatar() instead.
-					 */
 					const byteLoader:Loader = loadData.loader == null ? new Loader() : loadData.loader;
 
-					byteLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, function (e:Event):void {
-						try {
-							if (loadData.onComplete != null) {
-								loadData.onComplete(e);
-							}
-
-							if (loadData.key != null) {
-								clearLoader(loadData.key);
-
-								loaderStack[loadData.key] = {
-									kind: loadData.kind,
-									loader: byteLoader
-								};
-							}
-						} catch (error:Error) {
-							Pocket.SINGLETON.overlay.debug.logError("Failed to load: " + error.getStackTrace());
-						}
-
-						concurrentCount--;
-
-						loadNext();
-					});
-
-					if (loadData.onHTTPError != null) {
-						byteLoader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loadData.onHTTPError);
-					}
-
-					byteLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
-						if (loadData.onError != null) {
+					if (isQueued) {
+						byteLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, function (e:Event):void {
 							try {
-								loadData.onError(event);
+								if (loadData.onComplete != null) {
+									loadData.onComplete(e);
+								}
+
+								if (loadData.key != null) {
+									clearLoader(loadData.key);
+
+									loaderStack[loadData.key] = {
+										kind: loadData.kind,
+										loader: byteLoader
+									};
+								}
 							} catch (error:Error) {
-								Pocket.SINGLETON.overlay.debug.logError("Failed to load bytes: " + error.getStackTrace());
+								Pocket.SINGLETON.overlay.debug.logError("Failed to load: " + error.getStackTrace());
 							}
+
+							concurrentCount--;
+
+							loadNext();
+						});
+
+						if (loadData.onHTTPError != null) {
+							byteLoader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loadData.onHTTPError);
 						}
 
-						concurrentCount--;
+						byteLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
+							if (loadData.onError != null) {
+								try {
+									loadData.onError(event);
+								} catch (error:Error) {
+									Pocket.SINGLETON.overlay.debug.logError("Failed to load bytes: " + error.getStackTrace());
+								}
+							}
 
-						loadNext();
-					});
+							concurrentCount--;
+
+							loadNext();
+						});
+					} else {
+						if (loadData.onComplete != null) {
+							byteLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadData.onComplete);
+						}
+
+						if (loadData.onHTTPError != null) {
+							byteLoader.contentLoaderInfo.addEventListener(HTTPStatusEvent.HTTP_STATUS, loadData.onHTTPError);
+						}
+
+						byteLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
+							if (loadData.onError != null) {
+								loadData.onError(event);
+								return;
+							}
+							byteLoader.dispatchEvent(event);
+						});
+					}
 
 					byteLoader.loadBytes(finalBytes, loadData.context);
 				};
@@ -291,16 +305,24 @@ package load {
 
 			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, function (event:IOErrorEvent):void {
 				if (loadData.onError != null) {
-					try {
+					if (isQueued) {
+						try {
+							loadData.onError(event);
+						} catch (error:Error) {
+							Pocket.SINGLETON.overlay.debug.logError("Failed to load URL: " + error.getStackTrace());
+						}
+					} else {
 						loadData.onError(event);
-					} catch (error:Error) {
-						Pocket.SINGLETON.overlay.debug.logError("Failed to load URL: " + error.getStackTrace());
 					}
+				} else if (!isQueued && loadData.loader != null) {
+					loadData.loader.dispatchEvent(event);
 				}
 
-				concurrentCount--;
+				if (isQueued) {
+					concurrentCount--;
 
-				loadNext();
+					loadNext();
+				}
 			});
 
 			urlLoader.load(HelperLoader.buildRequest(loadData.url));

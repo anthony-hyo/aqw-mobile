@@ -246,7 +246,7 @@ package load {
 									};
 								}
 							} catch (error:Error) {
-								Pocket.SINGLETON.overlay.debug.logError("Failed to load: " + error.getStackTrace());
+								trace("Failed to load: " + error.getStackTrace());
 							}
 
 							concurrentCount--;
@@ -263,7 +263,7 @@ package load {
 								try {
 									loadData.onError(event);
 								} catch (error:Error) {
-									Pocket.SINGLETON.overlay.debug.logError("Failed to load bytes: " + error.getStackTrace());
+									trace("Failed to load bytes: " + error.getStackTrace());
 								}
 							}
 
@@ -309,7 +309,7 @@ package load {
 						try {
 							loadData.onError(event);
 						} catch (error:Error) {
-							Pocket.SINGLETON.overlay.debug.logError("Failed to load URL: " + error.getStackTrace());
+							trace("Failed to load URL: " + error.getStackTrace());
 						}
 					} else {
 						loadData.onError(event);

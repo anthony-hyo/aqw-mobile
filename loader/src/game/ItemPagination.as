@@ -123,12 +123,15 @@ package game {
 				};
 			}
 
+			const sortedItemIds:Object = {};
+
 			for (i = 0; i < sortOrder.length; i++) {
 				sortedGroup = [];
 
 				for each (itemData in filteredItems) {
 					if (itemData.sType == sortOrder[i]) {
 						sortedGroup.push(itemData);
+						sortedItemIds[itemData.ItemID] = true;
 					}
 				}
 
@@ -145,7 +148,7 @@ package game {
 			sortedGroup = [];
 
 			for each (itemData in filteredItems) {
-				if (listA.indexOf(itemData) == -1) {
+				if (!sortedItemIds[itemData.ItemID]) {
 					sortedGroup.push(itemData);
 				}
 			}

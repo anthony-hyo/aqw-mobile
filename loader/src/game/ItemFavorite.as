@@ -10,16 +10,24 @@ package game {
 		public function ItemFavorite(pocket:Pocket) {
 			this.pocket = pocket;
 			this.favoriteIds = HelperSetting.getArray(HelperSetting.OPTION_FAVORITE_ITEMS);
+
+			this.favoriteLookup = {};
+
+			for each (var itemId:* in this.favoriteIds) {
+				this.favoriteLookup[itemId] = true;
+			}
 		}
 
 		private var pocket:Pocket;
 
 		private var favoriteIds:Array;
 
+		private var favoriteLookup:Object;
+
 		private var favoriteButton:Favorite;
 
 		public function isFavorite(itemData:Object):Boolean {
-			return itemData != null && this.favoriteIds.indexOf(itemData.ItemID) > -1;
+			return itemData != null && this.favoriteLookup[itemData.ItemID] == true;
 		}
 
 		public function toggleFavorite(itemData:Object):Boolean {
@@ -28,16 +36,19 @@ package game {
 			}
 
 			const index:int = this.favoriteIds.indexOf(itemData.ItemID);
+			const nowFavorited:Boolean = index == -1;
 
-			if (index > -1) {
-				this.favoriteIds.splice(index, 1);
-			} else {
+			if (nowFavorited) {
 				this.favoriteIds.push(itemData.ItemID);
+				this.favoriteLookup[itemData.ItemID] = true;
+			} else {
+				this.favoriteIds.splice(index, 1);
+				delete this.favoriteLookup[itemData.ItemID];
 			}
 
 			HelperSetting.setArray(HelperSetting.OPTION_FAVORITE_ITEMS, this.favoriteIds);
 
-			return index == -1;
+			return nowFavorited;
 		}
 
 		public function fDraw(state:Object, lpf:MovieClip):void {

@@ -14,6 +14,7 @@ package game {
 		public function Core(pocket:Pocket) {
 			this.pocket = pocket;
 			this.itemPagination = new ItemPagination(this.pocket);
+			this.itemFavorite = new ItemFavorite(this.pocket);
 
 			POCKET::IS_DESKTOP {
 				this.pocket.addEventListener(Event.ENTER_FRAME, this.onEnterFrame, false, 0, true);
@@ -23,6 +24,7 @@ package game {
 		private var pocket:Pocket;
 
 		public var itemPagination:ItemPagination;
+		public var itemFavorite:ItemFavorite;
 
 		POCKET::IS_DESKTOP {
 			private var _tickDiscordRPC:int = 0;

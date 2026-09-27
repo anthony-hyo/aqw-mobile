@@ -20,6 +20,7 @@ package util {
 		
 		public static const OPTION_PAGINATION:String = "option_pagination";
 		public static const OPTION_EQUIPPED_ON_TOP:String = "option_equipped_on_top";
+		public static const OPTION_FAVORITE_ITEMS:String = "option_favorite_items";
 		
 		public static const OPTION_SKILL_TOOLTIPS:String = "option_skill_tooltips";
 		public static const OPTION_DISABLE_CUTSCENES:String = "option_disable_cutscenes";
@@ -107,6 +108,14 @@ package util {
 		}
 
 		public static function setString(key:String, value:String):void {
+			_set(key, value);
+		}
+
+		public static function getArray(key:String, defaultValue:Array = null):Array {
+			return _get(key, defaultValue || []) as Array;
+		}
+
+		public static function setArray(key:String, value:Array):void {
 			_set(key, value);
 		}
 

@@ -3,6 +3,7 @@ package game {
 	import flash.display.MovieClip;
 	import flash.display.SimpleButton;
 	import flash.events.MouseEvent;
+	import flash.geom.ColorTransform;
 
 	import ui.util.Pagination;
 
@@ -16,6 +17,9 @@ package game {
 
 		private var itemsPerPage:int = 9;
 
+		private static const FAVORITE_ALPHA:Number = 0.3;
+		private static const FAVORITE_CT:ColorTransform = new ColorTransform(0, 0, 0, 1, 255, 215, 0, 0);
+
 		/**
 		 * Patch freezing when opening Bank, Inventory etc.
 		 *
@@ -24,7 +28,7 @@ package game {
 		 * @param reset
 		 * @return
 		 */
-		public function fDraw(state:Object, lpf:Object, reset:Boolean):Object {
+		public function fDraw(state:Object, lpf:MovieClip, reset:Boolean):Object {
 			var listA:Array = [];
 			var sortedGroup:Array = [];
 			var filteredItems:Array = [];
@@ -166,6 +170,20 @@ package game {
 				listA = pinnedItems.concat(unpinnedItems);
 			}
 
+			const itemFavorite:ItemFavorite = this.pocket.gameCore.itemFavorite;
+			const favoritedItems:Array = [];
+			const unfavoritedItems:Array = [];
+
+			for each (itemData in listA) {
+				if (itemFavorite.isFavorite(itemData)) {
+					favoritedItems.push(itemData);
+				} else {
+					unfavoritedItems.push(itemData);
+				}
+			}
+
+			listA = favoritedItems.concat(unfavoritedItems);
+
 			const itemConfig:Object = {};
 
 			itemConfig.eventType = itemEventType;
@@ -272,6 +290,17 @@ package game {
 
 			if (key != 0) {
 				listItem.y = iList.height;
+			}
+
+			if (this.pocket.gameCore.itemFavorite.isFavorite(itemConfig.fData) && listItem.selBG) {
+				listItem.selBG.transform.colorTransform = FAVORITE_CT;
+				listItem.selBG.alpha = FAVORITE_ALPHA;
+
+				listItem.addEventListener(MouseEvent.MOUSE_OUT, function (e:MouseEvent):void {
+					if (!listItem.sel) {
+						listItem.selBG.alpha = FAVORITE_ALPHA;
+					}
+				}, false, int.MIN_VALUE, true);
 			}
 		}
 

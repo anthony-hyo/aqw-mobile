@@ -12,6 +12,11 @@ package util {
 		public static const OPTION_JOYSTICK_DASH:String = "option_joystick_dash";
 
 		public static const OPTION_SHOW_SKILL_BAR:String = "option_show_skill_bar";
+		public static const OPTION_SKILL_BAR_STYLE:String = "option_skill_bar_style";
+
+		public static const SKILL_BAR_STYLE_CLASSIC:int = 0;
+		public static const SKILL_BAR_STYLE_INFINITY:int = 1;
+
 		public static const OPTION_SNAP_TO_GRID:String = "option_snap_to_grid";
 		public static const OPTION_FPS:String = "option_fps";
 		public static const OPTION_LANGUAGE:String = "option_language";

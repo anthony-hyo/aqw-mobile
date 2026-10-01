@@ -563,6 +563,29 @@ package ui {
 						pocket.gameUI.showSkillBar();
 					}
 				),
+				new Toggle(
+					HelperSetting.OPTION_SKILL_BAR_STYLE,
+					HelperSetting.SKILL_BAR_STYLE_CLASSIC,
+					"Skill Bar Style",
+					"Choose the skill icon frame appearance",
+					true,
+					["Classic", "Infinity"],
+					function (option:Toggle):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (pocket.game) {
+							pocket.gameUI.applySkillBarStyle();
+						}
+					},
+					null,
+					function (frame:String):void {
+						const pocket:Pocket = Pocket.SINGLETON;
+
+						if (pocket.game) {
+							pocket.gameUI.applySkillBarStyle();
+						}
+					}
+				),
 				new Check(
 					HelperSetting.OPTION_JOYSTICK_DASH,
 					false,

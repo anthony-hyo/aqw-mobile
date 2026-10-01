@@ -90,7 +90,7 @@
 		public var networkCore:Network;
 
 		private const backgroundLoad:BackgroundLoad = new BackgroundLoad(this);
-		private const gameLoader:GameLoad = new GameLoad(this);
+		public const gameLoader:GameLoad = new GameLoad(this);
 		private const updateLoad:UpdateLoad = new UpdateLoad(this);
 		private const versionLoad:VersionLoad = new VersionLoad(this);
 

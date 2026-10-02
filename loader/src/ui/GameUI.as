@@ -25,6 +25,8 @@ package ui {
 
 			this.mouseChildren = true;
 			this.mouseEnabled = false;
+
+			this.layoutController.onChange = this.syncSkillDecor;
 		}
 
 		private var pocket:Pocket;
@@ -274,6 +276,35 @@ package ui {
 			return null;
 		}
 
+		public function syncSkillDecor():void {
+			if (!this.pocket.game || this.skillsInfinity.length == 0) {
+				return;
+			}
+
+			const actBar:Sprite = this.pocket.game.ui.mcInterface.actBar;
+
+			var icon:Sprite;
+
+			for each (var skill:SkillInfinity in this.skillsInfinity) {
+				icon = Sprite(actBar.getChildByName("i" + skill.id));
+
+				if (icon != null) {
+					positionSkillDecor(actBar, icon, skill);
+				}
+			}
+		}
+
+		private function positionSkillDecor(actBar:Sprite, icon:Sprite, skill:SkillInfinity):void {
+			// Bounds ignore masks, so this is safe while the icon is masked.
+			const bounds:Rectangle = icon.getBounds(actBar);
+			const cx:Number = bounds.x + bounds.width * 0.5;
+			const cy:Number = bounds.y + bounds.height * 0.5;
+			const size:Number = Math.max(bounds.width, bounds.height);
+
+			fitToCenter(skill.mask, cx, cy, size);
+			fitToCenter(skill.frame, cx, cy, size);
+		}
+
 		private function addSkillDecor(actBar:Sprite, icon:Sprite, id:int):void {
 			var skill:SkillInfinity = findSkill(id);
 
@@ -295,13 +326,7 @@ package ui {
 
 			icon.mask = skill.mask;
 
-			const bounds:Rectangle = icon.getBounds(actBar);
-			const cx:Number = bounds.x + (bounds.width >> 1);
-			const cy:Number = bounds.y + (bounds.height >> 1);
-			const size:Number = Math.max(bounds.width, bounds.height);
-
-			fitToCenter(skill.mask, cx, cy, size);
-			fitToCenter(skill.frame, cx, cy, size);
+			positionSkillDecor(actBar, icon, skill);
 		}
 
 		private function fitToCenter(target:DisplayObject, cx:Number, cy:Number, size:Number):void {
@@ -315,8 +340,8 @@ package ui {
 			target.scaleX = scale;
 			target.scaleY = scale;
 
-			const centerLocalX:Number = localBounds.x + (localBounds.width >> 1);
-			const centerLocalY:Number = localBounds.y + (localBounds.height >> 1);
+			const centerLocalX:Number = localBounds.x + localBounds.width * 0.5;
+			const centerLocalY:Number = localBounds.y + localBounds.height * 0.5;
 
 			target.x = cx - centerLocalX * scale;
 			target.y = cy - centerLocalY * scale;

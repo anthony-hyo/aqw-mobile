@@ -59,7 +59,7 @@ package game {
 				}
 			}
 
-			if (frame == "Game" && this.pocket.game.ui.mcInterface.mcMenu) {
+			/*if (frame == "Game" && this.pocket.game.ui.mcInterface.mcMenu) {
 				// Experiment: reposition/scale the game's menu bar for testing.
 				const mcMenu:* = this.pocket.game.ui.mcInterface.mcMenu;
 
@@ -71,7 +71,7 @@ package game {
 				mcMenu.scaleX = mcMenu.scaleY = 1.2;
 
 				mcMenu.x = rightEdge - mcMenu.width;
-			}
+			}*/
 
 			this.pocket.overlay.setOverlayButtonTransform();
 

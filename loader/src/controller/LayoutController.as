@@ -23,6 +23,8 @@ package controller {
 
 		private static var current:WidgetEntry;
 
+		public var onChange:Function = null;
+
 		private var widgets:Vector.<WidgetEntry> = new Vector.<WidgetEntry>();
 		private var dragOffsetX:Number = 0;
 		private var dragOffsetY:Number = 0;
@@ -60,6 +62,8 @@ package controller {
 				widgetEntry.target.scaleX = saved ? saved.scaleX : widgetEntry.defaultScaleX;
 				widgetEntry.target.scaleY = saved ? saved.scaleY : widgetEntry.defaultScaleY;
 			}
+
+			notifyChange();
 		}
 
 		public function toggleEdit(state:Boolean):void {
@@ -148,6 +152,8 @@ package controller {
 
 				HelperSetting._delete(widgetEntry.id);
 			}
+
+			notifyChange();
 		}
 
 		private function showHandles(widgetEntry:WidgetEntry):void {
@@ -275,6 +281,8 @@ package controller {
 				current.target.y = nextY;
 
 				e.updateAfterEvent();
+
+				notifyChange();
 			}
 
 			private function onTouchEnd(e:TouchEvent):void {
@@ -297,13 +305,14 @@ package controller {
 				repositionHandles(current);
 
 				current = null;
+
+				notifyChange();
 			}
 
 		}
 
 		//noinspection JSUnresolvedReference
 		POCKET::IS_DESKTOP {
-
 			private function onHandleMouseDown(mouseEvent:MouseEvent):void {
 				current = entryForHandle(SimpleButton(mouseEvent.currentTarget));
 
@@ -342,6 +351,8 @@ package controller {
 				current.target.y = nextY;
 
 				e.updateAfterEvent();
+
+				notifyChange();
 			}
 
 			private function onMouseUp(e:MouseEvent):void {
@@ -362,8 +373,9 @@ package controller {
 				repositionHandles(current);
 
 				current = null;
-			}
 
+				notifyChange();
+			}
 		}
 
 		private function onResizeUp(e:*):void {
@@ -379,6 +391,8 @@ package controller {
 			entry.target.scaleY = scale;
 
 			repositionHandles(entry);
+
+			notifyChange();
 		}
 
 		private function onResizeDown(e:*):void {
@@ -394,6 +408,8 @@ package controller {
 			entry.target.scaleY = scale;
 
 			repositionHandles(entry);
+
+			notifyChange();
 		}
 
 		private function isSnapToGridEnabled():Boolean {
@@ -402,6 +418,12 @@ package controller {
 
 		private function snap(value:Number):Number {
 			return Math.round(value / GRID_SIZE) * GRID_SIZE;
+		}
+
+		private function notifyChange():void {
+			if (this.onChange != null) {
+				this.onChange();
+			}
 		}
 
 	}

@@ -52,6 +52,8 @@ package game {
 			}
 
 			this.pocket.gameUI.layoutController.load();
+
+			this.pocket.gameUI.applySkillBarStyle();
 		}
 
 	}

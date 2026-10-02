@@ -1,19 +1,22 @@
 package ui.util {
 
+	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
+	import flash.display.SimpleButton;
 	import flash.events.MouseEvent;
 
 	public class Favorite extends MovieClip {
 
-		private static const ALPHA_ACTIVE:Number = 1;
-		private static const ALPHA_INACTIVE:Number = 0.35;
+		public var btnFavorite:SimpleButton;
 
 		public var fData:Object = {};
 
+		private var normalState:DisplayObject;
+		private var hoverState:DisplayObject;
+
 		public function Favorite() {
-			this.buttonMode = true;
-			this.useHandCursor = true;
-			//this.mouseChildren = false;
+			this.normalState = this.btnFavorite.upState;
+			this.hoverState = this.btnFavorite.overState;
 
 			this.addEventListener(MouseEvent.CLICK, onClick, false, 0, true);
 		}
@@ -41,7 +44,7 @@ package ui.util {
 				return;
 			}
 
-			this.alpha = fData.favorited ? ALPHA_ACTIVE : ALPHA_INACTIVE;
+			this.btnFavorite.upState = fData.favorited ? this.hoverState : this.normalState;
 		}
 
 		private function onClick(e:MouseEvent):void {

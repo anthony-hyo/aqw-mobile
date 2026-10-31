@@ -1,0 +1,161 @@
+name: Build iOS (sideload)
+
+# Builds an interpreter-mode IPA for sideloading.
+#
+# Interpreter mode runs ActionScript through an interpreter instead of
+# compiling it ahead of time, which is what normally stops iOS AIR apps from
+# running the map and item SWFs AQW downloads while you play.
+#
+# Game files are taken from an existing Android release APK, so the private
+# pocket-patches repo is not needed.
+
+on:
+    workflow_dispatch:
+        inputs:
+            release_tag:
+                description: 'aqw-mobile release to take game files from (blank = latest)'
+                required: false
+                default: ''
+            source_repo:
+                description: 'Repo whose releases hold the Android APK'
+                required: true
+                default: 'anthony-hyo/aqw-mobile'
+            render_mode:
+                description: 'Render mode'
+                required: true
+                default: 'auto'
+                type: choice
+                options:
+                    - 'auto'
+                    - 'direct'
+                    - 'gpu'
+
+jobs:
+    build-ios:
+        runs-on: macos-latest
+        permissions:
+            contents: write
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Get game files from the Android release
+                env:
+                    GH_TOKEN: ${{ github.token }}
+                run: |
+                    set -euo pipefail
+                    mkdir -p apk
+                    TAG="${{ github.event.inputs.release_tag }}"
+                    if [ -n "$TAG" ]; then
+                      gh release download "$TAG" -R "${{ github.event.inputs.source_repo }}" -p '*-armv8.apk' -D apk
+                    else
+                      gh release download -R "${{ github.event.inputs.source_repo }}" -p '*-armv8.apk' -D apk
+                    fi
+                    APK=$(ls apk/*.apk | grep -v -- '-direct\|-gpu' | head -1)
+                    echo "Using $APK"
+                    unzip -q -o "$APK" -d apk/x
+                    find apk/x -name '*.swf'
+                    SWF_MOBILE=$(find apk/x -name 'Mobile.swf' | head -1)
+                    SWF_GAME=$(find apk/x -path '*gamefiles/game.swf' | head -1)
+                    SWF_MAP=$(find apk/x -path '*gamefiles/world-map.swf' | head -1)
+                    test -n "$SWF_MOBILE" -a -n "$SWF_GAME" -a -n "$SWF_MAP"
+                    mkdir -p loader/gamefiles
+                    cp "$SWF_MOBILE" loader/Mobile.swf
+                    cp "$SWF_GAME" loader/gamefiles/game.swf
+                    cp "$SWF_MAP" loader/gamefiles/world-map.swf
+                    VERSION=$(basename "$APK" | sed -E 's/^AQWPocket-v?([0-9.]+).*/\1/')
+                    echo "VERSION=${VERSION:-1.0.0}" >> "$GITHUB_ENV"
+
+            -   name: Make iOS icons
+                run: |
+                    set -euo pipefail
+                    python3 -m pip install --quiet --break-system-packages pillow || python3 -m pip install --quiet pillow
+                    python3 - <<'PY'
+                    from PIL import Image
+                    src = Image.open("loader/icons/icon-192x192.png").convert("RGBA")
+                    for s in [29, 40, 58, 60, 76, 80, 87, 120, 152, 167, 180, 1024]:
+                        im = src.resize((s, s), Image.LANCZOS)
+                        if s == 1024:
+                            bg = Image.new("RGB", (s, s), (0, 0, 0))
+                            bg.paste(im, mask=im.split()[3])
+                            im = bg
+                        im.save(f"loader/icons/icon-{s}x{s}.png")
+                    PY
+
+            -   name: Setup AIR SDK
+                uses: joshtynjala/setup-adobe-air-action@v2
+                with:
+                    air-version: "51.3.1"
+                    accept-license: yes
+
+            # Uses your Apple certificate if you add these secrets; otherwise
+            # creates a throwaway one (the IPA must then be re-signed when
+            # sideloading, which Sideloadly / AltStore do automatically):
+            #   IOS_CERT_P12_BASE64, IOS_CERT_PASS, IOS_PROVISION_BASE64
+            -   name: Signing files
+                env:
+                    P12: ${{ secrets.IOS_CERT_P12_BASE64 }}
+                    P12_PASS: ${{ secrets.IOS_CERT_PASS }}
+                    PROFILE: ${{ secrets.IOS_PROVISION_BASE64 }}
+                run: |
+                    set -euo pipefail
+                    mkdir -p sign
+                    if [ -n "$P12" ] && [ -n "$PROFILE" ]; then
+                      echo "$P12" | base64 -D > sign/ios_cert.p12
+                      echo "$PROFILE" | base64 -D > sign/ios.mobileprovision
+                      echo "STOREPASS=$P12_PASS" >> "$GITHUB_ENV"
+                    else
+                      export PATH="$(brew --prefix openssl@3)/bin:$PATH"
+                      python3 ios/make_dev_profile.py sign com.aqw.pocket pocket
+                      echo "STOREPASS=pocket" >> "$GITHUB_ENV"
+                    fi
+
+            -   name: Build IPA
+                run: |
+                    set -euo pipefail
+                    sed -i '' "s|<renderMode>.*</renderMode>|<renderMode>${{ github.event.inputs.render_mode }}</renderMode>|" loader/iOS-app.xml
+                    sed -i '' "s|<versionNumber>.*</versionNumber>|<versionNumber>$VERSION</versionNumber>|" loader/iOS-app.xml
+                    sed -i '' "s|<versionLabel>.*</versionLabel>|<versionLabel>$VERSION</versionLabel>|" loader/iOS-app.xml
+                    OUT="AQWPocket-v$VERSION-ios-${{ github.event.inputs.render_mode }}.ipa"
+                    adt -package \
+                      -target ipa-test-interpreter \
+                      -storetype pkcs12 \
+                      -keystore sign/ios_cert.p12 \
+                      -storepass "$STOREPASS" \
+                      -provisioning-profile sign/ios.mobileprovision \
+                      "$OUT" \
+                      loader/iOS-app.xml \
+                      -platformsdk "$(xcrun --sdk iphoneos --show-sdk-path)" \
+                      -C loader \
+                        Mobile.swf \
+                        icons/icon-29x29.png \
+                        icons/icon-40x40.png \
+                        icons/icon-58x58.png \
+                        icons/icon-60x60.png \
+                        icons/icon-76x76.png \
+                        icons/icon-80x80.png \
+                        icons/icon-87x87.png \
+                        icons/icon-120x120.png \
+                        icons/icon-152x152.png \
+                        icons/icon-167x167.png \
+                        icons/icon-180x180.png \
+                        icons/icon-1024x1024.png \
+                        gamefiles/game.swf \
+                        gamefiles/world-map.swf
+                    ls -la "$OUT"
+
+            -   name: Upload IPA
+                uses: actions/upload-artifact@v4
+                with:
+                    name: AQWPocket-ios
+                    path: "*.ipa"
+
+            -   name: Publish IPA as a release
+                env:
+                    GH_TOKEN: ${{ github.token }}
+                run: |
+                    set -euo pipefail
+                    TAG="ios-v$VERSION-${{ github.event.inputs.render_mode }}-${{ github.run_number }}"
+                    gh release create "$TAG" *.ipa -R "${{ github.repository }}" \
+                      --title "AQW Pocket iOS v$VERSION (${{ github.event.inputs.render_mode }})" \
+                      --notes "Interpreter-mode IPA for sideloading. Re-sign with your Apple ID when installing."

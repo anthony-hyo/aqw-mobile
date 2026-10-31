@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<application xmlns="http://ns.adobe.com/air/application/51.3">
+  <!-- Must match the App ID in your provisioning profile -->
+  <id>com.aqw.pocket</id>
+  <versionNumber>1.0.0</versionNumber>
+  <versionLabel>1.0.0</versionLabel>
+  <filename>AQW Pocket</filename>
+  <description>Play AdventureQuest Worlds on your mobile device.</description>
+  <name>AQW Pocket</name>
+  <copyright>Community Mod</copyright>
+  <supportedProfiles>mobileDevice</supportedProfiles>
+  <initialWindow>
+    <content>Mobile.swf</content>
+    <systemChrome>standard</systemChrome>
+    <transparent>false</transparent>
+    <visible>true</visible>
+    <fullScreen>true</fullScreen>
+    <aspectRatio>landscape</aspectRatio>
+    <renderMode>auto</renderMode>
+    <softKeyboardBehavior>none</softKeyboardBehavior>
+    <autoOrients>true</autoOrients>
+  </initialWindow>
+  <icon>
+    <image29x29>icons/icon-29x29.png</image29x29>
+    <image40x40>icons/icon-40x40.png</image40x40>
+    <image58x58>icons/icon-58x58.png</image58x58>
+    <image60x60>icons/icon-60x60.png</image60x60>
+    <image76x76>icons/icon-76x76.png</image76x76>
+    <image80x80>icons/icon-80x80.png</image80x80>
+    <image87x87>icons/icon-87x87.png</image87x87>
+    <image120x120>icons/icon-120x120.png</image120x120>
+    <image152x152>icons/icon-152x152.png</image152x152>
+    <image167x167>icons/icon-167x167.png</image167x167>
+    <image180x180>icons/icon-180x180.png</image180x180>
+    <image1024x1024>icons/icon-1024x1024.png</image1024x1024>
+  </icon>
+  <iPhone>
+    <InfoAdditions><![CDATA[
+      <key>UIDeviceFamily</key>
+      <array>
+        <string>1</string>
+        <string>2</string>
+      </array>
+      <key>UIRequiresFullScreen</key>
+      <true/>
+      <key>NSAppTransportSecurity</key>
+      <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+      </dict>
+    ]]></InfoAdditions>
+    <requestedDisplayResolution>high</requestedDisplayResolution>
+  </iPhone>
+  <supportedLanguages>en</supportedLanguages>
+</application>
